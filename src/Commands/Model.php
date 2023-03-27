@@ -4,7 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Illuminate\Console\Command;
 
-class BaseModel extends Command
+class Model extends Command
 {
     /**
      * The name and signature of the console command.

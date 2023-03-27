@@ -18,7 +18,7 @@ class ShiftBlueprint extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'New shift blueprint';
 
     /**
      * Execute the console command.

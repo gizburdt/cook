@@ -2,10 +2,12 @@
 
 namespace Gizburdt\Cook;
 
+use Gizburdt\Cook\Commands\AuthJson;
+use Gizburdt\Cook\Commands\NovaResource;
 use Gizburdt\Cook\Commands\Packages;
 use Illuminate\Support\ServiceProvider;
 
-class UtilitiesServiceProvider extends ServiceProvider
+class CookServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -14,6 +16,8 @@ class UtilitiesServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                AuthJson::class,
+                NovaResource::class,
                 Packages::class,
             ]);
         }
@@ -21,7 +25,7 @@ class UtilitiesServiceProvider extends ServiceProvider
         // Publishes
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/utilities.php' => config_path('utilities.php'),
+                __DIR__.'/../config/cook.php' => config_path('cook.php'),
             ], 'config');
         }
     }
@@ -31,6 +35,6 @@ class UtilitiesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/utilities.php', 'utilities');
+        $this->mergeConfigFrom(__DIR__.'/../config/cook.php', 'cook');
     }
 }

@@ -48,7 +48,7 @@ class Packages extends Command
             $this->packages($packages, 'dev'), '--dev'
         );
 
-        $this->info('Packages installed!');
+        $this->info('Done!');
 
         return Command::SUCCESS;
     }
