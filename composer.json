@@ -1,8 +1,8 @@
 {
     "name": "gizburdt/cook",
-    "description": ":package_description",
+    "description": "Opinionated package to speed up new Laravel projects",
     "keywords": [
-        ":package_name"
+        "laravel"
     ],
     "homepage": "https://github.com/gizburdt/cook",
     "license": "MIT",

@@ -31,11 +31,11 @@ class CookServiceProvider extends ServiceProvider
         }
 
         // Publishes
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/cook.php' => config_path('cook.php'),
-            ], 'config');
-        }
+        // if ($this->app->runningInConsole()) {
+        //     $this->publishes([
+        //         __DIR__.'/../config/cook.php' => config_path('cook.php'),
+        //     ], 'config');
+        // }
     }
 
     /**
