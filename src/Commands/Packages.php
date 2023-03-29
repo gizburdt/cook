@@ -21,15 +21,8 @@ class Packages extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
-        $this->composer->dumpAutoloads();
-
         $packages = $this->choice(
             'Which packages do you want to install?',
             $this->choices()->keys()->toArray(),
@@ -53,7 +46,7 @@ class Packages extends Command
         return Command::SUCCESS;
     }
 
-    protected function packages($packages, $scope)
+    protected function packages($packages, $scope): array
     {
         return $this->choices()
             ->filter(fn ($value) => $value == $scope)
@@ -70,10 +63,13 @@ class Packages extends Command
             'laravel/breeze' => 'require',
             'laravel/horizon' => 'require',
             'laravel/nova' => 'require',
+            'laravel/scout' => 'require',
             'laravel/slack-notification-channel' => 'require',
+            'laravel/telescope' => 'require',
             'laravel-shift/blueprint' => 'dev',
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
+            'predis/predis' => 'require',
             'spatie/cpu-load-health-check' => 'require',
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',

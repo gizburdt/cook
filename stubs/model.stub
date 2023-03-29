@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Closure;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+
+class Model extends EloquentModel
+{
+    protected $guarded = [];
+
+    public static function addGlobalScopeWhen($value, $scope, Closure $implementation = null)
+    {
+        return $value ? static::addGlobalScope($scope, $implementation) : null;
+    }
+
+    public function scopeWhereLike($query, $column, $value)
+    {
+        return $query->where($column, 'like', "%{$value}%");
+    }
+}

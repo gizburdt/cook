@@ -2,33 +2,17 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-
-class Model extends Command
+class Model extends GenerateCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'cook:base-model';
+    protected $signature = 'cook:model {--force}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'Create a base Model';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        //
+    protected $subject = 'Model.php';
 
-        return Command::SUCCESS;
-    }
+    protected $file = 'Model.php';
+
+    protected $folder = 'app/Models';
+
+    protected $stub = 'model';
 }

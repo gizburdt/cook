@@ -2,33 +2,17 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-
-class ShiftBlueprint extends Command
+class ShiftBlueprint extends GenerateCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'cook:shift-blueprint';
+    protected $signature = 'cook:shift-blueprint {--force}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'New shift blueprint';
+    protected $description = 'Create a draft.yaml';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        //
+    protected $subject = 'Shift Blueprint';
 
-        return Command::SUCCESS;
-    }
+    protected $file = 'draft.yaml';
+
+    protected $folder = '/';
+
+    protected $stub = 'shift-blueprint';
 }

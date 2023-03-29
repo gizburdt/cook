@@ -2,9 +2,13 @@
 
 namespace Gizburdt\Cook;
 
+use Gizburdt\Cook\Commands\ApiResource;
 use Gizburdt\Cook\Commands\AuthJson;
+use Gizburdt\Cook\Commands\DocBlocks;
+use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\NovaResource;
 use Gizburdt\Cook\Commands\Packages;
+use Gizburdt\Cook\Commands\ShiftBlueprint;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
@@ -16,9 +20,13 @@ class CookServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                ApiResource::class,
                 AuthJson::class,
+                DocBlocks::class,
+                Model::class,
                 NovaResource::class,
                 Packages::class,
+                ShiftBlueprint::class,
             ]);
         }
 

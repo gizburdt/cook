@@ -2,48 +2,29 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Gizburdt\Cook\ReplaceStubs;
 
-class AuthJson extends Command
+class AuthJson extends GenerateCommand
 {
-    protected $signature = 'cook:auth-json {username} {password}';
+    use ReplaceStubs;
 
-    protected $description = 'Command description';
+    protected $signature = 'cook:auth-json {username} {password} {--force}';
 
-    protected $files;
+    protected $description = 'Create an auth.json';
 
-    public function __construct(Filesystem $files)
+    protected $subject = 'auth.json';
+
+    protected $file = 'auth.json';
+
+    protected $folder = '/';
+
+    protected $stub = 'auth-json';
+
+    public function contents(): string
     {
-        $this->files = $files;
-
-        parent::__construct();
-    }
-
-    public function handle()
-    {
-        $this->info('Creating auth.json...');
-
-        $fullPath = $this->laravel->basePath('auth.json');
-
-        $stub = $this->files->get(__DIR__.'/../../stubs/auth-json.stub');
-
-        $contents = $this->replaceStubs([
+        return $this->replaceStubs([
             '{{ username }}' => $this->argument('username'),
             '{{ password }}' => $this->argument('password'),
-        ], $stub);
-
-        $this->files->put($fullPath, $contents);
-
-        $this->info('Created!');
-
-        return Command::SUCCESS;
-    }
-
-    protected function replaceStubs($replace, $stub): string
-    {
-        return str_replace(
-            array_keys($replace), array_values($replace), $stub
-        );
+        ], $this->stubContents());
     }
 }

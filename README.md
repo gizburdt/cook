@@ -12,7 +12,7 @@
 You can install the package via composer:
 
 ``` bash
-composer require gizburdt/cook
+composer require gizburdt/cook --dev
 ```
 
 ## Usage
