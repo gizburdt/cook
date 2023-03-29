@@ -26,8 +26,6 @@ abstract class GenerateCommand extends Command
 
     public function handle()
     {
-        $this->info("Creating {$this->subject}...");
-
         $fullPath = $this->laravel->basePath("{$this->folder}/{$this->file}");
 
         if ($this->files->exists($fullPath) && ! $this->option('force')) {
@@ -36,17 +34,19 @@ abstract class GenerateCommand extends Command
             return Command::FAILURE;
         }
 
+        $this->info("Creating {$this->subject}...");
+
         if ($this->folder && ! $this->files->exists($this->folder)) {
             $this->files->makeDirectory(
                 $this->laravel->basePath($this->folder)
             );
         }
 
-        $contents = $this->contents();
-
-        $this->files->put($fullPath, $contents);
+        $this->files->put($fullPath, $this->contents());
 
         $this->info('Created!');
+
+        $this->after();
 
         return Command::SUCCESS;
     }
@@ -59,5 +59,10 @@ abstract class GenerateCommand extends Command
     protected function stubContents(): string
     {
         return $this->files->get(__DIR__."/../../stubs/{$this->stub}.stub");
+    }
+
+    protected function after()
+    {
+        return;
     }
 }

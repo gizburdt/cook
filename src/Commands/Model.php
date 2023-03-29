@@ -15,4 +15,9 @@ class Model extends GenerateCommand
     protected $folder = 'app/Models';
 
     protected $stub = 'model';
+
+    protected function after()
+    {
+        // @todo: remove `use Illimunate\Database\Eloquent\Model;` from models
+    }
 }
