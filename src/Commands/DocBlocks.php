@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class DocBlocks extends Command
 {
-    protected $signature = 'burn:doc-blocks {path=app/Models}';
+    protected $signature = 'burn:doc-blocks {path}';
 
     protected $description = 'Remove all multiline comments';
 
@@ -42,8 +42,6 @@ class DocBlocks extends Command
             $contents = preg_replace(
                 "/\n\s*\n\s*\n/", "\n\n", $contents
             );
-
-            dd($contents);
 
             $this->files->put($file, $contents);
         });
