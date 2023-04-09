@@ -9,13 +9,11 @@ use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\NovaResource;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\ShiftBlueprint;
+use Gizburdt\Cook\Commands\Traits;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
     public function boot()
     {
         if ($this->app->runningInConsole()) {
@@ -27,6 +25,7 @@ class CookServiceProvider extends ServiceProvider
                 NovaResource::class,
                 Packages::class,
                 ShiftBlueprint::class,
+                Traits::class,
             ]);
         }
 
@@ -38,9 +37,6 @@ class CookServiceProvider extends ServiceProvider
         // }
     }
 
-    /**
-     * Register the application services.
-     */
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/cook.php', 'cook');

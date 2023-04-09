@@ -2,13 +2,8 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-
 abstract class GenerateCommand extends Command
 {
-    protected $files;
-
     protected $subject;
 
     protected $file;
@@ -16,13 +11,6 @@ abstract class GenerateCommand extends Command
     protected $folder;
 
     protected $stub;
-
-    public function __construct(Filesystem $files)
-    {
-        $this->files = $files;
-
-        parent::__construct();
-    }
 
     public function handle()
     {
@@ -76,7 +64,7 @@ abstract class GenerateCommand extends Command
         return $this->folder;
     }
 
-    protected function stub(): string
+    protected function stub(): string|null
     {
         return $this->stub;
     }
