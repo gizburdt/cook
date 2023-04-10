@@ -9,7 +9,7 @@ class Model extends PublishCommand
     protected $description = 'Publish the base Model';
 
     protected $publish = [
-        'Models/Model.php' => "app/Models",
+        'Models/Model.php' => 'app/Models',
     ];
 
     protected function after()

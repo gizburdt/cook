@@ -9,6 +9,6 @@ class Traits extends PublishCommand
     protected $description = 'Publish traits to app/Traits';
 
     protected $publish = [
-        'Traits/FilterableByDates.php' => "app/Traits",
+        'Traits/FilterableByDates.php' => 'app/Traits',
     ];
 }

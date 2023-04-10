@@ -9,6 +9,6 @@ class NovaResource extends PublishCommand
     protected $description = 'Publish the base Nova resource';
 
     protected $publish = [
-        'Nova/Resource.php' => "app/Nova",
+        'Nova/Resource.php' => 'app/Nova',
     ];
 }

@@ -71,6 +71,6 @@ abstract class GenerateCommand extends Command
 
     protected function after()
     {
-        return;
+        //
     }
 }

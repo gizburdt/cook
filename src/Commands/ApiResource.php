@@ -9,6 +9,6 @@ class ApiResource extends PublishCommand
     protected $description = 'Publish the base API resource';
 
     protected $publish = [
-        'Http/Resources/Resource.php' => "app/Http/Resources",
+        'Http/Resources/Resource.php' => 'app/Http/Resources',
     ];
 }

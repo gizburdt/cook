@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 use JsonSerializable;
 
 abstract class Resource extends JsonResource

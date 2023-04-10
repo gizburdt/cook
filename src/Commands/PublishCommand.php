@@ -4,7 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 abstract class PublishCommand extends Command
 {
-    protected $folder = __DIR__."/../../publish/";
+    protected $folder = __DIR__.'/../../publish/';
 
     protected $publish = [];
 
@@ -18,7 +18,7 @@ abstract class PublishCommand extends Command
             $fullPath = "{$this->laravel->basePath()}/{$to}/{$file}";
 
             if ($this->files->exists($fullPath) && ! $this->option('force')) {
-                $this->error("{$this->file()} already exists!");
+                $this->error("{$file} already exists!");
 
                 return Command::FAILURE;
             }
@@ -52,6 +52,6 @@ abstract class PublishCommand extends Command
 
     protected function after()
     {
-        return;
+        //
     }
 }
