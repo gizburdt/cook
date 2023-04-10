@@ -2,19 +2,15 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class Model extends GenerateCommand
+class Model extends PublishCommand
 {
     protected $signature = 'cook:model {--force}';
 
-    protected $description = 'Create a base Model';
+    protected $description = 'Publish the base Model';
 
-    protected $subject = 'Model.php';
-
-    protected $file = 'Model.php';
-
-    protected $folder = 'app/Models';
-
-    protected $stub = 'model';
+    protected $publish = [
+        'Models/Model.php' => "app/Models",
+    ];
 
     protected function after()
     {

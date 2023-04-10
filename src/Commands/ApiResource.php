@@ -2,17 +2,13 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class ApiResource extends GenerateCommand
+class ApiResource extends PublishCommand
 {
     protected $signature = 'cook:api-resource {--force}';
 
-    protected $description = 'Create a base API resource';
+    protected $description = 'Publish the base API resource';
 
-    protected $subject = 'API Resrource';
-
-    protected $file = 'Resource.php';
-
-    protected $folder = 'app/Http/Resources';
-
-    protected $stub = 'api-resource';
+    protected $publish = [
+        'Http/Resources/Resource.php' => "app/Http/Resources",
+    ];
 }

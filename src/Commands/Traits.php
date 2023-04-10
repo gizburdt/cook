@@ -2,13 +2,13 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class Traits extends MoveCommand
+class Traits extends PublishCommand
 {
     protected $signature = 'cook:traits {--force}';
 
-    protected $description = 'Move traits to app/Traits';
+    protected $description = 'Publish traits to app/Traits';
 
-    protected $move = [
+    protected $publish = [
         'Traits/FilterableByDates.php' => "app/Traits",
     ];
 }

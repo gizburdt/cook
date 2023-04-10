@@ -2,18 +2,18 @@
 
 namespace Gizburdt\Cook\Commands;
 
-abstract class MoveCommand extends Command
+abstract class PublishCommand extends Command
 {
-    protected $folder = __DIR__."/../../stubs/Traits";
+    protected $folder = __DIR__."/../../publish/";
 
-    protected $move = [];
+    protected $publish = [];
 
     public function handle()
     {
-        foreach ($this->move() as $from => $to) {
+        foreach ($this->publish() as $from => $to) {
             $file = basename($from);
 
-            $from = $this->folder($file);
+            $from = $this->folder($from);
 
             $fullPath = "{$this->laravel->basePath()}/{$to}/{$file}";
 
@@ -29,7 +29,7 @@ abstract class MoveCommand extends Command
 
             $this->files->copy($from, $fullPath);
 
-            $this->info("Moved {$file} to {$to}");
+            $this->info("Published {$file} to {$to}");
         }
 
         $this->after();
@@ -45,9 +45,9 @@ abstract class MoveCommand extends Command
         ])->filter()->implode('/');
     }
 
-    protected function move(): array
+    protected function publish(): array
     {
-        return $this->move;
+        return $this->publish;
     }
 
     protected function after()
