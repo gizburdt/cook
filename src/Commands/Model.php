@@ -6,7 +6,7 @@ class Model extends PublishCommand
 {
     protected $signature = 'cook:model {--force}';
 
-    protected $description = 'Publish the base Model';
+    protected $description = 'Publish Model and stuff';
 
     protected $publish = [
         'Models/Model.php' => 'app/Models',
