@@ -10,6 +10,23 @@ class Model extends Command
 
     public function handle()
     {
-        // @todo: remove `use Illimunate\Database\Eloquent\Model;` from models
+        $files = $this->files->glob($this->laravel->basePath("app/Models/*.php"));
+
+        $this->info('Removing Illuminate\Database\Eloquent\Model...');
+
+        $this->withProgressBar($files, function ($file) {
+            $this->files->put($file, $this->contents($file));
+        });
+
+        $this->info('Done!');
+    }
+
+    protected function contents($file)
+    {
+        $contents = $this->files->get($file);
+
+        $contents = str_replace("use Illuminate\\Database\\Eloquent\\Model;\n", '', $contents);
+
+        return $contents;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Gizburdt\Cook;
 
-trait ReplaceStubs
+trait ReplacesContent
 {
-    protected function replaceStubs($replace, $stub): string
+    protected function replaceContent($replace, $stub): string
     {
         return str_replace(
             array_keys($replace), array_values($replace), $stub

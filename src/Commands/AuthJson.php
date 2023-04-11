@@ -2,11 +2,11 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\ReplaceStubs;
+use Gizburdt\Cook\ReplacesContent;
 
 class AuthJson extends GenerateCommand
 {
-    use ReplaceStubs;
+    use ReplacesContent;
 
     protected $signature = 'cook:auth-json {username} {password} {--force}';
 
@@ -18,7 +18,7 @@ class AuthJson extends GenerateCommand
 
     public function contents(): string
     {
-        return $this->replaceStubs([
+        return $this->replaceContent([
             '{{ username }}' => $this->argument('username'),
             '{{ password }}' => $this->argument('password'),
         ], $this->stubContents());
