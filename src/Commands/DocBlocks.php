@@ -28,8 +28,6 @@ class DocBlocks extends Command
             $this->files->put($file, $this->contents($file));
         });
 
-        $this->info('Done!');
-
         return Command::SUCCESS;
     }
 

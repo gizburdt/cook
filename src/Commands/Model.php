@@ -17,8 +17,6 @@ class Model extends Command
         $this->withProgressBar($files, function ($file) {
             $this->files->put($file, $this->contents($file));
         });
-
-        $this->info('Done!');
     }
 
     protected function contents($file)
