@@ -2,7 +2,7 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class ShiftBlueprint extends PublishCommand
+class ShiftBlueprint extends Command
 {
     protected $signature = 'cook:shift-blueprint {--force}';
 
@@ -11,4 +11,9 @@ class ShiftBlueprint extends PublishCommand
     protected $publish = [
         'draft.yaml' => '/',
     ];
+
+    public function handle()
+    {
+        //
+    }
 }

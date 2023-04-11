@@ -2,9 +2,6 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-
 class Publish extends Command
 {
     protected $signature = 'cook:publish {--force}';

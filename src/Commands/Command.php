@@ -24,6 +24,4 @@ abstract class Command extends ConsoleCommand
     }
 
     abstract public function handle();
-
-    abstract protected function after();
 }

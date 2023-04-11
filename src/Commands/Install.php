@@ -2,8 +2,6 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-
 class Install extends Command
 {
     protected $signature = 'cook:install {--force}';
@@ -13,5 +11,29 @@ class Install extends Command
     public function handle()
     {
         $this->call('cook:publish', ['--force' => $this->option('force')]);
+
+        // Packages
+        $this->call('cook:packages');
+
+        // Models
+        $this->call('cook:model');
+
+        // auth.json
+        if ($this->confirm('Run cook:auth-json?', true)) {
+            $this->call('cook:auth-json', [
+                'username' => $this->ask('Username?'),
+                'password' => $this->ask('Password?'),
+            ]);
+        }
+
+        // Shift
+        if ($this->confirm('Run cook:shift-blueprint?', true)) {
+            $this->call('cook:shift-blueprint', ['--force' => $this->option('force')]);
+        }
+
+        // Burn
+        if ($this->confirm('Run burn:doc-blocks?', true)) {
+            $this->call('burn:doc-blocks', ['path' => $this->ask('Path?', 'app/Models')]);
+        }
     }
 }

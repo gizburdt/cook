@@ -3,7 +3,7 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Composer;
-use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 
 class Packages extends Command
@@ -14,15 +14,19 @@ class Packages extends Command
 
     protected $composer;
 
-    public function __construct(Composer $composer)
+    public function __construct(Filesystem $files, Composer $composer)
     {
         $this->composer = $composer;
 
-        parent::__construct();
+        parent::__construct($files);
     }
 
     public function handle()
     {
+        $this->line('Installing these packages:');
+
+        $this->components->bulletList($this->mandatory()->keys()->toArray());
+
         $packages = $this->choice(
             'Which packages do you want to install?',
             $this->choices()->keys()->toArray(),
@@ -33,6 +37,15 @@ class Packages extends Command
 
         $this->info('Installing packages...');
 
+        $this->installPackages($packages);
+
+        $this->info('Done!');
+
+        return Command::SUCCESS;
+    }
+
+    protected function installPackages($packages)
+    {
         $this->composer->installPackages(
             $this->packages($packages, 'require')
         );
@@ -40,19 +53,34 @@ class Packages extends Command
         $this->composer->installPackages(
             $this->packages($packages, 'dev'), '--dev'
         );
-
-        $this->info('Done!');
-
-        return Command::SUCCESS;
     }
 
     protected function packages($packages, $scope): array
     {
-        return $this->choices()
+        $packages = collect($packages)->flip();
+
+        $choices = $this->choices()
             ->filter(fn ($value) => $value == $scope)
-            ->keys()
-            ->intersect($packages)
-            ->toArray();
+            ->intersectByKeys($packages);
+
+        $mandatory = $this->mandatory()
+            ->filter(fn ($value) => $value == $scope);
+
+        return $mandatory->merge($choices)->keys()->toArray();
+    }
+
+    protected function mandatory(): Collection
+    {
+        return collect([
+            'barryvdh/laravel-debugbar' => 'dev',
+            'laracraft-tech/laravel-date-scopes' => 'require',
+            'laravel/horizon' => 'require',
+            'laravel/slack-notification-channel' => 'require',
+            'laravel-shift/blueprint' => 'dev',
+            'predis/predis' => 'require',
+            'spatie/laravel-ray' => 'require',
+            'spatie/once' => 'require',
+        ]);
     }
 
     protected function choices(): Collection
@@ -60,25 +88,18 @@ class Packages extends Command
         return collect([
             'barryvdh/laravel-snappy' => 'require',
             'coderello/laravel-nova-lang' => 'require',
-            'laracraft-tech/laravel-date-scopes' => 'require',
             'laravel/breeze' => 'require',
-            'laravel/horizon' => 'require',
             'laravel/nova' => 'require',
             'laravel/scout' => 'require',
-            'laravel/slack-notification-channel' => 'require',
             'laravel/telescope' => 'require',
-            'laravel-shift/blueprint' => 'dev',
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
-            'predis/predis' => 'require',
             'spatie/cpu-load-health-check' => 'require',
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
             'spatie/laravel-failed-job-monitor' => 'require',
             'spatie/laravel-login-link' => 'require',
             'spatie/laravel-model-status' => 'require',
-            'spatie/laravel-ray' => 'require',
-            'spatie/once' => 'require',
             'staudenmeir/belongs-to-through' => 'require',
             'staudenmeir/eloquent-has-many-deep' => 'require',
             'symfony/postmark-mailer' => 'require',

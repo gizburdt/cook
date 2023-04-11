@@ -2,17 +2,13 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class Model extends PublishCommand
+class Model extends Command
 {
-    protected $signature = 'cook:model {--force}';
+    protected $signature = 'cook:model';
 
     protected $description = 'Publish Model and stuff';
 
-    protected $publish = [
-        'Models/Model.php' => 'app/Models',
-    ];
-
-    protected function after()
+    public function handle()
     {
         // @todo: remove `use Illimunate\Database\Eloquent\Model;` from models
     }

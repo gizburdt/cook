@@ -2,9 +2,6 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-
 class DocBlocks extends Command
 {
     protected $signature = 'burn:doc-blocks {path}';
@@ -12,13 +9,6 @@ class DocBlocks extends Command
     protected $description = 'Remove all multiline comments';
 
     protected $files;
-
-    public function __construct(Filesystem $files)
-    {
-        $this->files = $files;
-
-        parent::__construct();
-    }
 
     public function handle()
     {
