@@ -8,7 +8,6 @@ use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Publish;
-use Gizburdt\Cook\Commands\ShiftBlueprint;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
@@ -19,13 +18,11 @@ class CookServiceProvider extends ServiceProvider
             $this->commands([
                 Publish::class,
                 Install::class,
-
                 //
                 AuthJson::class,
                 DocBlocks::class,
                 Model::class,
                 Packages::class,
-                ShiftBlueprint::class,
             ]);
         }
 

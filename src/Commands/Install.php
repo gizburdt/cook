@@ -10,7 +10,10 @@ class Install extends Command
 
     public function handle()
     {
-        $this->call('cook:publish', ['--force' => $this->option('force')]);
+        // Publish
+        if ($this->confirm('Run cook:publish?', false)) {
+            $this->call('cook:publish', ['--force' => $this->option('force')]);
+        }
 
         // Packages
         $this->call('cook:packages');
@@ -24,11 +27,6 @@ class Install extends Command
                 'username' => $this->ask('Username?'),
                 'password' => $this->ask('Password?'),
             ]);
-        }
-
-        // Shift
-        if ($this->confirm('Run cook:shift-blueprint?', true)) {
-            $this->call('cook:shift-blueprint', ['--force' => $this->option('force')]);
         }
 
         // Burn
