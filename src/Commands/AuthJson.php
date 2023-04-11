@@ -12,13 +12,9 @@ class AuthJson extends GenerateCommand
 
     protected $description = 'Create an auth.json';
 
-    protected $subject = 'auth.json';
+    protected $stub = 'auth-json.stub';
 
-    protected $file = 'auth.json';
-
-    protected $folder = '/';
-
-    protected $stub = 'auth-json';
+    protected $path = '/auth.json';
 
     public function contents(): string
     {

@@ -35,19 +35,24 @@ class DocBlocks extends Command
         $this->info('Removing doc blocks...');
 
         $this->withProgressBar($files, function ($file) {
-            $contents = preg_replace(
-                "!/\*.*?\*/!s", '', $this->files->get($file)
-            );
-
-            $contents = preg_replace(
-                "/\n\s*\n\s*\n/", "\n\n", $contents
-            );
-
-            $this->files->put($file, $contents);
+            $this->files->put($file, $this->contents($file));
         });
 
         $this->info('Done!');
 
         return Command::SUCCESS;
+    }
+
+    protected function contents($file): string
+    {
+        $contents = preg_replace(
+            "!/\*.*?\*/!s", '', $this->files->get($file)
+        );
+
+        $contents = preg_replace(
+            "/\n\s*\n\s*\n/", "\n\n", $contents
+        );
+
+        return $contents;
     }
 }

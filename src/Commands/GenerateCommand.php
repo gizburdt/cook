@@ -4,17 +4,13 @@ namespace Gizburdt\Cook\Commands;
 
 abstract class GenerateCommand extends Command
 {
-    protected $subject;
-
-    protected $file;
-
-    protected $folder;
-
     protected $stub;
+
+    protected $path;
 
     public function handle()
     {
-        $fullPath = $this->laravel->basePath("{$this->folder()}/{$this->file()}");
+        $fullPath = $this->laravel->basePath("{$this->path()}");
 
         if ($this->files->exists($fullPath) && ! $this->option('force')) {
             $this->error("{$this->file()} already exists!");
@@ -22,13 +18,9 @@ abstract class GenerateCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->info("Creating {$this->subject()}...");
+        $this->info("Generating {$this->file()}...");
 
-        if ($this->folder() && ! $this->files->exists($this->folder())) {
-            $this->files->makeDirectory(
-                $this->laravel->basePath($this->folder())
-            );
-        }
+        $this->createParentDirectory($this->folder());
 
         $this->files->put($fullPath, $this->contents());
 
@@ -46,22 +38,22 @@ abstract class GenerateCommand extends Command
 
     protected function stubContents(): string
     {
-        return $this->files->get(__DIR__."/../../stubs/{$this->stub()}.stub");
+        return $this->files->get(__DIR__."/../../stubs/{$this->stub()}");
     }
 
-    protected function subject(): string
+    protected function path(): string
     {
-        return $this->subject;
+        return $this->path;
     }
 
     protected function file(): string
     {
-        return $this->file;
+        return basename($this->path);
     }
 
     protected function folder(): string
     {
-        return $this->folder;
+        return dirname($this->path);
     }
 
     protected function stub(): string|null

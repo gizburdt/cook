@@ -60,6 +60,7 @@ class Packages extends Command
         return collect([
             'barryvdh/laravel-snappy' => 'require',
             'coderello/laravel-nova-lang' => 'require',
+            'laracraft-tech/laravel-date-scopes' => 'require',
             'laravel/breeze' => 'require',
             'laravel/horizon' => 'require',
             'laravel/nova' => 'require',

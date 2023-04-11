@@ -9,6 +9,6 @@ class Controller extends PublishCommand
     protected $description = 'Publish Controller and stuff';
 
     protected $publish = [
-        'Http/Controllers/Controller.php' => 'app/Http/Controllers',
+        'Http/Controllers/Controller.php' => 'app/Http/Controllers/Controller.php',
     ];
 }
