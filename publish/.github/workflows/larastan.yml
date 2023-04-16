@@ -1,0 +1,28 @@
+name: Larastan
+
+on:
+  push:
+    branches-ignore:
+      - '**'
+    # branches:
+    #   - master
+
+jobs:
+  phpstan:
+    name: phpstan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v1
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan --error-format=github

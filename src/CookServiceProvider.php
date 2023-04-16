@@ -47,6 +47,9 @@ class CookServiceProvider extends ServiceProvider
             'Models/Model.php' => 'app/Models/Model.php',
             'Nova/Resource.php' => 'app/Nova/Resource.php',
             'draft.yaml' => 'draft.yaml',
+            'pint.json' => 'pint.json',
+            'phpstan.neon' => 'phpstan.neon',
+            '.github' => '.github',
         ])->mapWithKeys(function ($value, $key) {
             return [__DIR__."/../publish/{$key}" => base_path($value)];
         })->toArray();
@@ -55,20 +58,7 @@ class CookServiceProvider extends ServiceProvider
     protected function publishStubs(): array
     {
         return collect([
-            'stubs/controller.api.stub' => 'stubs/controller.api.stub',
-            'stubs/controller.invokable.stub' => 'stubs/controller.invokable.stub',
-            'stubs/controller.model.api.stub' => 'stubs/controller.model.api.stub',
-            'stubs/controller.model.stub' => 'stubs/controller.model.stub',
-            'stubs/controller.plain.stub' => 'stubs/controller.plain.stub',
-            'stubs/controller.singleton.api.stub' => 'stubs/controller.singleton.api.stub',
-            'stubs/controller.singleton.stub' => 'stubs/controller.singleton.stub',
-            'stubs/controller.stub' => 'stubs/controller.stub',
-            'stubs/migration.create.stub' => 'stubs/migration.create.stub',
-            'stubs/model.stub' => 'stubs/model.stub',
-            'stubs/observer.stub' => 'stubs/observer.stub',
-            'stubs/policy.plain.stub' => 'stubs/policy.plain.stub',
-            'stubs/policy.stub' => 'stubs/policy.stub',
-            'stubs/resource.stub' => 'stubs/resource.stub',
+            'stubs' => 'stubs',
         ])->mapWithKeys(function ($value, $key) {
             return [__DIR__."/../publish/{$key}" => base_path($value)];
         })->toArray();
