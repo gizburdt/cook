@@ -52,16 +52,16 @@ abstract class Resource extends NovaResource
     |--------------------------------------------------------------------------
     */
 
+    protected function name($title, $name = null): array
+    {
+        return [__($title), ($name ?: Str::slug($title, '_'))];
+    }
+
     protected function relation($title, $relation = null, $class = null): array
     {
         $class = $class ?: 'App\\Nova\\'.Str::of($title)->singular()->studly();
 
         return [__($title), ($relation ?: Str::camel($title)), $class];
-    }
-
-    protected function name($title, $name = null): array
-    {
-        return [__($title), ($name ?: Str::slug($title, '_'))];
     }
 
     protected function url($url, $text = null): string
