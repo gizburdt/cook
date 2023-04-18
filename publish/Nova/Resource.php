@@ -52,38 +52,40 @@ abstract class Resource extends NovaResource
     |--------------------------------------------------------------------------
     */
 
-    protected function abortWhen($expression)
-    {
-        abort_if($expression, 403);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Helpers
-    |--------------------------------------------------------------------------
-    */
-
-    public function relation($title, $relation = null, $class = null): array
+    protected function relation($title, $relation = null, $class = null): array
     {
         $class = $class ?: 'App\\Nova\\'.Str::of($title)->singular()->studly();
 
         return [__($title), ($relation ?: Str::camel($title)), $class];
     }
 
-    public function name($title, $name = null): array
+    protected function name($title, $name = null): array
     {
         return [__($title), ($name ?: Str::slug($title, '_'))];
     }
 
-    public function url($url, $text = null): string
+    protected function url($url, $text = null): string
     {
-        $string = '<a href="%s" class="link-default">%s</a>';
-
         if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $string = '<a href="%s" class="link-default">%s</a>';
+
             return sprintf($string, $url, $text ?: $url);
         }
 
         return $url;
+    }
+
+    protected function storeUniqueOriginal($file)
+    {
+        $extension = $file->getClientOriginalExtension();
+
+        $unique = time();
+
+        return Str::of($file->getClientOriginalName())
+            ->before('.')
+            ->slug('-')
+            ->append("-{$unique}")
+            ->finish(".{$extension}");
     }
 
     /*
