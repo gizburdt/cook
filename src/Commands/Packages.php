@@ -81,6 +81,7 @@ class Packages extends Command
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
+            "spatie/laravel-blade-comments" => 'dev',
             'spatie/once' => 'require',
         ]);
     }
