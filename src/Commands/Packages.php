@@ -78,6 +78,7 @@ class Packages extends Command
             'laravel/slack-notification-channel' => 'require',
             'laravel-shift/blueprint' => 'dev',
             'nunomaduro/larastan' => 'dev',
+            'livewire/livewire' => 'require',
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
