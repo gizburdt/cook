@@ -73,6 +73,7 @@ class Packages extends Command
     {
         return collect([
             'barryvdh/laravel-debugbar' => 'dev',
+            'canvural/larastan-strict-rules' => 'dev',
             'laracraft-tech/laravel-date-scopes' => 'require',
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
