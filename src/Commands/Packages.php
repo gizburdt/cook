@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use function Laravel\Prompts\multiselect;
 use Gizburdt\Cook\Composer;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
@@ -27,12 +28,9 @@ class Packages extends Command
 
         $this->components->bulletList($this->mandatory()->keys()->toArray());
 
-        $packages = $this->choice(
+        $packages = multiselect(
             'Which packages do you want to install?',
-            $this->choices()->keys()->toArray(),
-            default: null,
-            attempts: null,
-            multiple: true,
+            options: $this->choices()->keys()->toArray(),
         );
 
         $this->info('Installing packages...');
@@ -79,7 +77,7 @@ class Packages extends Command
             'laravel/slack-notification-channel' => 'require',
             'laravel-shift/blueprint' => 'dev',
             'nunomaduro/larastan' => 'dev',
-            'livewire/livewire' => 'require',
+            'livewire/livewire' => 'require', // and alpine.js
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',

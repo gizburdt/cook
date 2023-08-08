@@ -2,9 +2,11 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use function Laravel\Prompts\text;
+
 class DocBlocks extends Command
 {
-    protected $signature = 'burn:doc-blocks {path}';
+    protected $signature = 'burn:doc-blocks {path?}';
 
     protected $description = 'Remove all multiline comments';
 
@@ -12,7 +14,12 @@ class DocBlocks extends Command
 
     public function handle()
     {
-        $path = $this->argument('path');
+        $path = $this->argument('path') ?? text(
+            label: 'Path',
+            placeholder: 'app/Models',
+            default: 'app/Models',
+            required: true,
+        );
 
         $files = $this->files->glob($this->laravel->basePath("{$path}/*.php"));
 

@@ -17,8 +17,6 @@ composer require gizburdt/cook --dev
 ## Usage
 
 ``` php
-php artisan cook:publish
-
 php artisan cook:install
 ```
 
