@@ -33,6 +33,10 @@ class Packages extends Command
             options: $this->choices()->keys()->toArray(),
         );
 
+        $this->info('Installing repositories...');
+
+        $this->installRepositories();
+
         $this->info('Installing packages...');
 
         $this->installPackages($packages);
@@ -40,6 +44,11 @@ class Packages extends Command
         $this->info('Done!');
 
         return Command::SUCCESS;
+    }
+
+    protected function installRepositories()
+    {
+        $this->composer->addRepository('nova', 'composer', 'https://nova.laravel.com');
     }
 
     protected function installPackages($packages)
@@ -96,7 +105,6 @@ class Packages extends Command
             'laravel/nova' => 'require',
             'laravel/scout' => 'require',
             'laravel/telescope' => 'require',
-            'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
             'maatwebsite/laravel-nova-excel' => 'require',
             'spatie/cpu-load-health-check' => 'require',
