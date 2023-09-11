@@ -8,11 +8,9 @@ class Composer extends BaseComposer
 {
     public function addRepository($name, $type = 'composer', $repository = null)
     {
-        $prepend = "config repositories {$type}";
-
-        $repository = collect($repository)->prepend($prepend)->toArray();
-
-        $command = array_merge($this->findComposer(), $repository);
+        $command = array_merge($this->findComposer(), [
+            "config repositories.{$name} {$type} {$repository}",
+        ]);
 
         return $this->getProcess($command)->run();
     }
