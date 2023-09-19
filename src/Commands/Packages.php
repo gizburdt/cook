@@ -84,6 +84,7 @@ class Packages extends Command
             'laracraft-tech/laravel-date-scopes' => 'require',
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
+            'laravel-lang/common' => 'dev',
             'laravel-shift/blueprint' => 'dev',
             'nunomaduro/larastan' => 'dev',
             'livewire/livewire' => 'require', // and alpine.js
