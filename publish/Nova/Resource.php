@@ -50,32 +50,9 @@ abstract class Resource extends NovaResource
 
     /*
     |--------------------------------------------------------------------------
-    | Helpers
+    | Methods
     |--------------------------------------------------------------------------
     */
-
-    protected function name($title, $name = null): array
-    {
-        return [__($title), ($name ?: Str::slug($title, '_'))];
-    }
-
-    protected function relation($title, $relation = null, $class = null): array
-    {
-        $class = $class ?: 'App\\Nova\\'.Str::of($title)->singular()->studly();
-
-        return [__($title), ($relation ?: Str::camel($title)), $class];
-    }
-
-    protected function url($url, $text = null): string
-    {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
-            $string = '<a href="%s" class="link-default">%s</a>';
-
-            return sprintf($string, $url, $text ?: $url);
-        }
-
-        return $url;
-    }
 
     protected function storeUniqueOriginal($file)
     {

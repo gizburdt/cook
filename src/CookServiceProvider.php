@@ -42,6 +42,7 @@ class CookServiceProvider extends ServiceProvider
     protected function publishFiles(): array
     {
         return collect([
+            'Providers/NovaServiceProvider.php' => 'app/Providers/NovaServiceProvider.php',
             'Http/Controllers/Controller.php' => 'app/Http/Controllers/Controller.php',
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
