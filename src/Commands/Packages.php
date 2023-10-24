@@ -100,7 +100,6 @@ class Packages extends Command
     {
         return collect([
             'barryvdh/laravel-snappy' => 'require',
-            'coderello/laravel-nova-lang' => 'require',
             'jenssegers/model' => 'require',
             'laravel/breeze' => 'require',
             'laravel/nova' => 'require',
