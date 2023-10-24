@@ -6,8 +6,7 @@ use Illuminate\Auth\Access\Response;
 use {{ namespacedModel }};
 use {{ namespacedUserModel }};
 
-class {{ class }}
-{
+class {{ class }} extends Policy
     public function viewAny({{ user }} $user): bool
     {
         //
@@ -41,10 +40,5 @@ class {{ class }}
     public function forceDelete({{ user }} $user, {{ model }} ${{ modelVariable }}): bool
     {
         //
-    }
-
-    public function replicate({{ user }} $user, {{ model }} ${{ modelVariable }}): bool
-    {
-        return false;
     }
 }
