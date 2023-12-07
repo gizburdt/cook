@@ -82,11 +82,11 @@ class Packages extends Command
             'barryvdh/laravel-debugbar' => 'dev',
             'canvural/larastan-strict-rules' => 'dev',
             'laracraft-tech/laravel-date-scopes' => 'require',
+            'larastan/larastan' => 'dev',
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
             'laravel-lang/common' => 'dev',
             'laravel-shift/blueprint' => 'dev',
-            'nunomaduro/larastan' => 'dev',
             'livewire/livewire' => 'require', // and alpine.js
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
