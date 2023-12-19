@@ -23,6 +23,7 @@ php artisan cook:install
 ## Todo
 - Use `composer config http-basic.nova.laravel.com your-nova-account-email@your-domain.com your-license-key` for the auth file
 - Use `composer config repositories.nova '{"type": "composer", "url": "https://nova.laravel.com"}' --file composer.json` for the Nova repository
+- Use `shift-cli`
 
 ## Testing
 
