@@ -25,7 +25,7 @@ class Install extends Command
         // Models
         $this->call('cook:model');
 
-        // auth.json
+        // Auth.json
         if (confirm(label: 'Run cook:auth-json?', default: true)) {
             $this->authJson();
         }
