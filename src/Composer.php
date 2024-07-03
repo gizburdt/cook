@@ -6,10 +6,10 @@ use Illuminate\Support\Composer as BaseComposer;
 
 class Composer extends BaseComposer
 {
-    public function addRepository($name, $argument)
+    public function addRepository($name, $type = 'composer', $url = null)
     {
         $command = array_merge($this->findComposer(), [
-            "config repositories.{$name} {$argument}",
+            trim("config repositories.{$name} {$type} {$url}"),
         ]);
 
         return $this->getProcess($command)->run();

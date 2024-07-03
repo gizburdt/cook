@@ -54,7 +54,7 @@ class Packages extends Command
     protected function installRepositories()
     {
         if (in_array('laravel/nova', $this->packages)) {
-            $this->composer->addRepository('nova', '{"type": "composer", "url": "https://nova.laravel.com"} --file composer.json');
+            $this->composer->addRepository('nova', 'composer', 'https://nova.laravel.com');
         }
     }
 
