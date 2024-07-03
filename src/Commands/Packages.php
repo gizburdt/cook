@@ -16,6 +16,8 @@ class Packages extends Command
 
     protected $composer;
 
+    protected $packages;
+
     public function __construct(Filesystem $files, Composer $composer)
     {
         $this->composer = $composer;
@@ -29,7 +31,7 @@ class Packages extends Command
 
         $this->components->bulletList($this->mandatory()->keys()->toArray());
 
-        $packages = multiselect(
+        $this->packages = multiselect(
             'Which packages do you want to install?',
             options: $this->choices()->keys()->toArray(),
         );
@@ -38,9 +40,11 @@ class Packages extends Command
 
         $this->installRepositories();
 
+
+
         $this->info('Installing packages...');
 
-        $this->installPackages($packages);
+        $this->installPackages();
 
         $this->info('Done!');
 
@@ -49,17 +53,19 @@ class Packages extends Command
 
     protected function installRepositories()
     {
-        $this->composer->addRepository('nova', 'composer', 'https://nova.laravel.com');
+        if (in_array('laravel/nova', $this->packages)) {
+            $this->composer->addRepository('nova', '{"type": "composer", "url": "https://nova.laravel.com"} --file composer.json');
+        }
     }
 
-    protected function installPackages($packages)
+    protected function installPackages()
     {
         $this->composer->installPackages(
-            $this->packages($packages, 'require')
+            $this->packages($this->packages, 'require')
         );
 
         $this->composer->installPackages(
-            $this->packages($packages, 'dev'), '--dev'
+            $this->packages($this->packages, 'dev'), '--dev'
         );
     }
 
