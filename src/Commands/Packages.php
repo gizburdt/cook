@@ -87,7 +87,6 @@ class Packages extends Command
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
             'laravel-lang/common' => 'dev',
-            'livewire/livewire' => 'require', // and alpine.js
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
@@ -99,10 +98,12 @@ class Packages extends Command
         return collect([
             'barryvdh/laravel-snappy' => 'require',
             'jenssegers/model' => 'require',
+            'filament/filament' => 'require',
             'laravel/breeze' => 'require',
             'laravel/nova' => 'require',
             'laravel/scout' => 'require',
             'laravel/telescope' => 'require',
+            'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
             'maatwebsite/laravel-nova-excel' => 'require',
             'spatie/cpu-load-health-check' => 'require',
