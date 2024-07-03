@@ -5,20 +5,21 @@ namespace App\Http\Resources;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use JsonSerializable;
 
 abstract class Resource extends JsonResource
 {
-    protected $only;
+    protected array $only;
 
-    public function only($fields)
+    public function only($fields): self
     {
         $this->only = $fields;
 
         return $this;
     }
 
-    public function resolve($request = null)
+    public function resolve($request = null): array
     {
         $data = $this->toCollection(
             $request = $request ?: Container::getInstance()->make('request')
@@ -36,7 +37,7 @@ abstract class Resource extends JsonResource
         return $this->filter((array) $data);
     }
 
-    protected function toCollection($payload)
+    protected function toCollection($payload): Collection
     {
         return collect($this->toArray($payload));
     }

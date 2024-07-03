@@ -2,8 +2,6 @@
 
 namespace Gizburdt\Cook;
 
-use Gizburdt\Cook\Commands\AuthJson;
-use Gizburdt\Cook\Commands\DocBlocks;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\Packages;
@@ -16,11 +14,8 @@ class CookServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Publish::class,
                 Install::class,
-                //
-                AuthJson::class,
-                DocBlocks::class,
+                Publish::class,
                 Model::class,
                 Packages::class,
             ]);

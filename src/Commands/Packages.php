@@ -2,10 +2,11 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use function Laravel\Prompts\multiselect;
 use Gizburdt\Cook\Composer;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+
+use function Laravel\Prompts\multiselect;
 
 class Packages extends Command
 {
@@ -91,8 +92,6 @@ class Packages extends Command
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
-            "spatie/laravel-blade-comments" => 'dev',
-            'spatie/once' => 'require',
         ]);
     }
 

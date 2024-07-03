@@ -4,7 +4,6 @@ namespace Gizburdt\Cook\Commands;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\text;
-use function Laravel\Prompts\password;
 
 class Install extends Command
 {
@@ -24,49 +23,5 @@ class Install extends Command
 
         // Models
         $this->call('cook:model');
-
-        // Auth.json
-        if (confirm(label: 'Run cook:auth-json?', default: true)) {
-            $this->authJson();
-        }
-
-        // Burn
-        if (confirm(label: 'Run burn:doc-blocks?', default: true)) {
-            $this->docBlocks();
-        }
-    }
-
-    protected function authJson()
-    {
-        $username = text(
-            label: 'Username?',
-            placeholder: 'Username', required: true
-        );
-
-        $password = text(
-            label: 'Password?',
-            placeholder: 'Password',
-            required: true
-        );;
-
-        $this->call('cook:auth-json', [
-            'username' => $username,
-            'password' => $password,
-            '--force' => true,
-        ]);
-    }
-
-    protected function docBlocks()
-    {
-        $path = text(
-            label: 'Path',
-            placeholder: 'app/Models',
-            default: 'app/Models',
-            required: true,
-        );
-
-        $this->call('burn:doc-blocks', [
-            'path' => $path
-        ]);
     }
 }
