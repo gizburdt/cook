@@ -1,10 +1,15 @@
-includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
-    - ./vendor/canvural/larastan-strict-rules/rules.neon
-
 parameters:
-
-    paths:
-        - app/
-
     level: 1
+    paths:
+        - app
+        - nova-components
+        - packages
+    excludePaths:
+        - **/vendor/*
+    ignoreErrors:
+        -
+            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::#'
+            path: /*
+        -
+            message: "#^Unsafe usage of new static#"
+            path: /*

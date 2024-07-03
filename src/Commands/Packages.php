@@ -87,7 +87,6 @@ class Packages extends Command
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
             'laravel-lang/common' => 'dev',
-            'laravel-shift/blueprint' => 'dev',
             'livewire/livewire' => 'require', // and alpine.js
             'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',

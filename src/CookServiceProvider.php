@@ -38,12 +38,10 @@ class CookServiceProvider extends ServiceProvider
     {
         return collect([
             'Providers/NovaServiceProvider.php' => 'app/Providers/NovaServiceProvider.php',
-            'Http/Controllers/Controller.php' => 'app/Http/Controllers/Controller.php',
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
             'Nova/Resource.php' => 'app/Nova/Resource.php',
-            'draft.yaml' => 'draft.yaml',
             'pint.json' => 'pint.json',
             'phpstan.neon' => 'phpstan.neon',
             '.github' => '.github',
