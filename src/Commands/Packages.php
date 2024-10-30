@@ -38,10 +38,6 @@ class Packages extends Command
 
         $this->info('Installing repositories...');
 
-        $this->installRepositories();
-
-
-
         $this->info('Installing packages...');
 
         $this->installPackages();
@@ -49,13 +45,6 @@ class Packages extends Command
         $this->info('Done!');
 
         return Command::SUCCESS;
-    }
-
-    protected function installRepositories()
-    {
-        if (in_array('laravel/nova', $this->packages)) {
-            $this->composer->addRepository('nova', 'composer', 'https://nova.laravel.com');
-        }
     }
 
     protected function installPackages()
@@ -106,12 +95,10 @@ class Packages extends Command
             'jenssegers/model' => 'require',
             'filament/filament' => 'require',
             'laravel/breeze' => 'require',
-            'laravel/nova' => 'require',
             'laravel/scout' => 'require',
             'laravel/telescope' => 'require',
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
-            'maatwebsite/laravel-nova-excel' => 'require',
             'spatie/cpu-load-health-check' => 'require',
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
