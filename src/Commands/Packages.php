@@ -82,7 +82,6 @@ class Packages extends Command
             'laravel/horizon' => 'require',
             'laravel/slack-notification-channel' => 'require',
             'laravel-lang/common' => 'dev',
-            'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
         ]);
