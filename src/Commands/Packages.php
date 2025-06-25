@@ -80,8 +80,8 @@ class Packages extends Command
             'laracraft-tech/laravel-date-scopes' => 'require',
             'larastan/larastan' => 'dev',
             'laravel/horizon' => 'require',
-            'laravel/slack-notification-channel' => 'require',
             'laravel-lang/common' => 'dev',
+            'nunomaduro/essentials' => 'require',
             'predis/predis' => 'require',
             'spatie/laravel-ray' => 'require',
         ]);
@@ -94,6 +94,7 @@ class Packages extends Command
             'jenssegers/model' => 'require',
             'filament/filament' => 'require',
             'laravel/breeze' => 'require',
+            'laravel/pulse' => 'require',
             'laravel/scout' => 'require',
             'laravel/telescope' => 'require',
             'livewire/livewire' => 'require',
