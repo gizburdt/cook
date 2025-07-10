@@ -82,7 +82,9 @@ class Packages extends Command
             'laravel/horizon' => 'require',
             'laravel-lang/common' => 'dev',
             'nunomaduro/essentials' => 'require',
+            'nunomaduro/phpinsights' => 'dev',
             'predis/predis' => 'require',
+            'rector/rector' => 'dev',
             'spatie/laravel-ray' => 'require',
         ]);
     }
