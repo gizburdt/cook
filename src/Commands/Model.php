@@ -10,9 +10,11 @@ class Model extends Command
 
     public function handle(): void
     {
-        $files = $this->files->glob($this->laravel->basePath('app/Models/*.php'));
+        $files = $this->files->glob(
+            $this->laravel->basePath('app/Models/*.php')
+        );
 
-        $this->info('Removing Illuminate\Database\Eloquent\Model...');
+        $this->info('Removing Eloquent\Model...');
 
         $this->withProgressBar($files, function ($file) {
             $this->files->put($file, $this->contents($file));
