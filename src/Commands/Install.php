@@ -11,7 +11,7 @@ class Install extends Command
 
     protected $description = 'Install';
 
-    public function handle()
+    public function handle(): void
     {
         // Publish
         if (confirm(label: 'Run cook:publish?', default: true)) {

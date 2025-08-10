@@ -22,7 +22,7 @@ abstract class Resource extends JsonResource
     public function resolve($request = null): array
     {
         $data = $this->toCollection(
-            $request = $request ?: Container::getInstance()->make('request')
+            $request ?? Container::getInstance()->make('request')
         )->when($this->only, function ($collect) {
             return $collect->only($this->only);
         });

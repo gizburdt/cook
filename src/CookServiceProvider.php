@@ -10,31 +10,21 @@ use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                Install::class,
-                Publish::class,
-                Model::class,
-                Packages::class,
-            ]);
-        }
+        $this->commands([
+            Install::class,
+            Publish::class,
+            Model::class,
+            Packages::class,
+        ]);
 
-        // Publishes
-        if ($this->app->runningInConsole()) {
-            $this->publishes($this->publishFiles(), 'cook-files');
+        $this->publishes($this->filesToPublish(), 'cook-files');
 
-            $this->publishes($this->publishStubs(), 'cook-stubs');
-        }
+        $this->publishes($this->stubsToPublish(), 'cook-stubs');
     }
 
-    public function register()
-    {
-        //
-    }
-
-    protected function publishFiles(): array
+    protected function filesToPublish(): array
     {
         return collect([
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
@@ -48,7 +38,7 @@ class CookServiceProvider extends ServiceProvider
         })->toArray();
     }
 
-    protected function publishStubs(): array
+    protected function stubsToPublish(): array
     {
         return collect([
             'stubs' => 'stubs',

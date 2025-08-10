@@ -16,7 +16,7 @@ abstract class Command extends ConsoleCommand
         parent::__construct();
     }
 
-    protected function createParentDirectory($directory)
+    protected function createParentDirectory(string $directory): void
     {
         if (! $this->files->isDirectory($directory)) {
             $this->files->makeDirectory($directory, 0755, true);

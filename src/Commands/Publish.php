@@ -8,7 +8,7 @@ class Publish extends Command
 
     protected $description = 'Publish all files';
 
-    public function handle()
+    public function handle(): void
     {
         $this->call('vendor:publish', [
             '--provider' => 'Gizburdt\Cook\CookServiceProvider',

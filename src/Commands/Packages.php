@@ -25,7 +25,7 @@ class Packages extends Command
         parent::__construct($files);
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->line('Installing these packages:');
 
@@ -36,18 +36,14 @@ class Packages extends Command
             options: $this->choices()->keys()->toArray(),
         );
 
-        $this->info('Installing repositories...');
-
         $this->info('Installing packages...');
 
         $this->installPackages();
 
         $this->info('Done!');
-
-        return Command::SUCCESS;
     }
 
-    protected function installPackages()
+    protected function installPackages(): void
     {
         $this->composer->installPackages(
             $this->packages($this->packages, 'require')
@@ -58,7 +54,7 @@ class Packages extends Command
         );
     }
 
-    protected function packages($packages, $scope): array
+    protected function packages(array $packages, string $scope): array
     {
         $packages = collect($packages)->flip();
 

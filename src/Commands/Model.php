@@ -8,7 +8,7 @@ class Model extends Command
 
     protected $description = 'Publish Model and stuff';
 
-    public function handle()
+    public function handle(): void
     {
         $files = $this->files->glob($this->laravel->basePath('app/Models/*.php'));
 
@@ -19,12 +19,10 @@ class Model extends Command
         });
     }
 
-    protected function contents($file)
+    protected function contents(string $file): string
     {
         $contents = $this->files->get($file);
 
-        $contents = str_replace("use Illuminate\\Database\\Eloquent\\Model;\n", '', $contents);
-
-        return $contents;
+        return str_replace("use Illuminate\\Database\\Eloquent\\Model;\n", '', $contents);
     }
 }
