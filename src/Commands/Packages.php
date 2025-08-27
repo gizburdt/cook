@@ -75,6 +75,7 @@ class Packages extends Command
             'canvural/larastan-strict-rules' => 'dev',
             'laracasts/presenter' => 'require',
             'larastan/larastan' => 'dev',
+            'laravel/boost' => 'dev',
             'laravel/horizon' => 'require',
             'laravel/pail' => 'dev',
             'lorisleiva/laravel-actions' => 'require',
