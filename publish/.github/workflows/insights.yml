@@ -1,4 +1,4 @@
-name: Larastan
+name: Insights
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
     # [pull_request]
 
 jobs:
-  phpstan:
-    name: phpstan
+  insights:
+    name: insights
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -26,4 +26,4 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+        run: php artisan insights --no-interaction --min-quality=80 --min-complexity=80 --min-architecture=80 --min-style=90 --disable-security-check

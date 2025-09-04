@@ -33,6 +33,7 @@ class CookServiceProvider extends ServiceProvider
             'pint.json' => 'pint.json',
             'phpstan.neon' => 'phpstan.neon',
             '.github' => '.github',
+            '.ai' => '.ai',
         ])->mapWithKeys(function ($value, $key) {
             return [__DIR__."/../publish/{$key}" => base_path($value)];
         })->toArray();

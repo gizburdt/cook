@@ -3,7 +3,6 @@
 namespace Gizburdt\Cook\Commands;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\text;
 
 class Install extends Command
 {
