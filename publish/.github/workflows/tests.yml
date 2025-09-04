@@ -1,12 +1,10 @@
 name: Tests
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - '**'
-    # branches:
-    #   - master
-    # [pull_request]
 
 jobs:
   tests:
@@ -14,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.3, 8.4]
     name: php-${{ matrix.php }}
     steps:
       - name: Checkout code

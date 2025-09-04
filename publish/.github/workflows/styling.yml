@@ -1,12 +1,10 @@
 name: Styling
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - '**'
-    # branches:
-    #   - master
-    # [pull_request]
 
 jobs:
   pint:

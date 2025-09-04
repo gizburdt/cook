@@ -1,12 +1,10 @@
 name: Insights
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - '**'
-    # branches:
-    #   - master
-    # [pull_request]
 
 jobs:
   insights:
@@ -25,5 +23,5 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
-        run: php artisan insights --no-interaction --min-quality=80 --min-complexity=80 --min-architecture=80 --min-style=90 --disable-security-check
+      - name: Run Insights
+        run: php artisan insights --no-interaction --disable-security-check

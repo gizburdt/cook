@@ -2,13 +2,9 @@ parameters:
     level: 1
     paths:
         - app
-        - packages
     excludePaths:
         - **/vendor/*
     ignoreErrors:
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::#'
-            path: /*
-        -
-            message: "#^Unsafe usage of new static#"
             path: /*

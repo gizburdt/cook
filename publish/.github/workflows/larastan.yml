@@ -1,12 +1,10 @@
 name: Larastan
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - '**'
-    # branches:
-    #   - master
-    # [pull_request]
 
 jobs:
   phpstan:
