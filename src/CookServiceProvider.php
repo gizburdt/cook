@@ -30,6 +30,8 @@ class CookServiceProvider extends ServiceProvider
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
+            'config/insights.php' => 'config/insights.php',
+            'rector.php' => 'rector.php',
             'pint.json' => 'pint.json',
             'phpstan.neon' => 'phpstan.neon',
             '.github' => '.github',
