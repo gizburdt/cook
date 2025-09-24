@@ -19,32 +19,22 @@ class CookServiceProvider extends ServiceProvider
             Packages::class,
         ]);
 
-        $this->publishes($this->filesToPublish(), 'cook-files');
-
-        $this->publishes($this->stubsToPublish(), 'cook-stubs');
+        $this->publishes($this->filesToPublish(), 'cook');
     }
 
     protected function filesToPublish(): array
     {
         return collect([
+            '.ai' => '.ai',
+            '.github' => '.github',
+            'config/insights.php' => 'config/insights.php',
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
-            'config/insights.php' => 'config/insights.php',
-            'rector.php' => 'rector.php',
-            'pint.json' => 'pint.json',
-            'phpstan.neon' => 'phpstan.neon',
-            '.github' => '.github',
-            '.ai' => '.ai',
-        ])->mapWithKeys(function ($value, $key) {
-            return [__DIR__."/../publish/{$key}" => base_path($value)];
-        })->toArray();
-    }
-
-    protected function stubsToPublish(): array
-    {
-        return collect([
             'stubs' => 'stubs',
+            'phpstan.neon' => 'phpstan.neon',
+            'pint.json' => 'pint.json',
+            'rector.php' => 'rector.php',
         ])->mapWithKeys(function ($value, $key) {
             return [__DIR__."/../publish/{$key}" => base_path($value)];
         })->toArray();
