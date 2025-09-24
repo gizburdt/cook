@@ -1,4 +1,4 @@
-## Filament
+# Filament
 
 - Use the translate method (`__()`) for all labels, placeholders, help texts, stats, etc.
 - Make slug fields live based on the title/name field, on blur
