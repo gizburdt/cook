@@ -18,7 +18,9 @@ class Install extends Command
         }
 
         // Packages
-        $this->call('cook:packages');
+        if (confirm(label: 'Run cook:packages?', default: true)) {
+            $this->call('cook:packages');
+        }
 
         // Models
         $this->call('cook:model');

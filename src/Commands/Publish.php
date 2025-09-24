@@ -2,6 +2,8 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\CookServiceProvider;
+
 class Publish extends Command
 {
     protected $signature = 'cook:publish {--force}';
@@ -11,7 +13,7 @@ class Publish extends Command
     public function handle(): void
     {
         $this->call('vendor:publish', [
-            '--provider' => 'Gizburdt\Cook\CookServiceProvider',
+            '--provider' => CookServiceProvider::class,
             '--force' => $this->option('force'),
         ]);
     }
