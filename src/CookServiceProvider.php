@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook;
 
+use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\Packages;
@@ -17,6 +18,7 @@ class CookServiceProvider extends ServiceProvider
             Publish::class,
             Model::class,
             Packages::class,
+            Backups::class,
         ]);
 
         $this->publishes($this->filesToPublish(), 'cook');

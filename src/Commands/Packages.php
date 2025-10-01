@@ -32,23 +32,28 @@ class Packages extends Command
             options: $this->choices()->keys()->toArray(),
         );
 
-        $this->installPackages();
+        $this->info('Installing packages (require)');
+
+        $this->installRequirePackages();
+
+        $this->info('Installing packages (require-dev)');
+
+        $this->installRequireDevPackages();
 
         $this->info('Done!');
     }
 
-    protected function installPackages(): void
+    protected function installRequirePackages(): void
     {
-        $this->info('Installing packages (require)');
-
         $this->packages($this->packages, 'require')->each(function ($package) {
             $this->line($package);
 
             $this->composer->installPackages([$package]);
         });
+    }
 
-        $this->info('Installing packages (require-dev)');
-
+    protected function installRequireDevPackages(): void
+    {
         $this->packages($this->packages, 'dev')->each(function ($package) {
             $this->line($package);
 

@@ -16,12 +16,7 @@ abstract class Command extends ConsoleCommand
         parent::__construct();
     }
 
-    protected function createParentDirectory(string $directory): void
-    {
-        if (! $this->files->isDirectory($directory)) {
-            $this->files->makeDirectory($directory, 0755, true);
-        }
-    }
+    abstract public function handle();
 
     protected function parseContent(string $content, array $visitors): string
     {
@@ -54,6 +49,4 @@ abstract class Command extends ConsoleCommand
 
         return $traverser->traverse($nodes);
     }
-
-    abstract public function handle();
 }
