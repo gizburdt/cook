@@ -16,7 +16,7 @@ class Model extends Command
             $this->laravel->basePath('app/Models/*.php')
         );
 
-        $this->info('Removing Eloquent\Model...');
+        $this->info('Removing Eloquent\Model');
 
         $this->withProgressBar($files, function ($file) {
             $content = $this->files->get($file);

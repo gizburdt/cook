@@ -36,8 +36,6 @@ class Packages extends Command
             options: $this->choices()->keys()->toArray(),
         );
 
-        $this->info('Installing packages...');
-
         $this->installPackages();
 
         $this->info('Done!');
@@ -45,16 +43,24 @@ class Packages extends Command
 
     protected function installPackages(): void
     {
-        $this->composer->installPackages(
-            $this->packages($this->packages, 'require')
-        );
+        $this->info('Installing packages (require)');
 
-        $this->composer->installPackages(
-            $this->packages($this->packages, 'dev'), '--dev'
-        );
+        $this->packages($this->packages, 'require')->each(function ($package) {
+            $this->line($package);
+
+            $this->composer->installPackages([$package]);
+        });
+
+        $this->info('Installing packages (require-dev)');
+
+        $this->packages($this->packages, 'dev')->each(function ($package) {
+            $this->line($package);
+
+            $this->composer->installPackages([$package], '--dev');
+        });
     }
 
-    protected function packages(array $packages, string $scope): array
+    protected function packages(array $packages, string $scope): Collection
     {
         $packages = collect($packages)->flip();
 
@@ -65,7 +71,7 @@ class Packages extends Command
         $mandatory = $this->mandatory()
             ->filter(fn ($value) => $value == $scope);
 
-        return $mandatory->merge($choices)->keys()->toArray();
+        return $mandatory->merge($choices)->keys();
     }
 
     protected function mandatory(): Collection
