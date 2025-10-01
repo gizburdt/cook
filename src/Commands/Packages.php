@@ -14,14 +14,10 @@ class Packages extends Command
 
     protected $description = 'Install packages';
 
-    protected $composer;
-
     protected $packages;
 
-    public function __construct(Filesystem $files, Composer $composer)
+    public function __construct(Filesystem $files, protected Composer $composer)
     {
-        $this->composer = $composer;
-
         parent::__construct($files);
     }
 
@@ -65,11 +61,11 @@ class Packages extends Command
         $packages = collect($packages)->flip();
 
         $choices = $this->choices()
-            ->filter(fn ($value) => $value == $scope)
+            ->filter(fn ($value): bool => $value == $scope)
             ->intersectByKeys($packages);
 
         $mandatory = $this->mandatory()
-            ->filter(fn ($value) => $value == $scope);
+            ->filter(fn ($value): bool => $value == $scope);
 
         return $mandatory->merge($choices)->keys();
     }

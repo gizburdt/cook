@@ -12,10 +12,14 @@ class RemoveEloquentModel extends NodeVisitorAbstract
 {
     public function enterNode(Node $node)
     {
-        if ($node instanceof Use_) {
-            if ($node->uses[0]->name->name === Model::class) {
-                return NodeVisitor::REMOVE_NODE;
-            }
+        if (! $node instanceof Use_) {
+            return null;
         }
+
+        if ($node->uses[0]->name->name === Model::class) {
+            return NodeVisitor::REMOVE_NODE;
+        }
+
+        return null;
     }
 }

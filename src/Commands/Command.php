@@ -11,12 +11,8 @@ use PhpParser\PrettyPrinter;
 
 abstract class Command extends ConsoleCommand
 {
-    protected $files;
-
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
-        $this->files = $files;
-
         parent::__construct();
     }
 
