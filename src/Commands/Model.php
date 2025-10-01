@@ -2,6 +2,8 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
+
 class Model extends Command
 {
     protected $signature = 'cook:model';
@@ -17,14 +19,13 @@ class Model extends Command
         $this->info('Removing Eloquent\Model...');
 
         $this->withProgressBar($files, function ($file) {
-            $this->files->put($file, $this->contents($file));
+            $content = $this->files->get($file);
+
+            $content = $this->parseContent($content, [
+                RemoveEloquentModel::class,
+            ]);
+
+            $this->files->put($file, $content);
         });
-    }
-
-    protected function contents(string $file): string
-    {
-        $contents = $this->files->get($file);
-
-        return str_replace("use Illuminate\\Database\\Eloquent\\Model;\n", '', $contents);
     }
 }

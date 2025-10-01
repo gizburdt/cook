@@ -104,6 +104,7 @@ class Packages extends Command
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
             'spatie/cpu-load-health-check' => 'require',
+            'spatie/laravel-backup' => 'require',
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
             'spatie/laravel-failed-job-monitor' => 'require',

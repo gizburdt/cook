@@ -1,22 +1,4 @@
-# Todos
-
-# Instructions
-# 1. Add your todos below with title and description
-# 2. Ask Claude to "work on the todos"
-# 3. Each completed item will be auto-committed when enabled
-# 4. Mark the task status as completed once done
-#    Options: pending, in_progress, completed, skip, attention_required
-# 5. Mark todos as 'skip' if you want to temporarily skip them
-
-# Configuration
-config:
-    auto_commit: true
-    commit_message_prefix: ""
-    stop_on_error: true
-    max_todos_per_session: 10
-
-# List
-todos:
+todo:
     - title: "Add feature"
       description: "Build this feature for me"
       status: "pending"
