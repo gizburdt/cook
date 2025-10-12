@@ -3,7 +3,6 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\confirm;
 
@@ -41,7 +40,7 @@ class Install extends Command
 
         // Code quality
         if (confirm(label: 'Install code quality?')) {
-            $this->call('cook:base-classes');
+            $this->call('cook:code-quality');
         }
 
         // AI
@@ -50,7 +49,7 @@ class Install extends Command
         }
 
         // Packages
-        if (confirm(label: '', hint: 'Install packages?')) {
+        if (confirm(label: 'Install packages?')) {
             $this->call('cook:packages');
         }
 

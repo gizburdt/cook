@@ -2,7 +2,6 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Composer;
 use Illuminate\Console\Command as ConsoleCommand;
 use Illuminate\Filesystem\Filesystem;

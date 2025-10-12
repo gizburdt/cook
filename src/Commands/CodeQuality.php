@@ -2,12 +2,12 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\Composer;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
+use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
 class CodeQuality extends Command
 {
+    use InstallsPackages;
+
     protected $signature = 'cook:code-quality {--force}';
 
     protected $description = 'Install Essentials, PHPstan, Pint, Rector, GitHub Actions';

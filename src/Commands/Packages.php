@@ -21,7 +21,7 @@ class Packages extends Command
     {
         $this->chosen = multiselect(
             'Which packages do you want to install?',
-            options: $this->choices()->keys()->toArray(),
+            options: $this->possibilities()->keys()->toArray(),
         );
 
         $this->info('Installing packages (require)');
@@ -49,11 +49,14 @@ class Packages extends Command
         );
     }
 
-    protected function selectPackages(array $chosen, string $scope): Collection
+    protected function selectPackages(array $chosen, string $scope): array
     {
+        $packages = collect($chosen)->flip();
+
         return $this->possibilities()
             ->filter(fn ($value): bool => $value == $scope)
-            ->intersectByKeys(array_values($chosen));
+            ->intersectByKeys($packages)
+            ->toArray();
     }
 
     protected function possibilities(): Collection

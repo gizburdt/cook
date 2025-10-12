@@ -4,6 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
+use Illuminate\Support\Str;
 
 class BaseClasses extends Command
 {
@@ -32,6 +33,10 @@ class BaseClasses extends Command
         $files = $this->files->glob(
             $this->laravel->basePath('app/Models/*.php')
         );
+
+        $files = collect($files)->reject(function ($file) {
+            return Str::of($file)->contains('Model.php');
+        })->toArray();
 
         $this->info('Removing Eloquent\Model');
 

@@ -5,6 +5,7 @@ namespace Gizburdt\Cook;
 use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\BaseClasses;
+use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Stubs;
@@ -18,6 +19,7 @@ class CookServiceProvider extends ServiceProvider
             Install::class,
             Stubs::class,
             BaseClasses::class,
+            CodeQuality::class,
             Ai::class,
             Packages::class,
             Backups::class,

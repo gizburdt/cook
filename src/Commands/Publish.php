@@ -8,7 +8,7 @@ class Publish extends Command
 {
     protected $signature = 'cook:publish {--force}';
 
-    protected $description = 'Publish all files';
+    protected $description = 'Publish files';
 
     public function handle(): void
     {

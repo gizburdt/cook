@@ -2,15 +2,15 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\Composer;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
+use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
 class Ai extends Command
 {
-    protected $signature = 'cook:code-quality {--force}';
+    use InstallsPackages;
 
-    protected $description = 'Install Essentials, PHPstan, Pint, Rector, GitHub Actions';
+    protected $signature = 'cook:ai {--force}';
+
+    protected $description = 'Install AI';
 
     protected array $packages = [
         'laravel/boost' => 'dev',

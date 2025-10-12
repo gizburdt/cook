@@ -4,13 +4,12 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\NodeVisitors\AddBackupsDisk;
 use Gizburdt\Cook\Composer;
-use Illuminate\Filesystem\Filesystem;
 
 class Backups extends Command
 {
     protected $signature = 'cook:backups';
 
-    protected $description = 'Setup backups';
+    protected $description = 'Install backups';
 
     public function handle(): void
     {
