@@ -24,15 +24,13 @@ class Packages extends Command
             options: $this->possibilities()->keys()->toArray(),
         );
 
-        $this->info('Installing packages (require)');
+        $this->components->info('Installing packages (require)');
 
         $this->installRequirePackages();
 
-        $this->info('Installing packages (require-dev)');
+        $this->components->info('Installing packages (require-dev)');
 
         $this->installRequireDevPackages();
-
-        $this->info('Done!');
     }
 
     protected function installRequirePackages(): void
