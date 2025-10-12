@@ -38,8 +38,6 @@ class BaseClasses extends Command
             return Str::of($file)->contains('Model.php');
         })->toArray();
 
-        $this->info('Removing Eloquent\Model');
-
         $this->withProgressBar($files, function ($file) {
             $content = $this->files->get($file);
 
