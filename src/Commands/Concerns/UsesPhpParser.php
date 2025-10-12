@@ -5,6 +5,7 @@ namespace Gizburdt\Cook\Commands\Concerns;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 
 trait UsesPhpParser
 {
@@ -19,7 +20,7 @@ trait UsesPhpParser
 
         $new = $this->traverse($old, $visitors);
 
-        return (new PrettyPrinter\Standard)->printFormatPreserving($new, $old, $tokens);
+        return (new Standard)->printFormatPreserving($new, $old, $tokens);
     }
 
     protected function newParser(): \PhpParser\Parser

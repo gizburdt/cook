@@ -9,8 +9,6 @@ use Illuminate\Filesystem\Filesystem;
 
 abstract class Command extends ConsoleCommand
 {
-    use UsesPhpParser;
-
     public function __construct(
         protected Filesystem $files,
         protected Composer $composer

@@ -2,10 +2,13 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 
 class BaseClasses extends Command
 {
+    use UsesPhpParser;
+
     protected $signature = 'cook:base-classes {--force}';
 
     protected $description = 'Install Model, Policy, Resource';

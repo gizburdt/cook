@@ -6,12 +6,16 @@ trait InstallsPackages
 {
     protected function installPackages(array $packages): void
     {
-        collect($packages)->each(function ($type, $package) {
-            $this->components->line($package);
+        collect($packages)->groupBy(function ($type) {
+            return $type;
+        }, preserveKeys: true)->each(function ($packages, $type) {
+            $packages = $packages->keys()->all();
+
+            $this->components->bulletList($packages);
 
             $extra = ($type === 'dev') ? '--dev' : '';
 
-            $this->composer->installPackages([$package], $extra);
+            $this->composer->installPackages($packages, $extra);
         });
     }
 }

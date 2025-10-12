@@ -12,11 +12,6 @@ class Backups extends Command
 
     protected $description = 'Setup backups';
 
-    public function __construct(Filesystem $files, protected Composer $composer)
-    {
-        parent::__construct($files);
-    }
-
     public function handle(): void
     {
         // $this->info('Installing package');
