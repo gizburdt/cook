@@ -3,10 +3,10 @@
 namespace Gizburdt\Cook;
 
 use Gizburdt\Cook\Commands\Backups;
+use Gizburdt\Cook\Commands\BaseClasses;
 use Gizburdt\Cook\Commands\Install;
-use Gizburdt\Cook\Commands\Model;
 use Gizburdt\Cook\Commands\Packages;
-use Gizburdt\Cook\Commands\Publish;
+use Gizburdt\Cook\Commands\Stubs;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
@@ -15,30 +15,59 @@ class CookServiceProvider extends ServiceProvider
     {
         $this->commands([
             Install::class,
-            Publish::class,
-            Model::class,
+            Stubs::class,
+            BaseClasses::class,
             Packages::class,
             Backups::class,
         ]);
 
-        $this->publishes($this->filesToPublish(), 'cook');
+        $this->publishes($this->stubs(), 'cook-stubs');
+
+        $this->publishes($this->baseClasses(), 'cook-base-classes');
+
+        $this->publishes($this->codeQuality(), 'cook-code-quality');
+
+        $this->publishes($this->ai(), 'cook-ai');
     }
 
-    protected function filesToPublish(): array
+    protected function stubs(): array
     {
-        return collect([
-            '.ai' => '.ai',
-            '.github' => '.github',
-            'config/essentials.php' => 'config/essentials.php',
-            'config/insights.php' => 'config/insights.php',
+        return $this->files([
+            'stubs' => 'stubs',
+        ]);
+    }
+
+    protected function baseClasses(): array
+    {
+        return $this->files([
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
-            'stubs' => 'stubs',
+        ]);
+    }
+
+    protected function codeQuality(): array
+    {
+        return $this->files([
+            '.github' => '.github',
+            'config/essentials.php' => 'config/essentials.php',
+            'config/insights.php' => 'config/insights.php',
             'phpstan.neon' => 'phpstan.neon',
             'pint.json' => 'pint.json',
             'rector.php' => 'rector.php',
-        ])->mapWithKeys(function ($value, $key) {
+        ]);
+    }
+
+    protected function ai(): array
+    {
+        return $this->files([
+            '.ai' => '.ai',
+        ]);
+    }
+
+    protected function files(array $files): array
+    {
+        return collect($files)->mapWithKeys(function ($value, $key) {
             return [__DIR__."/../publish/{$key}" => base_path($value)];
         })->toArray();
     }

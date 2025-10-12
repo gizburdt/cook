@@ -2,52 +2,21 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Composer;
 use Illuminate\Console\Command as ConsoleCommand;
 use Illuminate\Filesystem\Filesystem;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor\CloningVisitor;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
 
 abstract class Command extends ConsoleCommand
 {
-    public function __construct(protected Filesystem $files)
-    {
+    use UsesPhpParser;
+
+    public function __construct(
+        protected Filesystem $files,
+        protected Composer $composer
+    ) {
         parent::__construct();
     }
 
     abstract public function handle();
-
-    protected function parseContent(string $content, array $visitors): string
-    {
-        $parser = $this->newParser();
-
-        [$old, $tokens] = [
-            $parser->parse($content),
-            $parser->getTokens(),
-        ];
-
-        $new = $this->traverse($old, $visitors);
-
-        return (new PrettyPrinter\Standard)->printFormatPreserving($new, $old, $tokens);
-    }
-
-    protected function newParser(): \PhpParser\Parser
-    {
-        return (new ParserFactory)->createForNewestSupportedVersion();
-    }
-
-    protected function traverse(array $nodes, array $visitors): array
-    {
-        $traverser = new NodeTraverser;
-
-        // Preserve original nodes
-        $traverser->addVisitor(new CloningVisitor);
-
-        foreach ($visitors as $visitor) {
-            $traverser->addVisitor(new $visitor);
-        }
-
-        return $traverser->traverse($nodes);
-    }
 }

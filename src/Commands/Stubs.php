@@ -2,20 +2,18 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\CookServiceProvider;
-
-class Publish extends Command
+class Stubs extends Command
 {
-    protected $signature = 'cook:publish {--force}';
+    protected $signature = 'cook:stubs {--force}';
 
-    protected $description = 'Publish all files';
+    protected $description = 'Install stubs';
 
     public function handle(): void
     {
         $this->components->info('Publishing files');
 
         $this->call('vendor:publish', [
-            '--provider' => CookServiceProvider::class,
+            '--tag' => 'cook-stubs',
             '--force' => $this->option('force'),
         ]);
     }

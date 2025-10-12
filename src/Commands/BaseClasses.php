@@ -4,13 +4,27 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 
-class Model extends Command
+class BaseClasses extends Command
 {
-    protected $signature = 'cook:model';
+    protected $signature = 'cook:base-classes {--force}';
 
-    protected $description = 'Publish Model and stuff';
+    protected $description = 'Install Model, Policy, Resource';
 
     public function handle(): void
+    {
+        $this->components->info('Publishing files');
+
+        $this->call('vendor:publish', [
+            '--tag' => 'cook-base-classes',
+            '--force' => $this->option('force'),
+        ]);
+
+        $this->components->info('Replacing Eloquent Model');
+
+        $this->replaceEloquentModel();
+    }
+
+    protected function replaceEloquentModel(): void
     {
         $files = $this->files->glob(
             $this->laravel->basePath('app/Models/*.php')

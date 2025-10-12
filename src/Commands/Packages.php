@@ -2,32 +2,24 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\Composer;
-use Illuminate\Filesystem\Filesystem;
+use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\multiselect;
 
 class Packages extends Command
 {
+    use InstallsPackages;
+
     protected $signature = 'cook:packages';
 
     protected $description = 'Install packages';
 
-    protected $packages;
-
-    public function __construct(Filesystem $files, protected Composer $composer)
-    {
-        parent::__construct($files);
-    }
+    protected array $chosen = [];
 
     public function handle(): void
     {
-        $this->line('Installing these packages:');
-
-        $this->components->bulletList($this->mandatory()->keys()->toArray());
-
-        $this->packages = multiselect(
+        $this->chosen = multiselect(
             'Which packages do you want to install?',
             options: $this->choices()->keys()->toArray(),
         );
@@ -45,66 +37,30 @@ class Packages extends Command
 
     protected function installRequirePackages(): void
     {
-        $this->packages($this->packages, 'require')->each(function ($package) {
-            $this->line($package);
-
-            $this->composer->installPackages([$package]);
-        });
+        $this->installPackages(
+            $this->selectPackages($this->chosen, 'require')
+        );
     }
 
     protected function installRequireDevPackages(): void
     {
-        $this->packages($this->packages, 'dev')->each(function ($package) {
-            $this->line($package);
-
-            $this->composer->installPackages([$package], '--dev');
-        });
+        $this->installPackages(
+            $this->selectPackages($this->chosen, 'dev')
+        );
     }
 
-    protected function packages(array $packages, string $scope): Collection
+    protected function selectPackages(array $chosen, string $scope): Collection
     {
-        $packages = collect($packages)->flip();
-
-        $choices = $this->choices()
+        return $this->possibilities()
             ->filter(fn ($value): bool => $value == $scope)
-            ->intersectByKeys($packages);
-
-        $mandatory = $this->mandatory()
-            ->filter(fn ($value): bool => $value == $scope);
-
-        return $mandatory->merge($choices)->keys();
+            ->intersectByKeys(array_values($chosen));
     }
 
-    protected function mandatory(): Collection
-    {
-        return collect([
-            'barryvdh/laravel-debugbar' => 'dev',
-            'canvural/larastan-strict-rules' => 'dev',
-            'driftingly/rector-laravel' => 'dev',
-            'laracasts/presenter' => 'require',
-            'larastan/larastan' => 'dev',
-            'laravel/boost' => 'dev',
-            'laravel/horizon' => 'require',
-            'laravel/pail' => 'dev',
-            'lorisleiva/laravel-actions' => 'require',
-            'nunomaduro/essentials' => 'require',
-            'nunomaduro/phpinsights' => 'dev',
-            'pestphp/pest' => 'dev',
-            'pestphp/pest-plugin-browser' => 'dev',
-            'pestphp/pest-plugin-laravel' => 'dev',
-            'pestphp/pest-plugin-livewire' => 'dev',
-            'spatie/laravel-failed-job-monitor' => 'require',
-            'spatie/pest-plugin-test-time' => 'dev',
-            'predis/predis' => 'require',
-            'rector/rector' => 'dev',
-            'spatie/laravel-ray' => 'require',
-        ]);
-    }
-
-    protected function choices(): Collection
+    protected function possibilities(): Collection
     {
         return collect([
             'barryvdh/laravel-snappy' => 'require',
+            'dutchcodingcompany/filament-developer-logins' => 'require',
             'jenssegers/model' => 'require',
             'filament/filament' => 'require',
             'laravel/breeze' => 'require',
