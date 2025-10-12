@@ -80,6 +80,7 @@ class Packages extends Command
         return collect([
             'barryvdh/laravel-debugbar' => 'dev',
             'canvural/larastan-strict-rules' => 'dev',
+            'driftingly/rector-laravel' => 'dev',
             'laracasts/presenter' => 'require',
             'larastan/larastan' => 'dev',
             'laravel/boost' => 'dev',
@@ -89,6 +90,7 @@ class Packages extends Command
             'nunomaduro/essentials' => 'require',
             'nunomaduro/phpinsights' => 'dev',
             'pestphp/pest' => 'dev',
+            'pestphp/pest-plugin-browser' => 'dev',
             'pestphp/pest-plugin-laravel' => 'dev',
             'pestphp/pest-plugin-livewire' => 'dev',
             'spatie/laravel-failed-job-monitor' => 'require',
@@ -112,7 +114,6 @@ class Packages extends Command
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
             'spatie/cpu-load-health-check' => 'require',
-            'spatie/laravel-backup' => 'require',
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
             'spatie/laravel-login-link' => 'require',

@@ -29,6 +29,7 @@ class CookServiceProvider extends ServiceProvider
         return collect([
             '.ai' => '.ai',
             '.github' => '.github',
+            'config/essentials.php' => 'config/essentials.php',
             'config/insights.php' => 'config/insights.php',
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
