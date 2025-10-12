@@ -23,11 +23,13 @@ class Install extends Command
         }
 
         // Backups
-        if (confirm(label: 'Run cook:backups?')) {
-            $this->call('cook:backups');
-        }
+        // if (confirm(label: 'Run cook:backups?')) {
+        //     $this->call('cook:backups');
+        // }
 
         // Models
-        $this->call('cook:model');
+        if (confirm(label: 'Run cook:model?')) {
+            $this->call('cook:model');
+        }
     }
 }

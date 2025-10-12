@@ -41,6 +41,7 @@ abstract class Command extends ConsoleCommand
     {
         $traverser = new NodeTraverser;
 
+        // Preserve original nodes
         $traverser->addVisitor(new CloningVisitor);
 
         foreach ($visitors as $visitor) {

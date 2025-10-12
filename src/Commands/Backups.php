@@ -21,7 +21,7 @@ class Backups extends Command
     {
         // $this->info('Installing package');
         //
-        // $this->composer->installPackages(['spatie/laravel-backup'], '--dev');
+        // $this->composer->installPackages(['spatie/laravel-backup']);
         //
         // $this->info('Publishing config');
         //
