@@ -46,6 +46,7 @@ class CookServiceProvider extends ServiceProvider
         return $this->files([
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
+            'Models/Pivot.php' => 'app/Models/Pivot.php',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
         ]);
     }

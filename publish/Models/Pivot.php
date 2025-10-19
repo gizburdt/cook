@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot as EloquentPivot;
 
 class Pivot extends EloquentPivot
 {
-    //
+    public $incrementing = false;
+
+    protected $guarded = [];
 }

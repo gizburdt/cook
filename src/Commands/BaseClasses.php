@@ -35,7 +35,7 @@ class BaseClasses extends Command
         );
 
         $files = collect($files)->reject(function ($file) {
-            return Str::of($file)->contains('Model.php');
+            return Str::of($file)->contains(['Model.php', 'Pivot.php']);
         })->toArray();
 
         $this->withProgressBar($files, function ($file) {

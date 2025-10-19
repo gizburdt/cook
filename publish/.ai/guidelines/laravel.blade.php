@@ -13,6 +13,7 @@
 ## Enums
 - Put enums in the `App\Enums` namespace
 - Use translation method `__()` for the label
+- Use UPPER_SNAKE_CASE for enum cases
 
 ## Migrations
 - Use datetime columns (instead of timestamp)
@@ -23,3 +24,8 @@
 
 ## Queries
 - When building a query, use `::query()` to start the query before calling other methods
+
+## Translations
+- Use `__('key')` and @lang('key') for translations
+- Put dot notated keys in lang/{locale}/{file}.php files, when contains "enum", put in lang/{locale}/enums.php
+- Put the rest of the translations the rest in {locale}.json
