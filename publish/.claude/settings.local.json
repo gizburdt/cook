@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan lang:publish)",
+      "Bash(php artisan make:filament-resource:*)",
+      "Bash(php artisan make:model:*)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan test:*)",
+      "Bash(vendor/bin/pint:*)",
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__browser-logs",
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__database-query",
+      "mcp__laravel-boost__get-absolute-url",
+      "mcp__laravel-boost__get-config",
+      "mcp__laravel-boost__last-error",
+      "mcp__laravel-boost__list-artisan-commands",
+      "mcp__laravel-boost__list-available-env-vars",
+      "mcp__laravel-boost__read-log-entries",
+      "mcp__laravel-boost__search-docs",
+      "mcp__laravel-boost__tinker"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
+}

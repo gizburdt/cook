@@ -19,9 +19,11 @@ class Install extends Command
         'laracasts/presenter' => 'require',
         'laravel/horizon' => 'require',
         'laravel/pail' => 'dev',
+        'laravel/prompts' => 'require',
         'lorisleiva/laravel-actions' => 'require',
         'spatie/laravel-failed-job-monitor' => 'require',
         'spatie/laravel-ray' => 'require',
+        'timokoerber/laravel-one-time-operations' => 'require',
     ];
 
     public function handle(): void
@@ -48,8 +50,13 @@ class Install extends Command
             $this->call('cook:ai');
         }
 
+        // Filament
+        if (confirm(label: 'Install Filament?')) {
+            $this->call('cook:filament');
+        }
+
         // Packages
-        if (confirm(label: 'Install packages?')) {
+        if (confirm(label: 'Install extra packages?')) {
             $this->call('cook:packages');
         }
 

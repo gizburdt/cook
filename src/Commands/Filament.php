@@ -4,16 +4,16 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
-class Ai extends Command
+class Filament extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:ai {--force}';
+    protected $signature = 'cook:filament {--force}';
 
-    protected $description = 'Install AI';
+    protected $description = 'Install Filament';
 
     protected array $packages = [
-        'laravel/boost' => 'dev',
+        'filament/filament' => 'require',
     ];
 
     public function handle(): void
@@ -21,14 +21,12 @@ class Ai extends Command
         $this->components->info('Publishing files');
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-ai',
+            '--tag' => 'cook-filament',
             '--force' => $this->option('force'),
         ]);
 
         $this->components->info('Installing packages');
 
         $this->installPackages($this->packages);
-
-        $this->call('boost:install');
     }
 }

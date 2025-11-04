@@ -63,7 +63,6 @@ class Packages extends Command
             'barryvdh/laravel-snappy' => 'require',
             'dutchcodingcompany/filament-developer-logins' => 'require',
             'jenssegers/model' => 'require',
-            'filament/filament' => 'require',
             'laravel/breeze' => 'require',
             'laravel/pulse' => 'require',
             'laravel/scout' => 'require',

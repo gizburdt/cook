@@ -6,6 +6,7 @@ use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\BaseClasses;
 use Gizburdt\Cook\Commands\CodeQuality;
+use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Stubs;
@@ -21,6 +22,7 @@ class CookServiceProvider extends ServiceProvider
             BaseClasses::class,
             CodeQuality::class,
             Ai::class,
+            Filament::class,
             Packages::class,
             Backups::class,
         ]);
@@ -32,6 +34,8 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->codeQuality(), 'cook-code-quality');
 
         $this->publishes($this->ai(), 'cook-ai');
+
+        $this->publishes($this->filament(), 'cook-filament');
     }
 
     protected function stubs(): array
@@ -67,6 +71,14 @@ class CookServiceProvider extends ServiceProvider
     {
         return $this->files([
             '.ai' => '.ai',
+            '.claude' => '.claude',
+        ]);
+    }
+
+    protected function filament(): array
+    {
+        return $this->files([
+            'Filament' => 'app/Filament',
         ]);
     }
 

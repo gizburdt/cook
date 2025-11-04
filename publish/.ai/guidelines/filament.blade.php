@@ -8,3 +8,6 @@
 - When creating forms, always use a section to put all the fields in
 - Don't add `created_at`, `updated_at` and `delected_at` to forms and tables
 - Use our own `SimpleEditAction`, `SimpleDetachAction`, `SimpleDeleteAction` in tables
+- Don't use `use Filament\Schemas\Components\TextInput`, but `use Filament\Forms\Components\TextInput`
+- Don't use `use Filament\Schemas\Components\Select`, but `use Filament\Forms\Components\Select`
+- Use `->visible()` rather than `->hidden()`
