@@ -55,15 +55,15 @@ class Install extends Command
             $this->call('cook:filament');
         }
 
-        // Packages
-        if (confirm(label: 'Install extra packages?')) {
-            $this->call('cook:packages');
-        }
-
         // Backups
         // if (confirm(label: 'Run cook:backups?')) {
         //     $this->call('cook:backups');
         // }
+
+        // Packages
+        if (confirm(label: 'Install extra packages?')) {
+            $this->call('cook:packages');
+        }
     }
 
     protected function core(): void
