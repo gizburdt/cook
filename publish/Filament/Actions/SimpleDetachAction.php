@@ -13,8 +13,6 @@ class SimpleDetachAction extends DetachAction
 
         $this->icon = Heroicon::OutlinedXCircle;
 
-        $this->label('');
-
-        $this->size('lg');
+        $this->iconButton();
     }
 }

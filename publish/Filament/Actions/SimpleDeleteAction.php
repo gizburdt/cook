@@ -13,8 +13,6 @@ class SimpleDeleteAction extends DeleteAction
 
         $this->icon = Heroicon::OutlinedTrash;
 
-        $this->label('');
-
-        $this->size('lg');
+        $this->iconButton();
     }
 }

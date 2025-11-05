@@ -10,8 +10,6 @@ class SimpleEditAction extends EditAction
     {
         parent::setUp();
 
-        $this->label('');
-
-        $this->size('lg');
+        $this->iconButton();
     }
 }

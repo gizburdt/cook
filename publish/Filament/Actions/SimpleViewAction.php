@@ -10,8 +10,6 @@ class SimpleViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->label('');
-
-        $this->size('lg');
+        $this->iconButton();
     }
 }
