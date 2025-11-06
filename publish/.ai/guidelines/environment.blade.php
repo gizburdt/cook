@@ -1,9 +1,13 @@
 # Environment
 
+A project goes through several stages. It starts with development, during which existing migrations are often adjusted. Once the project has been deployed to a production (or staging) environment, this is no longer possible. Follow the instructions below for the different project statuses.
+
+---
+
 STATUS: development
 
 ## When status == development
-- Edit existing migrations when possible, don't create new ones
+- Adjust existing migrations when possible; do not create new ones
 
 ## When status == production
-- Don't edit existing translations when asked to translate the application
+- Do not modify existing translations without permission when asked to translate the application
