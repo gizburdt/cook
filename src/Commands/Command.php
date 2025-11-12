@@ -26,7 +26,7 @@ abstract class Command extends ConsoleCommand
             return;
         }
 
-        if (confirm('Open docs?')) {
+        if (confirm('Open docs?', default: false)) {
             $process = new Process(['open', $this->docs]);
 
             $process->run();
