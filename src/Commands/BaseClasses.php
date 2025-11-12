@@ -26,6 +26,8 @@ class BaseClasses extends Command
         $this->components->info('Replacing Eloquent Model');
 
         $this->replaceEloquentModel();
+
+        $this->line("\n");
     }
 
     protected function replaceEloquentModel(): void

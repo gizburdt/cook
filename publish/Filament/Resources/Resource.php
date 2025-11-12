@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resource as FilamentResource;
+use Filament\Resources\Resource as FilamentResource;
 use Illuminate\Database\Eloquent\Builder;
 
 class Resource extends FilamentResource
