@@ -50,6 +50,11 @@ class Install extends Command
             $this->call('cook:ai');
         }
 
+        // UI
+        if (confirm(label: 'Install UI?')) {
+            $this->call('cook:ui');
+        }
+
         // Filament
         if (confirm(label: 'Install Filament?')) {
             $this->call('cook:filament');

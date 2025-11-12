@@ -10,6 +10,7 @@ use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Stubs;
+use Gizburdt\Cook\Commands\Ui;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
@@ -23,6 +24,7 @@ class CookServiceProvider extends ServiceProvider
             CodeQuality::class,
             Ai::class,
             Filament::class,
+            Ui::class,
             Packages::class,
             Backups::class,
         ]);

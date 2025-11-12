@@ -12,6 +12,8 @@ class Filament extends Command
 
     protected $description = 'Install Filament';
 
+    protected string $docs = 'https://filamentphp.com/docs/4.x/introduction/installation';
+
     protected array $packages = [
         'filament/filament' => 'require',
     ];
@@ -28,5 +30,7 @@ class Filament extends Command
         $this->components->info('Installing packages');
 
         $this->installPackages($this->packages);
+
+        $this->openDocs();
     }
 }

@@ -9,7 +9,7 @@
 - Use `d-m-Y` format for date
 - Use `H:i` format for time
 
-## Pricing
+## Prices
 - When working with prices, store them as cents
 
 ## Code
