@@ -11,7 +11,7 @@ class Packages extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:packages';
+    protected $signature = 'cook:packages {--force}';
 
     protected $description = 'Install packages';
 

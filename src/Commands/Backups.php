@@ -7,7 +7,7 @@ use Gizburdt\Cook\Composer;
 
 class Backups extends Command
 {
-    protected $signature = 'cook:backups';
+    protected $signature = 'cook:backups {--force}';
 
     protected $description = 'Install backups';
 

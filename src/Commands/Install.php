@@ -4,6 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
+use Gizburdt\Cook\CookServiceProvider;
 use function Laravel\Prompts\confirm;
 
 class Install extends Command
@@ -30,44 +31,46 @@ class Install extends Command
     {
         $this->core();
 
+        $arguments = ['--force' => $this->option('force')];
+
         // Stubs
         if (confirm(label: 'Install stubs?')) {
-            $this->call('cook:stubs');
+            $this->call('cook:stubs', $arguments);
         }
 
         // Base classes
         if (confirm(label: 'Install base classes?')) {
-            $this->call('cook:base-classes');
+            $this->call('cook:base-classes', $arguments);
         }
 
         // Code quality
         if (confirm(label: 'Install code quality?')) {
-            $this->call('cook:code-quality');
+            $this->call('cook:code-quality', $arguments);
         }
 
         // AI
         if (confirm(label: 'Install ai?')) {
-            $this->call('cook:ai');
-        }
-
-        // UI
-        if (confirm(label: 'Install UI?')) {
-            $this->call('cook:ui');
+            $this->call('cook:ai', $arguments);
         }
 
         // Filament
         if (confirm(label: 'Install Filament?')) {
-            $this->call('cook:filament');
+            $this->call('cook:filament', $arguments);
         }
 
         // Backups
         // if (confirm(label: 'Run cook:backups?')) {
-        //     $this->call('cook:backups');
+        //     $this->call('cook:backups', $arguments);
         // }
+
+        // UI
+        if (confirm(label: 'Install UI?')) {
+            $this->call('cook:ui', $arguments);
+        }
 
         // Packages
         if (confirm(label: 'Install extra packages?')) {
-            $this->call('cook:packages');
+            $this->call('cook:packages', $arguments);
         }
     }
 
