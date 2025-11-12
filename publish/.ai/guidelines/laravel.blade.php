@@ -18,6 +18,7 @@
 ## Migrations
 - Use datetime columns (instead of timestamp)
 - Put relationship columns at the start, after `id`, `uuid` and `hash`
+- Don't use migration to parse, convert or migrate data in the database, use a `one time operation`
 
 ## Observers
 - Put observers in the `App\Observers` namespace and use `ObservedBy` to register it to the model
@@ -29,3 +30,17 @@
 - Use `__('key')` and @lang('key') for translations
 - Put dot notated keys in lang/{locale}/{file}.php files, when contains "enum", put in lang/{locale}/enums.php
 - Put the rest of the translations the rest in {locale}.json
+
+## Config
+- Use the same code formatting in config files as Laravel. This means adding an empty line after the opening bracket of the first array, and no empty line after the opening bracket of child arrays
+@verbatim
+<code-snippet name="Config" lang="php">
+    return [
+
+        'foo' => [
+            'bar' => 'baz'
+        ]
+
+    ];
+</code-snippet>
+@endverbatim
