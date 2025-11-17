@@ -69,8 +69,6 @@ class Packages extends Command
             'laravel/telescope' => 'require',
             'livewire/livewire' => 'require',
             'maatwebsite/excel' => 'require',
-            'spatie/cpu-load-health-check' => 'require',
-            'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
             'spatie/laravel-login-link' => 'require',
             'spatie/laravel-query-builder' => 'require',

@@ -38,6 +38,8 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
+
+        $this->publishes($this->health(), 'cook-health');
     }
 
     protected function stubs(): array
@@ -81,6 +83,13 @@ class CookServiceProvider extends ServiceProvider
     {
         return $this->files([
             'Filament' => 'app/Filament',
+        ]);
+    }
+
+    protected function health(): array
+    {
+        return $this->files([
+            'config/health.php' => 'config/health.php',
         ]);
     }
 

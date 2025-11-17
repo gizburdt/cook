@@ -4,7 +4,6 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
-use Gizburdt\Cook\CookServiceProvider;
 use function Laravel\Prompts\confirm;
 
 class Install extends Command
@@ -62,6 +61,11 @@ class Install extends Command
         // if (confirm(label: 'Run cook:backups?')) {
         //     $this->call('cook:backups', $arguments);
         // }
+
+        // Health
+        if (confirm(label: 'Install health?')) {
+            $this->call('cook:health', $arguments);
+        }
 
         // UI
         if (confirm(label: 'Install UI?')) {
