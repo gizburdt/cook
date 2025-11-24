@@ -53,6 +53,7 @@ class CookServiceProvider extends ServiceProvider
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Models/Pivot.php' => 'app/Models/Pivot.php',
+            'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
         ]);
     }
