@@ -37,9 +37,7 @@
 
     $john = 'doe';
 </code-snippet>
-@endverbatim
 
-@verbatim
 <code-snippet name="Whitespace" lang="php">
     $this->foo();
 
