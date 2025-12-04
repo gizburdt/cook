@@ -32,5 +32,9 @@ class Ai extends Command
         }
 
         $this->call('boost:install');
+
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addScript('post-update-cmd', '@php artisan boost:update --ansi');
     }
 }

@@ -33,6 +33,35 @@ class Composer extends BaseComposer
         return $this->setScripts($hook, $currentScripts);
     }
 
+    public function addAutoloadFile(string $file): int
+    {
+        $currentFiles = $this->getAutoloadFiles();
+
+        if (in_array($file, $currentFiles)) {
+            return 0;
+        }
+
+        $currentFiles[] = $file;
+
+        return $this->setAutoloadFiles($currentFiles);
+    }
+
+    public function getAutoloadFiles(): array
+    {
+        $config = $this->getComposerConfig();
+
+        return $config['autoload']['files'] ?? [];
+    }
+
+    protected function setAutoloadFiles(array $files): int
+    {
+        $config = $this->getComposerConfig();
+
+        $config['autoload']['files'] = $files;
+
+        return $this->writeComposerConfig($config);
+    }
+
     public function getScripts(string $hook): array
     {
         $config = $this->getComposerConfig();

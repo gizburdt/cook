@@ -27,7 +27,9 @@ class Base extends Command
 
         $this->replaceEloquentModel();
 
-        $this->line("\n");
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addAutoloadFile('app/Support/helpers.php');
     }
 
     protected function replaceEloquentModel(): void
@@ -49,5 +51,7 @@ class Base extends Command
 
             $this->files->put($file, $content);
         });
+
+        $this->line("\n");
     }
 }

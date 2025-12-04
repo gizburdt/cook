@@ -68,6 +68,7 @@ class CookServiceProvider extends ServiceProvider
             'Models/Pivot.php' => 'app/Models/Pivot.php',
             'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
+            'Support/helpers.php' => 'app/Support/helpers.php',
         ], 'base');
     }
 
