@@ -3,7 +3,6 @@
 namespace Gizburdt\Cook\Commands\Concerns;
 
 use Illuminate\Support\Collection;
-use Laravel\Roster\Roster;
 
 trait InstallsPackages
 {
@@ -46,16 +45,6 @@ trait InstallsPackages
     }
 
     protected function getInstalledPackages(): Collection
-    {
-        return Roster::scan()
-            ->packages()
-            ->map(fn ($package) => $package->rawName())
-            ->merge($this->getComposerLockPackages())
-            ->unique()
-            ->values();
-    }
-
-    protected function getComposerLockPackages(): Collection
     {
         $lockFile = base_path('composer.lock');
 

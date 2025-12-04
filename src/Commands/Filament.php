@@ -34,6 +34,10 @@ class Filament extends Command
             $this->installPackages($this->packages);
         }
 
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
+
         // todo: add developer login to PortalProvider
 
         $this->openDocs();

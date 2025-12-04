@@ -18,4 +18,14 @@ class Composer extends BaseComposer
 
         return $this->getProcess($command)->run();
     }
+
+    public function addScript(string $hook, string $script): int
+    {
+        $command = array_merge(
+            $this->findComposer(),
+            ['config', "scripts.{$hook}", $script, '--merge']
+        );
+
+        return $this->getProcess($command)->run();
+    }
 }
