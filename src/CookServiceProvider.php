@@ -9,7 +9,6 @@ use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Packages;
-use Gizburdt\Cook\Commands\Stubs;
 use Gizburdt\Cook\Commands\Ui;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,7 +18,6 @@ class CookServiceProvider extends ServiceProvider
     {
         $this->commands([
             Install::class,
-            Stubs::class,
             BaseClasses::class,
             CodeQuality::class,
             Ai::class,
@@ -28,8 +26,6 @@ class CookServiceProvider extends ServiceProvider
             Packages::class,
             Backups::class,
         ]);
-
-        $this->publishes($this->stubs(), 'cook-stubs');
 
         $this->publishes($this->baseClasses(), 'cook-base-classes');
 
@@ -40,16 +36,10 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->filament(), 'cook-filament');
     }
 
-    protected function stubs(): array
-    {
-        return $this->files([
-            'stubs' => 'stubs',
-        ], 'stubs');
-    }
-
     protected function baseClasses(): array
     {
         return $this->files([
+            'stubs' => 'stubs',
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Models/Pivot.php' => 'app/Models/Pivot.php',

@@ -42,9 +42,4 @@ class {{ class }} extends Policy
     {
         //
     }
-
-    public function replicate({{ user }} $user, {{ model }} ${{ modelVariable }}): bool
-    {
-        return false;
-    }
 }
