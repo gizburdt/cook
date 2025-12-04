@@ -32,11 +32,6 @@ class Install extends Command
 
         $arguments = ['--force' => $this->option('force')];
 
-        // Operations
-        if (confirm(label: 'Install operations?')) {
-            $this->call('cook:operations', $arguments);
-        }
-
         // Base
         if (confirm(label: 'Install base (classes, stubs, helpers)?')) {
             $this->call('cook:base', $arguments);
@@ -52,19 +47,24 @@ class Install extends Command
             $this->call('cook:ai', $arguments);
         }
 
-        // Filament
-        if (confirm(label: 'Install Filament?')) {
-            $this->call('cook:filament', $arguments);
+        // Operations
+        if (confirm(label: 'Install operations?')) {
+            $this->call('cook:operations', $arguments);
         }
+
+        // Health
+        // if (confirm(label: 'Run cook:health?')) {
+        //     $this->call('cook:health', $arguments);
+        // }
 
         // Backups
         // if (confirm(label: 'Run cook:backups?')) {
         //     $this->call('cook:backups', $arguments);
         // }
 
-        // Health
-        if (confirm(label: 'Install health?')) {
-            $this->call('cook:health', $arguments);
+        // Filament
+        if (confirm(label: 'Install Filament?')) {
+            $this->call('cook:filament', $arguments);
         }
 
         // UI
