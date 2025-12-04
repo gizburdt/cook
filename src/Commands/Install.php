@@ -53,9 +53,9 @@ class Install extends Command
         }
 
         // Health
-        // if (confirm(label: 'Run cook:health?')) {
-        //     $this->call('cook:health', $arguments);
-        // }
+        if (confirm(label: 'Run cook:health?')) {
+            $this->call('cook:health', $arguments);
+        }
 
         // Backups
         // if (confirm(label: 'Run cook:backups?')) {

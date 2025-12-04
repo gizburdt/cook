@@ -7,6 +7,7 @@ use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Filament;
+use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
@@ -38,6 +39,7 @@ class CookServiceProvider extends ServiceProvider
             Ui::class,
             Packages::class,
             Backups::class,
+            Health::class,
         ]);
 
         $this->publishes($this->operations(), 'cook-operations');
