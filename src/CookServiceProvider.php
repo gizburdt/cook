@@ -12,10 +12,18 @@ use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Publish;
 use Gizburdt\Cook\Commands\Ui;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->singleton(Composer::class, function ($app) {
+            return new Composer($app->make(Filesystem::class), base_path());
+        });
+    }
+
     public function boot(): void
     {
         $this->commands([

@@ -21,11 +21,28 @@ class Composer extends BaseComposer
 
     public function addScript(string $hook, string $script): int
     {
+        $currentScripts = $this->getScripts($hook);
+
+        if (in_array($script, $currentScripts)) {
+            return 0;
+        }
+
+        $currentScripts[] = $script;
+
         $command = array_merge(
             $this->findComposer(),
-            ['config', "scripts.{$hook}", $script, '--merge']
+            ['config', "scripts.{$hook}", json_encode($currentScripts), '--json']
         );
 
         return $this->getProcess($command)->run();
+    }
+
+    public function getScripts(string $hook): array
+    {
+        $config = json_decode(file_get_contents($this->workingPath.'/composer.json'), true);
+
+        $scripts = $config['scripts'][$hook] ?? [];
+
+        return (array) $scripts;
     }
 }

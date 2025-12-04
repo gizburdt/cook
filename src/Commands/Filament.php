@@ -28,11 +28,11 @@ class Filament extends Command
             '--force' => $this->option('force'),
         ]);
 
-        if ($this->hasInstallablePackages($this->packages)) {
-            $this->components->info('Installing packages');
-
-            $this->installPackages($this->packages);
-        }
+        // if ($this->hasInstallablePackages($this->packages)) {
+        //     $this->components->info('Installing packages');
+        //
+        //     $this->installPackages($this->packages);
+        // }
 
         $this->components->info('Updating composer.json');
 
