@@ -4,7 +4,6 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
-use Gizburdt\Cook\CookServiceProvider;
 use function Laravel\Prompts\confirm;
 
 class Install extends Command
