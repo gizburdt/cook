@@ -11,31 +11,13 @@ class Backups extends Command
 
     protected $description = 'Install backups';
 
+    protected array $packages = [
+        'awssat/discord-notification-channel' => 'require',
+        'spatie/laravel-backup' => 'require',
+    ];
+
     public function handle(): void
     {
-        // $this->info('Installing package');
         //
-        // $this->composer->installPackages(['spatie/laravel-backup']);
-        //
-        // $this->info('Publishing config');
-        //
-        // $this->files->copy(__DIR__.'/../../publish/config/backup.php', base_path('config/backup.php'));
-        //
-        // $this->info('Setup backups disk');
-
-        $this->setupBackupsDisk();
-    }
-
-    protected function setupBackupsDisk(): void
-    {
-        $file = base_path('config/filesystems.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
-            AddBackupsDisk::class,
-        ]);
-
-        $this->files->put($file, $content);
     }
 }
