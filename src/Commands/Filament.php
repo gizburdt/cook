@@ -21,8 +21,6 @@ class Filament extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--tag' => 'cook-filament',
             '--force' => $this->option('force'),

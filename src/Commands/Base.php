@@ -16,8 +16,6 @@ class Base extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--tag' => 'cook-base',
             '--force' => $this->option('force'),

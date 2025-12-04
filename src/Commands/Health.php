@@ -17,7 +17,7 @@ class Health extends Command
 
     protected $description = 'Install Health';
 
-    // protected string $docs = 'https://spatie.be/docs/laravel-health/v1/introduction';
+    protected string $docs = 'https://spatie.be/docs/laravel-health/v1/introduction';
 
     protected array $packages = [
         'awssat/discord-notification-channel' => 'require',
@@ -29,8 +29,6 @@ class Health extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--tag' => 'cook-health',
             '--force' => $this->option('force'),

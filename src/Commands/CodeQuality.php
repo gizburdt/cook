@@ -28,8 +28,6 @@ class CodeQuality extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--tag' => 'cook-code-quality',
             '--force' => $this->option('force'),

@@ -18,8 +18,6 @@ class Ai extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--tag' => 'cook-ai',
             '--force' => $this->option('force'),

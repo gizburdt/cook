@@ -12,8 +12,6 @@ class Publish extends Command
 
     public function handle(): void
     {
-        $this->components->info('Publishing files');
-
         $this->call('vendor:publish', [
             '--provider' => CookServiceProvider::class,
             '--force' => $this->option('force'),
