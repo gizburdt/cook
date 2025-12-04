@@ -15,6 +15,7 @@ class Filament extends Command
     protected string $docs = 'https://filamentphp.com/docs/4.x/introduction/installation';
 
     protected array $packages = [
+        'dutchcodingcompany/filament-developer-logins' => 'require',
         'filament/filament' => 'require',
     ];
 
@@ -32,6 +33,8 @@ class Filament extends Command
 
             $this->installPackages($this->packages);
         }
+
+        // todo: add developer login to PortalProvider
 
         $this->openDocs();
     }

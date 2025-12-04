@@ -8,7 +8,9 @@ use Gizburdt\Cook\Commands\BaseClasses;
 use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
+use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
+use Gizburdt\Cook\Commands\Publish;
 use Gizburdt\Cook\Commands\Ui;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,6 +20,9 @@ class CookServiceProvider extends ServiceProvider
     {
         $this->commands([
             Install::class,
+            Publish::class,
+            //
+            Operations::class,
             BaseClasses::class,
             CodeQuality::class,
             Ai::class,
@@ -27,6 +32,8 @@ class CookServiceProvider extends ServiceProvider
             Backups::class,
         ]);
 
+        $this->publishes($this->operations(), 'cook-operations');
+
         $this->publishes($this->baseClasses(), 'cook-base-classes');
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
@@ -34,6 +41,14 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
+    }
+
+    protected function operations(): array
+    {
+        return $this->files([
+            'config/one-time-operations.php' => 'config/one-time-operations.php',
+            'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
+        ], 'operations');
     }
 
     protected function baseClasses(): array

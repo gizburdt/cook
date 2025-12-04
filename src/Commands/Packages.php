@@ -55,7 +55,6 @@ class Packages extends Command
     {
         return collect([
             'barryvdh/laravel-snappy' => 'require',
-            'dutchcodingcompany/filament-developer-logins' => 'require',
             'jenssegers/model' => 'require',
             'laravel/breeze' => 'require',
             'laravel/pulse' => 'require',

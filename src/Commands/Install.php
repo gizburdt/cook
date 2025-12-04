@@ -32,9 +32,9 @@ class Install extends Command
 
         $arguments = ['--force' => $this->option('force')];
 
-        // Stubs
-        if (confirm(label: 'Install stubs?')) {
-            $this->call('cook:stubs', $arguments);
+        // Operations
+        if (confirm(label: 'Install operations?')) {
+            $this->call('cook:operations', $arguments);
         }
 
         // Base classes
