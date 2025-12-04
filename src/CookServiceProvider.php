@@ -4,23 +4,34 @@ namespace Gizburdt\Cook;
 
 use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
-use Gizburdt\Cook\Commands\BaseClasses;
+use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
+use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
-use Gizburdt\Cook\Commands\Stubs;
+use Gizburdt\Cook\Commands\Publish;
 use Gizburdt\Cook\Commands\Ui;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 class CookServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->singleton(Composer::class, function ($app) {
+            return new Composer($app->make(Filesystem::class), base_path());
+        });
+    }
+
     public function boot(): void
     {
         $this->commands([
             Install::class,
-            Stubs::class,
-            BaseClasses::class,
+            Publish::class,
+            //
+            Operations::class,
+            Base::class,
             CodeQuality::class,
             Ai::class,
             Filament::class,
@@ -29,34 +40,36 @@ class CookServiceProvider extends ServiceProvider
             Backups::class,
         ]);
 
-        $this->publishes($this->stubs(), 'cook-stubs');
+        $this->publishes($this->operations(), 'cook-operations');
 
-        $this->publishes($this->baseClasses(), 'cook-base-classes');
+        $this->publishes($this->base(), 'cook-base');
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
 
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
-
-        $this->publishes($this->health(), 'cook-health');
     }
 
-    protected function stubs(): array
+    protected function operations(): array
+    {
+        return $this->files([
+            'config/one-time-operations.php' => 'config/one-time-operations.php',
+            'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
+        ], 'operations');
+    }
+
+    protected function base(): array
     {
         return $this->files([
             'stubs' => 'stubs',
-        ]);
-    }
-
-    protected function baseClasses(): array
-    {
-        return $this->files([
             'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
             'Models/Model.php' => 'app/Models/Model.php',
             'Models/Pivot.php' => 'app/Models/Pivot.php',
+            'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
-        ]);
+            'Support/helpers.php' => 'app/Support/helpers.php',
+        ], 'base');
     }
 
     protected function codeQuality(): array
@@ -68,7 +81,7 @@ class CookServiceProvider extends ServiceProvider
             'phpstan.neon' => 'phpstan.neon',
             'pint.json' => 'pint.json',
             'rector.php' => 'rector.php',
-        ]);
+        ], 'code-quality');
     }
 
     protected function ai(): array
@@ -76,27 +89,27 @@ class CookServiceProvider extends ServiceProvider
         return $this->files([
             '.ai' => '.ai',
             '.claude' => '.claude',
-        ]);
+        ], 'ai');
     }
 
     protected function filament(): array
     {
         return $this->files([
             'Filament' => 'app/Filament',
-        ]);
+        ], 'filament');
     }
 
     protected function health(): array
     {
         return $this->files([
             'config/health.php' => 'config/health.php',
-        ]);
+        ], 'health');
     }
 
-    protected function files(array $files): array
+    protected function files(array $files, string $group): array
     {
-        return collect($files)->mapWithKeys(function ($value, $key) {
-            return [__DIR__."/../publish/{$key}" => base_path($value)];
+        return collect($files)->mapWithKeys(function ($value, $key) use ($group) {
+            return [__DIR__."/../publish/{$group}/{$key}" => base_path($value)];
         })->toArray();
     }
 }

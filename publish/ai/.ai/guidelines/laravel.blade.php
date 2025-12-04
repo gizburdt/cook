@@ -27,6 +27,16 @@
 - Use datetime columns (instead of timestamp)
 - Put relationship columns at the start, after `id`, `uuid` and `hash`
 - Don't use migration to parse, convert or migrate data in the database, use a `one time operation`
+- In the `down` method of migration, use a new line for every `->dropColumn()`
+@verbatim
+<code-snippet name="dropColumn" lang="php">
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn('column_1');
+        $table->dropColumn('column_2');
+    });
+</code-snippet>
+@endverbatim
+
 
 ## Translations
 - Use `__('key')` and @lang('key') for translations

@@ -6,20 +6,20 @@ use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 use Illuminate\Support\Str;
 
-class BaseClasses extends Command
+class Base extends Command
 {
     use UsesPhpParser;
 
-    protected $signature = 'cook:base-classes {--force}';
+    protected $signature = 'cook:base {--force}';
 
-    protected $description = 'Install Model, Policy, Resource';
+    protected $description = 'Install classes, stubs, helpers';
 
     public function handle(): void
     {
         $this->components->info('Publishing files');
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-base-classes',
+            '--tag' => 'cook-base',
             '--force' => $this->option('force'),
         ]);
 
@@ -27,7 +27,9 @@ class BaseClasses extends Command
 
         $this->replaceEloquentModel();
 
-        $this->line("\n");
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addAutoloadFile('app/Support/helpers.php');
     }
 
     protected function replaceEloquentModel(): void
@@ -49,5 +51,7 @@ class BaseClasses extends Command
 
             $this->files->put($file, $content);
         });
+
+        $this->line("\n");
     }
 }

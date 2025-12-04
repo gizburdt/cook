@@ -1,0 +1,17 @@
+<?php
+
+use TimoKoerber\LaravelOneTimeOperations\OneTimeOperation;
+
+return new class extends OneTimeOperation
+{
+    protected bool $async = false;
+
+    protected string $queue = 'default';
+
+    protected ?string $tag = null;
+
+    public function process(): void
+    {
+        //
+    }
+};

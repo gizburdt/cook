@@ -25,10 +25,16 @@ class Ai extends Command
             '--force' => $this->option('force'),
         ]);
 
-        $this->components->info('Installing packages');
+        if ($this->hasInstallablePackages($this->packages)) {
+            $this->components->info('Installing packages');
 
-        $this->installPackages($this->packages);
+            $this->installPackages($this->packages);
+        }
 
         $this->call('boost:install');
+
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addScript('post-update-cmd', '@php artisan boost:update --ansi');
     }
 }

@@ -15,6 +15,7 @@ class Filament extends Command
     protected string $docs = 'https://filamentphp.com/docs/4.x/introduction/installation';
 
     protected array $packages = [
+        'dutchcodingcompany/filament-developer-logins' => 'require',
         'filament/filament' => 'require',
     ];
 
@@ -27,9 +28,17 @@ class Filament extends Command
             '--force' => $this->option('force'),
         ]);
 
-        $this->components->info('Installing packages');
+        if ($this->hasInstallablePackages($this->packages)) {
+            $this->components->info('Installing packages');
 
-        $this->installPackages($this->packages);
+            $this->installPackages($this->packages);
+        }
+
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
+
+        // todo: add developer login to PortalProvider
 
         $this->openDocs();
     }

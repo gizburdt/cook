@@ -2,18 +2,18 @@
 
 namespace Gizburdt\Cook\Commands;
 
-class Stubs extends Command
+class Operations extends Command
 {
-    protected $signature = 'cook:stubs {--force}';
+    protected $signature = 'cook:operations {--force}';
 
-    protected $description = 'Install stubs';
+    protected $description = 'Publish one-time-operations files';
 
     public function handle(): void
     {
         $this->components->info('Publishing files');
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-stubs',
+            '--tag' => 'cook-operations',
             '--force' => $this->option('force'),
         ]);
     }

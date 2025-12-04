@@ -27,7 +27,11 @@ class Ui extends Command
 
         $this->setup($mode);
 
-        $this->installPackages($this->packages);
+        if ($this->hasInstallablePackages($this->packages)) {
+            $this->components->info('Installing packages');
+
+            $this->installPackages($this->packages);
+        }
 
         $this->openDocs();
     }

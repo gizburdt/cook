@@ -32,14 +32,14 @@ class Install extends Command
 
         $arguments = ['--force' => $this->option('force')];
 
-        // Stubs
-        if (confirm(label: 'Install stubs?')) {
-            $this->call('cook:stubs', $arguments);
+        // Operations
+        if (confirm(label: 'Install operations?')) {
+            $this->call('cook:operations', $arguments);
         }
 
-        // Base classes
-        if (confirm(label: 'Install base classes?')) {
-            $this->call('cook:base-classes', $arguments);
+        // Base
+        if (confirm(label: 'Install base (classes, stubs, helpers)?')) {
+            $this->call('cook:base', $arguments);
         }
 
         // Code quality
@@ -80,8 +80,10 @@ class Install extends Command
 
     protected function core(): void
     {
-        $this->components->info('Installing packages');
+        if ($this->hasInstallablePackages($this->packages)) {
+            $this->components->info('Installing packages');
 
-        $this->installPackages($this->packages);
+            $this->installPackages($this->packages);
+        }
     }
 }

@@ -2,20 +2,60 @@
 
 namespace Gizburdt\Cook\Commands\Concerns;
 
+use Illuminate\Support\Collection;
+
 trait InstallsPackages
 {
+    protected function hasInstallablePackages(array $packages): bool
+    {
+        $installed = $this->getInstalledPackages();
+
+        return collect($packages)->keys()
+            ->reject(fn ($package) => $installed->contains($package))
+            ->isNotEmpty();
+    }
+
     protected function installPackages(array $packages): void
     {
-        collect($packages)->groupBy(function ($type) {
-            return $type;
-        }, preserveKeys: true)->each(function ($packages, $type) {
-            $packages = $packages->keys()->all();
+        if (! $this->hasInstallablePackages($packages)) {
+            return;
+        }
 
-            $this->components->bulletList($packages);
+        $installed = $this->getInstalledPackages();
 
-            $extra = ($type === 'dev') ? '--dev' : '';
+        $packageGroups = collect($packages)->groupBy(function ($group) {
+            return $group;
+        }, preserveKeys: true);
 
-            $this->composer->installPackages($packages, $extra);
+        $packageGroups->each(function ($packages, $group) use ($installed) {
+            if (! $this->hasInstallablePackages($packages->all())) {
+                return;
+            }
+
+            $packages = $packages->keys()
+                ->reject(fn ($package) => $installed->contains($package))
+                ->values();
+
+            $this->components->bulletList($packages->all());
+
+            $extra = ($group === 'dev') ? '--dev' : '';
+
+            $this->composer->installPackages($packages->all(), $extra);
         });
+    }
+
+    protected function getInstalledPackages(): Collection
+    {
+        $lockFile = base_path('composer.lock');
+
+        if (! file_exists($lockFile)) {
+            return collect();
+        }
+
+        $lock = json_decode(file_get_contents($lockFile), true);
+
+        return collect($lock['packages'] ?? [])
+            ->merge($lock['packages-dev'] ?? [])
+            ->pluck('name');
     }
 }
