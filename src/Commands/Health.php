@@ -40,6 +40,11 @@ class Health extends Command
             $this->installPackages($this->packages);
         }
 
+        $this->addCode();
+    }
+
+    protected function addCode(): void
+    {
         $this->components->info('Adding checks');
 
         $this->addChecks();
