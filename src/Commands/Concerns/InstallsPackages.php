@@ -7,26 +7,39 @@ use Laravel\Roster\Roster;
 
 trait InstallsPackages
 {
-    protected function installPackages(array $packages): void
+    protected function hasInstallablePackages(array $packages): bool
     {
         $installed = $this->getInstalledPackages();
 
-        $packages = collect($packages)->groupBy(function ($type) {
-            return $type;
+        return collect($packages)->keys()
+            ->reject(fn ($package) => $installed->contains($package))
+            ->isNotEmpty();
+    }
+
+    protected function installPackages(array $packages): void
+    {
+        if (! $this->hasInstallablePackages($packages)) {
+            return;
+        }
+
+        $installed = $this->getInstalledPackages();
+
+        $packageGroups = collect($packages)->groupBy(function ($group) {
+            return $group;
         }, preserveKeys: true);
 
-        $packages->each(function ($packages, $type) use ($installed) {
-            $packages = $packages->keys()->reject(function ($package) use ($installed) {
-                return $installed->contains($package);
-            })->values();
-
-            if ($packages->isEmpty()) {
+        $packageGroups->each(function ($packages, $group) use ($installed) {
+            if (! $this->hasInstallablePackages($packages->all())) {
                 return;
             }
 
+            $packages = $packages->keys()
+                ->reject(fn ($package) => $installed->contains($package))
+                ->values();
+
             $this->components->bulletList($packages->all());
 
-            $extra = ($type === 'dev') ? '--dev' : '';
+            $extra = ($group === 'dev') ? '--dev' : '';
 
             $this->composer->installPackages($packages->all(), $extra);
         });

@@ -24,27 +24,21 @@ class Packages extends Command
             options: $this->possibilities()->keys()->toArray(),
         );
 
-        $this->components->info('Installing packages (require)');
+        $requirePackages = $this->selectPackages($this->chosen, 'require');
 
-        $this->installRequirePackages();
+        if ($this->hasInstallablePackages($requirePackages)) {
+            $this->components->info('Installing packages (require)');
 
-        $this->components->info('Installing packages (require-dev)');
+            $this->installPackages($requirePackages);
+        }
 
-        $this->installRequireDevPackages();
-    }
+        $devPackages = $this->selectPackages($this->chosen, 'dev');
 
-    protected function installRequirePackages(): void
-    {
-        $this->installPackages(
-            $this->selectPackages($this->chosen, 'require')
-        );
-    }
+        if ($this->hasInstallablePackages($devPackages)) {
+            $this->components->info('Installing packages (require-dev)');
 
-    protected function installRequireDevPackages(): void
-    {
-        $this->installPackages(
-            $this->selectPackages($this->chosen, 'dev')
-        );
+            $this->installPackages($devPackages);
+        }
     }
 
     protected function selectPackages(array $chosen, string $scope): array
