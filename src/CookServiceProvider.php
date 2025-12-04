@@ -50,6 +50,8 @@ class CookServiceProvider extends ServiceProvider
 
         $this->publishes($this->health(), 'cook-health');
 
+        $this->publishes($this->backups(), 'cook-backups');
+
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
@@ -110,6 +112,13 @@ class CookServiceProvider extends ServiceProvider
             'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php',
             'Support/Notification.php' => 'app/Support/Health/Notification.php',
         ], 'health');
+    }
+
+    protected function backups(): array
+    {
+        return $this->files([
+            'config/backup.php' => 'config/backup.php',
+        ], 'backups');
     }
 
     protected function files(array $files, string $group): array
