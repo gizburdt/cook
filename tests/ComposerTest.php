@@ -78,7 +78,7 @@ it('returns zero when script already exists', function () {
         ->toBe(0);
 });
 
-it('builds correct command for adding script', function () {
+it('writes script directly to composer.json', function () {
     createComposerJson($this->composerJsonPath, [
         'scripts' => [
             'post-autoload-dump' => [
@@ -87,18 +87,19 @@ it('builds correct command for adding script', function () {
         ],
     ]);
 
-    $capturedCommand = null;
+    $composer = createComposer($this->tempDir);
 
-    $composer = createComposerWithProcessCapture($this->tempDir, $capturedCommand);
+    $result = $composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
 
-    $composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
+    expect($result)->toBe(0);
 
-    expect($capturedCommand)
-        ->not->toBeNull()
-        ->toContain('config')
-        ->toContain('scripts.post-autoload-dump')
-        ->toContain('@php artisan package:discover')
-        ->toContain('@php artisan filament:upgrade');
+    $content = json_decode(file_get_contents($this->composerJsonPath), true);
+
+    expect($content['scripts']['post-autoload-dump'])
+        ->toBe([
+            '@php artisan package:discover',
+            '@php artisan filament:upgrade',
+        ]);
 });
 
 it('builds correct command for install packages', function () {
@@ -133,28 +134,6 @@ it('builds correct command for install packages with extra', function () {
         ->toContain('--dev');
 });
 
-it('actually writes script to composer.json', function () {
-    createComposerJson($this->composerJsonPath, [
-        'scripts' => [
-            'post-autoload-dump' => [
-                '@php artisan package:discover',
-            ],
-        ],
-    ]);
-
-    $composer = createComposer($this->tempDir);
-
-    $composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
-
-    $content = json_decode(file_get_contents($this->composerJsonPath), true);
-
-    expect($content['scripts']['post-autoload-dump'])
-        ->toBe([
-            '@php artisan package:discover',
-            '@php artisan filament:upgrade',
-        ]);
-});
-
 it('actually writes script to composer.json when no scripts exist', function () {
     createComposerJson($this->composerJsonPath, [
         'name' => 'test/package',
@@ -167,7 +146,7 @@ it('actually writes script to composer.json when no scripts exist', function () 
     $content = json_decode(file_get_contents($this->composerJsonPath), true);
 
     expect($content['scripts']['post-autoload-dump'])
-        ->toBe('@php artisan package:discover');
+        ->toBe(['@php artisan package:discover']);
 });
 
 it('does not duplicate script in composer.json', function () {

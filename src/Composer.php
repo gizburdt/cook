@@ -29,22 +29,44 @@ class Composer extends BaseComposer
 
         $currentScripts[] = $script;
 
-        $command = array_merge(
-            $this->findComposer(),
-            ['config', "scripts.{$hook}", '--json', json_encode($currentScripts)],
-        );
-
-        return $this->getProcess($command)->run();
+        // todo: use composer config scripts.x "value"
+        return $this->setScripts($hook, $currentScripts);
     }
 
     public function getScripts(string $hook): array
     {
-        $file = file_get_contents($this->workingPath.'/composer.json');
-
-        $config = json_decode($file, true);
+        $config = $this->getComposerConfig();
 
         $scripts = $config['scripts'][$hook] ?? [];
 
         return (array) $scripts;
+    }
+
+    protected function setScripts(string $hook, array $scripts): int
+    {
+        $config = $this->getComposerConfig();
+
+        $config['scripts'][$hook] = $scripts;
+
+        return $this->writeComposerConfig($config);
+    }
+
+    protected function getComposerConfig(): array
+    {
+        if (! file_exists($path = "{$this->workingPath}/composer.json")) {
+            return [];
+        }
+
+        return json_decode(file_get_contents($path), true) ?? [];
+    }
+
+    protected function writeComposerConfig(array $config): int
+    {
+        $result = file_put_contents(
+            "{$this->workingPath}/composer.json",
+            json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n"
+        );
+
+        return $result === false ? 1 : 0;
     }
 }

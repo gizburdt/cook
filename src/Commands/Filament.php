@@ -36,8 +36,7 @@ class Filament extends Command
 
         $this->components->info('Updating composer.json');
 
-        // todo: activate
-        // $this->composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
+        $this->composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
 
         // todo: add developer login to PortalProvider
 
