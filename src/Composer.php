@@ -31,8 +31,7 @@ class Composer extends BaseComposer
 
         $command = array_merge(
             $this->findComposer(),
-            ['config', "scripts.{$hook}"],
-            $currentScripts
+            ['config', "scripts.{$hook}", '--json', json_encode($currentScripts)],
         );
 
         return $this->getProcess($command)->run();
