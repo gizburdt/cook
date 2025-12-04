@@ -39,7 +39,9 @@ class Composer extends BaseComposer
 
     public function getScripts(string $hook): array
     {
-        $config = json_decode(file_get_contents($this->workingPath.'/composer.json'), true);
+        $file = file_get_contents($this->workingPath.'/composer.json');
+
+        $config = json_decode($file, true);
 
         $scripts = $config['scripts'][$hook] ?? [];
 

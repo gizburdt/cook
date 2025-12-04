@@ -6,11 +6,11 @@ use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 use Illuminate\Support\Str;
 
-class BaseClasses extends Command
+class Base extends Command
 {
     use UsesPhpParser;
 
-    protected $signature = 'cook:base-classes {--force}';
+    protected $signature = 'cook:base {--force}';
 
     protected $description = 'Install Model, Policy, Resource';
 
@@ -19,7 +19,7 @@ class BaseClasses extends Command
         $this->components->info('Publishing files');
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-base-classes',
+            '--tag' => 'cook-base',
             '--force' => $this->option('force'),
         ]);
 

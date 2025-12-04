@@ -4,7 +4,7 @@ namespace Gizburdt\Cook;
 
 use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
-use Gizburdt\Cook\Commands\BaseClasses;
+use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Install;
@@ -31,7 +31,7 @@ class CookServiceProvider extends ServiceProvider
             Publish::class,
             //
             Operations::class,
-            BaseClasses::class,
+            Base::class,
             CodeQuality::class,
             Ai::class,
             Filament::class,
@@ -42,7 +42,7 @@ class CookServiceProvider extends ServiceProvider
 
         $this->publishes($this->operations(), 'cook-operations');
 
-        $this->publishes($this->baseClasses(), 'cook-base-classes');
+        $this->publishes($this->base(), 'cook-base');
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
 
@@ -59,7 +59,7 @@ class CookServiceProvider extends ServiceProvider
         ], 'operations');
     }
 
-    protected function baseClasses(): array
+    protected function base(): array
     {
         return $this->files([
             'stubs' => 'stubs',
@@ -68,7 +68,7 @@ class CookServiceProvider extends ServiceProvider
             'Models/Pivot.php' => 'app/Models/Pivot.php',
             'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
-        ], 'base-classes');
+        ], 'base');
     }
 
     protected function codeQuality(): array

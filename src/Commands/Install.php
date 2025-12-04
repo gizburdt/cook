@@ -37,9 +37,9 @@ class Install extends Command
             $this->call('cook:operations', $arguments);
         }
 
-        // Base classes
-        if (confirm(label: 'Install base classes?')) {
-            $this->call('cook:base-classes', $arguments);
+        // Base
+        if (confirm(label: 'Install base (classes, stubs, helpers)?')) {
+            $this->call('cook:base', $arguments);
         }
 
         // Code quality
