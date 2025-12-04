@@ -66,6 +66,7 @@ class Packages extends Command
             'spatie/laravel-health' => 'require',
             'spatie/laravel-directory-cleanup' => 'require',
             'spatie/laravel-login-link' => 'require',
+            'spatie/laravel-markdown' => 'require',
             'spatie/laravel-query-builder' => 'require',
             'spatie/simple-excel' => 'require',
             'staudenmeir/belongs-to-through' => 'require',
