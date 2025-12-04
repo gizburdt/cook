@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook\Commands\Concerns;
 
+use Illuminate\Support\Collection;
 use Laravel\Roster\Roster;
 
 trait InstallsPackages
@@ -15,10 +16,9 @@ trait InstallsPackages
         }, preserveKeys: true);
 
         $packages->each(function ($packages, $type) use ($installed) {
-            $packages = $packages->keys()->reject(function ($package) use ($installed, $type) {
-                return in_array($package, $installed);
-            })->values()
-;
+            $packages = $packages->keys()->reject(function ($package) use ($installed) {
+                return $installed->contains($package);
+            })->values();
 
             if ($packages->isEmpty()) {
                 return;
@@ -32,37 +32,28 @@ trait InstallsPackages
         });
     }
 
-    protected function getInstalledPackages(): array
+    protected function getInstalledPackages(): Collection
     {
-        $roster = Roster::scan();
-
-        $rosterPackages = $roster->packages()->map(function ($package) {
-            return $package->rawName();
-        })->toArray();
-
-        $composerLockPackages = $this->getComposerLockPackages();
-
-        return array_unique(array_merge($rosterPackages, $composerLockPackages));
+        return Roster::scan()
+            ->packages()
+            ->map(fn ($package) => $package->rawName())
+            ->merge($this->getComposerLockPackages())
+            ->unique()
+            ->values();
     }
 
-    protected function getComposerLockPackages(): array
+    protected function getComposerLockPackages(): Collection
     {
         $lockFile = base_path('composer.lock');
 
         if (! file_exists($lockFile)) {
-            return [];
+            return collect();
         }
 
         $lock = json_decode(file_get_contents($lockFile), true);
 
-        $packages = collect($lock['packages'] ?? [])
-            ->pluck('name')
-            ->toArray();
-
-        $devPackages = collect($lock['packages-dev'] ?? [])
-            ->pluck('name')
-            ->toArray();
-
-        return array_merge($packages, $devPackages);
+        return collect($lock['packages'] ?? [])
+            ->merge($lock['packages-dev'] ?? [])
+            ->pluck('name');
     }
 }
