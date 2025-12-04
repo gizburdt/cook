@@ -17,9 +17,10 @@ class Health extends Command
 
     protected $description = 'Install Health';
 
-    protected string $docs = 'https://spatie.be/docs/laravel-health/v1/introduction';
+    // protected string $docs = 'https://spatie.be/docs/laravel-health/v1/introduction';
 
     protected array $packages = [
+        'awssat/discord-notification-channel' => 'require',
         'doctrine/dbal' => 'require',
         'spatie/cpu-load-health-check' => 'require',
         'spatie/laravel-health' => 'require',

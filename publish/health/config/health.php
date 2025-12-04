@@ -38,14 +38,14 @@ return [
         'enabled' => true,
 
         'notifications' => [
-            Spatie\Health\Notifications\CheckFailedNotification::class => ['mail'],
+            App\Support\Health\Notification::class => ['discord'],
         ],
 
         /*
          * Here you can specify the notifiable to which the notifications should be sent. The default
          * notifiable will use the variables specified in this config file.
          */
-        'notifiable' => Spatie\Health\Notifications\Notifiable::class,
+        'notifiable' => App\Support\Health\Notifiable::class,
 
         /*
          * When checks start failing, you could potentially end up getting
@@ -77,6 +77,10 @@ return [
             'username' => null,
 
             'icon' => null,
+        ],
+
+        'discord' => [
+            'webhook_url' => env('HEALTH_DISCORD_WEBHOOK_URL', ''),
         ],
     ],
 

@@ -48,6 +48,8 @@ class CookServiceProvider extends ServiceProvider
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
 
+        $this->publishes($this->health(), 'cook-health');
+
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
@@ -105,6 +107,8 @@ class CookServiceProvider extends ServiceProvider
     {
         return $this->files([
             'config/health.php' => 'config/health.php',
+            'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php',
+            'Support/Notification.php' => 'app/Support/Health/Notification.php',
         ], 'health');
     }
 
