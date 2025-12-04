@@ -44,7 +44,7 @@ class CookServiceProvider extends ServiceProvider
     {
         return $this->files([
             'stubs' => 'stubs',
-        ]);
+        ], 'stubs');
     }
 
     protected function baseClasses(): array
@@ -55,7 +55,7 @@ class CookServiceProvider extends ServiceProvider
             'Models/Pivot.php' => 'app/Models/Pivot.php',
             'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
-        ]);
+        ], 'base-classes');
     }
 
     protected function codeQuality(): array
@@ -67,7 +67,7 @@ class CookServiceProvider extends ServiceProvider
             'phpstan.neon' => 'phpstan.neon',
             'pint.json' => 'pint.json',
             'rector.php' => 'rector.php',
-        ]);
+        ], 'code-quality');
     }
 
     protected function ai(): array
@@ -75,20 +75,20 @@ class CookServiceProvider extends ServiceProvider
         return $this->files([
             '.ai' => '.ai',
             '.claude' => '.claude',
-        ]);
+        ], 'ai');
     }
 
     protected function filament(): array
     {
         return $this->files([
             'Filament' => 'app/Filament',
-        ]);
+        ], 'filament');
     }
 
-    protected function files(array $files): array
+    protected function files(array $files, string $group): array
     {
-        return collect($files)->mapWithKeys(function ($value, $key) {
-            return [__DIR__."/../publish/{$key}" => base_path($value)];
+        return collect($files)->mapWithKeys(function ($value, $key) use ($group) {
+            return [__DIR__."/../publish/{$group}/{$key}" => base_path($value)];
         })->toArray();
     }
 }
