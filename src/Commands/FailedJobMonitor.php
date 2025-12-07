@@ -8,7 +8,7 @@ class FailedJobMonitor extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:failed-job-monitor';
+    protected $signature = 'cook:failed-job-monitor {--force}';
 
     protected $description = 'Install Failed Job Monitor';
 
@@ -19,6 +19,11 @@ class FailedJobMonitor extends Command
 
     public function handle(): void
     {
+        $this->call('vendor:publish', [
+            '--tag' => 'cook-failed-job-monitor',
+            '--force' => $this->option('force'),
+        ]);
+
         if ($this->hasInstallablePackages($this->packages)) {
             $this->components->info('Installing packages');
 

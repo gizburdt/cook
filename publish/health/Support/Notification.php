@@ -1,7 +1,5 @@
 <?php
 
-namespace Spatie\Health\Notifications;
-
 namespace App\Support\Health;
 
 use Awssat\Notifications\Messages\DiscordEmbed;

@@ -128,7 +128,7 @@ class AddBackupsSchedule extends NodeVisitorAbstract
                 ),
                 'at',
                 [
-                    new Arg(new String_('01:00')),
+                    new Arg(new String_('02:00')),
                 ]
             )
         );
@@ -150,7 +150,7 @@ class AddBackupsSchedule extends NodeVisitorAbstract
                 ),
                 'at',
                 [
-                    new Arg(new String_('01:30')),
+                    new Arg(new String_('03:00')),
                 ]
             )
         );

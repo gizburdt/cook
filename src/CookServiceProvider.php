@@ -50,6 +50,8 @@ class CookServiceProvider extends ServiceProvider
 
         $this->publishes($this->health(), 'cook-health');
 
+        $this->publishes($this->failedJobMonitor(), 'cook-failed-job-monitor');
+
         $this->publishes($this->backups(), 'cook-backups');
 
         $this->publishes($this->ai(), 'cook-ai');
@@ -112,6 +114,15 @@ class CookServiceProvider extends ServiceProvider
             'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php',
             'Support/Notification.php' => 'app/Support/Health/Notification.php',
         ], 'health');
+    }
+
+    protected function failedJobMonitor(): array
+    {
+        return $this->files([
+            'config/failed-job-monitor.php' => 'config/failed-job-monitor.php',
+            'Support/Notifiable.php' => 'app/Support/FailedJobMonitor/Notifiable.php',
+            'Support/Notification.php' => 'app/Support/FailedJobMonitor/Notification.php',
+        ], 'failed-job-monitor');
     }
 
     protected function backups(): array
