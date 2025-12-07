@@ -2,31 +2,20 @@
 
 namespace App\Support\FailedJobMonitor;
 
-use Awssat\Notifications\Messages\DiscordEmbed;
 use Awssat\Notifications\Messages\DiscordMessage;
-use Spatie\Health\Notifications\CheckFailedNotification;
+use Spatie\FailedJobMonitor\Notification as VendorNotification;
 
-class Notification extends CheckFailedNotification
+class Notification extends VendorNotification
 {
     public function toDiscord(): DiscordMessage
     {
-        $message = (new DiscordMessage)->content(
-            trans('A job failed at '.config('app.name'))
-        );
-
-        $results = [
-            'Exception message' => $this->event->exception->getMessage(),
-            'Job class' => $this->event->job->resolveName(),
-            'Job body' => $this->event->job->getRawBody(),
-            'Exception' => $this->event->exception->getTraceAsString(),
-        ];
-
-        foreach ($results as $title => $content) {
-            $message->embed(function (DiscordEmbed $embed) use ($title, $content) {
-                $embed->title($title)->description($content);
+        return (new DiscordMessage)
+            ->content(__('A job failed at '.config('app.name')))
+            ->embed(function ($embed) {
+                $embed
+                    ->color('#E01E5A')
+                    ->title($this->event->job->resolveName())
+                    ->description($this->event->exception->getMessage());
             });
-        }
-
-        return $message;
     }
 }
