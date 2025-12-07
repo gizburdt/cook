@@ -21,9 +21,7 @@ class Install extends Command
         'laravel/pail' => 'dev',
         'laravel/prompts' => 'require',
         'lorisleiva/laravel-actions' => 'require',
-        'spatie/laravel-failed-job-monitor' => 'require',
         'spatie/laravel-ray' => 'require',
-        'timokoerber/laravel-one-time-operations' => 'require',
     ];
 
     public function handle(): void
@@ -33,7 +31,7 @@ class Install extends Command
         $arguments = ['--force' => $this->option('force')];
 
         // Base
-        if (confirm(label: 'Install base (classes, stubs, helpers)?')) {
+        if (confirm(label: 'Install base (classes, helpers, stubs)?')) {
             $this->call('cook:base', $arguments);
         }
 
@@ -42,14 +40,9 @@ class Install extends Command
             $this->call('cook:code-quality', $arguments);
         }
 
-        // AI
-        if (confirm(label: 'Install ai?')) {
-            $this->call('cook:ai', $arguments);
-        }
-
-        // Operations
-        if (confirm(label: 'Install operations?')) {
-            $this->call('cook:operations', $arguments);
+        // Failed job monitor
+        if (confirm(label: 'Run cook:failed-job-monitor?')) {
+            $this->call('cook:failed-job-monitor', $arguments);
         }
 
         // Health
@@ -58,9 +51,19 @@ class Install extends Command
         }
 
         // Backups
-        // if (confirm(label: 'Run cook:backups?')) {
-        //     $this->call('cook:backups', $arguments);
-        // }
+        if (confirm(label: 'Run cook:backups?')) {
+            $this->call('cook:backups', $arguments);
+        }
+
+        // Operations
+        if (confirm(label: 'Install operations?')) {
+            $this->call('cook:operations', $arguments);
+        }
+
+        // AI
+        if (confirm(label: 'Install ai?')) {
+            $this->call('cook:ai', $arguments);
+        }
 
         // Filament
         if (confirm(label: 'Install Filament?')) {

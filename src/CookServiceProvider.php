@@ -6,6 +6,7 @@ use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
+use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
@@ -30,6 +31,7 @@ class CookServiceProvider extends ServiceProvider
             Install::class,
             //
             Operations::class,
+            FailedJobMonitor::class,
             Base::class,
             CodeQuality::class,
             Ai::class,
