@@ -11,7 +11,6 @@ use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
-use Gizburdt\Cook\Commands\Publish;
 use Gizburdt\Cook\Commands\Ui;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
@@ -29,7 +28,6 @@ class CookServiceProvider extends ServiceProvider
     {
         $this->commands([
             Install::class,
-            Publish::class,
             //
             Operations::class,
             Base::class,
@@ -42,11 +40,11 @@ class CookServiceProvider extends ServiceProvider
             Health::class,
         ]);
 
-        $this->publishes($this->operations(), 'cook-operations');
-
         $this->publishes($this->base(), 'cook-base');
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
+
+        $this->publishes($this->operations(), 'cook-operations');
 
         $this->publishes($this->health(), 'cook-health');
 
@@ -55,14 +53,6 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
-    }
-
-    protected function operations(): array
-    {
-        return $this->files([
-            'config/one-time-operations.php' => 'config/one-time-operations.php',
-            'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
-        ], 'operations');
     }
 
     protected function base(): array
@@ -88,6 +78,14 @@ class CookServiceProvider extends ServiceProvider
             'pint.json' => 'pint.json',
             'rector.php' => 'rector.php',
         ], 'code-quality');
+    }
+
+    protected function operations(): array
+    {
+        return $this->files([
+            'config/one-time-operations.php' => 'config/one-time-operations.php',
+            'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
+        ], 'operations');
     }
 
     protected function ai(): array
