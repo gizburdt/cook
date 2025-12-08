@@ -3,10 +3,12 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\UsesEnvParser;
 
 class FailedJobMonitor extends Command
 {
     use InstallsPackages;
+    use UsesEnvParser;
 
     protected $signature = 'cook:failed-job-monitor {--force}';
 
@@ -29,5 +31,11 @@ class FailedJobMonitor extends Command
 
             $this->installPackages($this->packages);
         }
+
+        $this->components->info('Adding environment variables');
+
+        $this->addEnvVariables([
+            'FAILED_JOB_DISCORD_WEBHOOK_URL' => '',
+        ]);
     }
 }

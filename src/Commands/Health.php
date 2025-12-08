@@ -3,6 +3,7 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\UsesEnvParser;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddHealthChecks;
 use Gizburdt\Cook\Commands\NodeVisitors\AddHealthRoute;
@@ -11,6 +12,7 @@ use Gizburdt\Cook\Commands\NodeVisitors\AddHealthSchedule;
 class Health extends Command
 {
     use InstallsPackages;
+    use UsesEnvParser;
     use UsesPhpParser;
 
     protected $signature = 'cook:health {--force}';
@@ -56,6 +58,12 @@ class Health extends Command
         $this->components->info('Adding schedule');
 
         $this->addSchedule();
+
+        $this->components->info('Adding environment variables');
+
+        $this->addEnvVariables([
+            'HEALTH_DISCORD_WEBHOOK_URL' => '',
+        ]);
 
         $this->openDocs();
     }
