@@ -6,10 +6,11 @@ parameters:
     level: 1
     paths:
         - app
-        - packages
+        - bootstrap/app.php
+        - config
+        - database
+        - public
+        - routes
     excludePaths:
         - **/vendor/*
-    ignoreErrors:
-        -
-            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::#'
-            path: /*
+    tmpDir: /tmp/phpstan

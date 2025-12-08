@@ -14,7 +14,6 @@ use PHP_CodeSniffer\Standards\PSR12\Sniffs\Classes\ClassInstantiationSniff;
 use PhpCsFixer\Fixer\ClassNotation\OrderedClassElementsFixer;
 use PhpCsFixer\Fixer\Comment\NoEmptyCommentFixer;
 use PhpCsFixer\Fixer\FunctionNotation\MethodArgumentSpaceFixer;
-use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
 use SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff;
 use SlevomatCodingStandard\Sniffs\Commenting\DocCommentSpacingSniff;
 use SlevomatCodingStandard\Sniffs\Commenting\UselessFunctionDocCommentSniff;
@@ -100,7 +99,6 @@ return [
         ForbiddenPublicPropertySniff::class,
         ForbiddenTraits::class,
         FunctionLengthSniff::class,
-        NewWithBracesFixer::class,
         NoEmptyCommentFixer::class,
         OrderedClassElementsFixer::class,
         ParameterTypeHintSniff::class,
