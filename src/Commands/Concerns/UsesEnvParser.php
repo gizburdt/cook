@@ -21,7 +21,7 @@ trait UsesEnvParser
 
         foreach ($variables as $key => $value) {
             if (! $this->envHasVariable($content, $key)) {
-                $content = rtrim($content)."\n\n{$key}={$value}\n";
+                $content = rtrim($content)."\n{$key}={$value}\n";
             }
         }
 

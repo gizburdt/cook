@@ -2,6 +2,9 @@
 
 /**
  * https://github.com/spatie/laravel-backup/blob/main/config/backup.php
+ * https://codingtricks.co/posts/how-to-set-up-daily-laravel-backups-on-google-drive-for-free
+ * https://github.com/ivanvermeyen/laravel-google-drive-demo/blob/master/README/1-getting-your-dlient-id-and-secret.md
+ * https://github.com/ivanvermeyen/laravel-google-drive-demo/blob/master/README/2-getting-your-refresh-token.md
  */
 return [
 

@@ -5,7 +5,10 @@ namespace Gizburdt\Cook\Commands;
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesEnvParser;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Commands\NodeVisitors\AddBackupsDisk;
 use Gizburdt\Cook\Commands\NodeVisitors\AddBackupsSchedule;
+
+use function Laravel\Prompts\select;
 
 class Backups extends Command
 {
@@ -17,12 +20,21 @@ class Backups extends Command
 
     protected $description = 'Install backups';
 
+    protected string $driver;
+
     protected array $packages = [
         'spatie/laravel-backup' => 'require',
     ];
 
     public function handle(): void
     {
+        $this->driver = select('Which backup driver?', [
+            'local' => 'Local',
+            'google' => 'Google Drive',
+        ], 'google');
+
+        $this->setupDriver();
+
         $this->call('vendor:publish', [
             '--tag' => 'cook-backups',
             '--force' => $this->option('force'),
@@ -37,6 +49,13 @@ class Backups extends Command
         $this->addCode();
     }
 
+    protected function setupDriver(): void
+    {
+        if ($this->driver === 'google') {
+            $this->packages['yaza/laravel-google-drive-storage'] = 'require';
+        }
+    }
+
     protected function addCode(): void
     {
         $this->components->info('Adding schedule');
@@ -48,6 +67,55 @@ class Backups extends Command
         $this->addEnvVariables([
             'BACKUP_DISCORD_WEBHOOK_URL' => '',
         ]);
+
+        if ($this->driver === 'local') {
+            $this->addLocalDisk();
+        }
+
+        if ($this->driver === 'google') {
+            $this->addGoogleEnvVariables();
+            $this->addGoogleDisk();
+        }
+    }
+
+    protected function addGoogleEnvVariables(): void
+    {
+        $this->addEnvVariables([
+            'GOOGLE_DRIVE_CLIENT_ID' => '',
+            'GOOGLE_DRIVE_CLIENT_SECRET' => '',
+            'GOOGLE_DRIVE_REFRESH_TOKEN' => '',
+            'GOOGLE_DRIVE_FOLDER' => '',
+        ]);
+    }
+
+    protected function addLocalDisk(): void
+    {
+        $this->components->info('Adding backups disk to filesystems config');
+
+        $file = config_path('filesystems.php');
+
+        $content = $this->files->get($file);
+
+        $content = $this->parseContent($content, [
+            new AddBackupsDisk('local'),
+        ]);
+
+        $this->files->put($file, $content);
+    }
+
+    protected function addGoogleDisk(): void
+    {
+        $this->components->info('Adding backups disk to filesystems config');
+
+        $file = config_path('filesystems.php');
+
+        $content = $this->files->get($file);
+
+        $content = $this->parseContent($content, [
+            new AddBackupsDisk('google'),
+        ]);
+
+        $this->files->put($file, $content);
     }
 
     protected function addSchedule(): void
