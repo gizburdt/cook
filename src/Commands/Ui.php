@@ -3,7 +3,6 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-use Illuminate\Support\Str;
 
 use function Laravel\Prompts\select;
 

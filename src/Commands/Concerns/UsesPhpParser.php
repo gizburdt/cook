@@ -36,7 +36,9 @@ trait UsesPhpParser
         $traverser->addVisitor(new CloningVisitor);
 
         foreach ($visitors as $visitor) {
-            $traverser->addVisitor(is_string($visitor) ? new $visitor : $visitor);
+            $visitor = is_string($visitor) ? new $visitor : $visitor;
+
+            $traverser->addVisitor($visitor);
         }
 
         return $traverser->traverse($nodes);
