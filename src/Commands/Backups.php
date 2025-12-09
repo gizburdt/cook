@@ -28,7 +28,7 @@ class Backups extends Command
 
     public function handle(): void
     {
-        $this->driver = select('Which backup driver?', [
+        $this->driver = select('Which driver?', [
             'local' => 'Local',
             'google' => 'Google Drive',
         ], 'google');
@@ -68,27 +68,21 @@ class Backups extends Command
             'BACKUP_DISCORD_WEBHOOK_URL' => '',
         ]);
 
-        if ($this->driver === 'local') {
-            $this->addLocalDisk();
-        }
-
         if ($this->driver === 'google') {
-            $this->addGoogleEnvVariables();
-            $this->addGoogleDisk();
+            $this->addEnvVariables([
+                'GOOGLE_DRIVE_CLIENT_ID' => '',
+                'GOOGLE_DRIVE_CLIENT_SECRET' => '',
+                'GOOGLE_DRIVE_REFRESH_TOKEN' => '',
+                'GOOGLE_DRIVE_FOLDER' => '',
+            ]);
         }
+
+        $this->components->info('Adding config');
+
+        $this->addConfig();
     }
 
-    protected function addGoogleEnvVariables(): void
-    {
-        $this->addEnvVariables([
-            'GOOGLE_DRIVE_CLIENT_ID' => '',
-            'GOOGLE_DRIVE_CLIENT_SECRET' => '',
-            'GOOGLE_DRIVE_REFRESH_TOKEN' => '',
-            'GOOGLE_DRIVE_FOLDER' => '',
-        ]);
-    }
-
-    protected function addLocalDisk(): void
+    protected function addConfig(): void
     {
         $this->components->info('Adding backups disk to filesystems config');
 
@@ -97,22 +91,7 @@ class Backups extends Command
         $content = $this->files->get($file);
 
         $content = $this->parseContent($content, [
-            new AddBackupsDisk('local'),
-        ]);
-
-        $this->files->put($file, $content);
-    }
-
-    protected function addGoogleDisk(): void
-    {
-        $this->components->info('Adding backups disk to filesystems config');
-
-        $file = config_path('filesystems.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
-            new AddBackupsDisk('google'),
+            new AddBackupsDisk($this->driver),
         ]);
 
         $this->files->put($file, $content);

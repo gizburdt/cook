@@ -84,6 +84,7 @@ class AddHealthSchedule extends NodeVisitorAbstract
             ]);
 
             array_splice($nodes, $lastUseIndex + 1 + $insertOffset, 0, [$useStatement]);
+
             $insertOffset++;
         }
 
@@ -115,6 +116,7 @@ class AddHealthSchedule extends NodeVisitorAbstract
             );
 
             $nodes[] = new Nop;
+
             $nodes[] = $scheduleCommand;
         }
 

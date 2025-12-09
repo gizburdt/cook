@@ -86,6 +86,7 @@ class AddHealthRoute extends NodeVisitorAbstract
             );
 
             $nodes[] = new Nop;
+
             $nodes[] = $route;
         }
 

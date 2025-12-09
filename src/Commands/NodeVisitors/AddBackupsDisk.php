@@ -13,7 +13,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
 {
     protected bool $hasBackupsDisk = false;
 
-    public function __construct(protected string $driver = 'google') {}
+    public function __construct(protected string $driver) {}
 
     public function enterNode(Node $node)
     {
@@ -61,6 +61,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
         };
 
         $parser = (new ParserFactory)->createForNewestSupportedVersion();
+
         $ast = $parser->parse($code);
 
         /** @var Array_ $array */
@@ -76,7 +77,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
 return [
     'backups' => [
         'driver' => 'local',
-        'root' => storage_path('app/backups'),
+        'root' => storage_path('backups'),
         'serve' => true,
         'throw' => false,
         'report' => false,

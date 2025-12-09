@@ -88,6 +88,7 @@ class AddHealthChecks extends NodeVisitorAbstract
 
         if ($node instanceof Class_ && ! $this->hasHealthChecksMethod) {
             $node->stmts[] = new Nop;
+
             $node->stmts[] = $this->createHealthChecksMethod();
 
             return $node;
@@ -164,6 +165,7 @@ class Temp {
 PHP;
 
         $parser = (new \PhpParser\ParserFactory)->createForNewestSupportedVersion();
+
         $ast = $parser->parse($code);
 
         /** @var Class_ $class */

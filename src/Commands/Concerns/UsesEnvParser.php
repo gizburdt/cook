@@ -6,12 +6,12 @@ trait UsesEnvParser
 {
     protected function addEnvVariables(array $variables): void
     {
-        $this->addEnvVariablesToFile(base_path('.env'), $variables);
+        $this->addVariablesToFile(base_path('.env'), $variables);
 
-        $this->addEnvVariablesToFile(base_path('.env.example'), $variables);
+        $this->addVariablesToFile(base_path('.env.example'), $variables);
     }
 
-    protected function addEnvVariablesToFile(string $file, array $variables): void
+    protected function addVariablesToFile(string $file, array $variables): void
     {
         if (! $this->files->exists($file)) {
             return;
@@ -19,16 +19,29 @@ trait UsesEnvParser
 
         $content = $this->files->get($file);
 
-        foreach ($variables as $key => $value) {
-            if (! $this->envHasVariable($content, $key)) {
-                $content = rtrim($content)."\n{$key}={$value}\n";
-            }
+        $newVariables = collect($variables)
+            ->map(function ($value, $key) use ($content) {
+                if ($value === null || is_int($key)) {
+                    return '';
+                }
+
+                if (! $this->hasVariable($content, $key)) {
+                    return "{$key}={$value}";
+                }
+
+                return null;
+            })
+            ->filter()
+            ->implode("\n");
+
+        if ($newVariables !== '') {
+            $content = rtrim($content)."\n\n{$newVariables}\n";
         }
 
         $this->files->put($file, $content);
     }
 
-    protected function envHasVariable(string $content, string $key): bool
+    protected function hasVariable(string $content, string $key): bool
     {
         return preg_match('/^'.preg_quote($key, '/').'=/m', $content) === 1;
     }
