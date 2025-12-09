@@ -35,24 +35,14 @@ class Install extends Command
             $this->call('cook:base', $arguments);
         }
 
+        // AI
+        if (confirm(label: 'Install ai?')) {
+            $this->call('cook:ai', $arguments);
+        }
+
         // Code quality
         if (confirm(label: 'Install code quality?')) {
             $this->call('cook:code-quality', $arguments);
-        }
-
-        // Failed job monitor
-        if (confirm(label: 'Run cook:failed-job-monitor?')) {
-            $this->call('cook:failed-job-monitor', $arguments);
-        }
-
-        // Health
-        if (confirm(label: 'Run cook:health?')) {
-            $this->call('cook:health', $arguments);
-        }
-
-        // Backups
-        if (confirm(label: 'Run cook:backups?')) {
-            $this->call('cook:backups', $arguments);
         }
 
         // Operations
@@ -60,9 +50,19 @@ class Install extends Command
             $this->call('cook:operations', $arguments);
         }
 
-        // AI
-        if (confirm(label: 'Install ai?')) {
-            $this->call('cook:ai', $arguments);
+        // Health
+        if (confirm(label: 'Run cook:health?')) {
+            $this->call('cook:health', $arguments);
+        }
+
+        // Failed job monitor
+        if (confirm(label: 'Run cook:failed-job-monitor?')) {
+            $this->call('cook:failed-job-monitor', $arguments);
+        }
+
+        // Backups
+        if (confirm(label: 'Run cook:backups?')) {
+            $this->call('cook:backups', $arguments);
         }
 
         // Filament

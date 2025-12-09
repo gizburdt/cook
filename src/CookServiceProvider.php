@@ -30,19 +30,21 @@ class CookServiceProvider extends ServiceProvider
         $this->commands([
             Install::class,
             //
-            Operations::class,
-            FailedJobMonitor::class,
             Base::class,
-            CodeQuality::class,
             Ai::class,
+            CodeQuality::class,
+            Operations::class,
+            Health::class,
+            FailedJobMonitor::class,
+            Backups::class,
             Filament::class,
             Ui::class,
             Packages::class,
-            Backups::class,
-            Health::class,
         ]);
 
         $this->publishes($this->base(), 'cook-base');
+
+        $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->codeQuality(), 'cook-code-quality');
 
@@ -53,8 +55,6 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->failedJobMonitor(), 'cook-failed-job-monitor');
 
         $this->publishes($this->backups(), 'cook-backups');
-
-        $this->publishes($this->ai(), 'cook-ai');
 
         $this->publishes($this->filament(), 'cook-filament');
     }
@@ -71,6 +71,14 @@ class CookServiceProvider extends ServiceProvider
             'Policies/Policy.php' => 'app/Policies/Policy.php',
             'Support/helpers.php' => 'app/Support/helpers.php',
         ], 'base');
+    }
+
+    protected function ai(): array
+    {
+        return $this->files([
+            '.ai' => '.ai',
+            '.claude' => '.claude',
+        ], 'ai');
     }
 
     protected function codeQuality(): array
@@ -91,21 +99,6 @@ class CookServiceProvider extends ServiceProvider
             'config/one-time-operations.php' => 'config/one-time-operations.php',
             'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
         ], 'operations');
-    }
-
-    protected function ai(): array
-    {
-        return $this->files([
-            '.ai' => '.ai',
-            '.claude' => '.claude',
-        ], 'ai');
-    }
-
-    protected function filament(): array
-    {
-        return $this->files([
-            'Filament' => 'app/Filament',
-        ], 'filament');
     }
 
     protected function health(): array
@@ -131,6 +124,13 @@ class CookServiceProvider extends ServiceProvider
         return $this->files([
             'config/backup.php' => 'config/backup.php',
         ], 'backups');
+    }
+
+    protected function filament(): array
+    {
+        return $this->files([
+            'Filament' => 'app/Filament',
+        ], 'filament');
     }
 
     protected function files(array $files, string $group): array

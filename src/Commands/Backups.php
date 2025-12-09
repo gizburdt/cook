@@ -84,8 +84,6 @@ class Backups extends Command
 
     protected function addConfig(): void
     {
-        $this->components->info('Adding backups disk to filesystems config');
-
         $file = config_path('filesystems.php');
 
         $content = $this->files->get($file);

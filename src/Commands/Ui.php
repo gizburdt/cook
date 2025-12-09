@@ -15,17 +15,19 @@ class Ui extends Command
 
     protected $description = 'Install UI';
 
+    protected string $driver;
+
     protected ?string $docs = null;
 
     protected array $packages = [];
 
     public function handle(): void
     {
-        $mode = select('What UI?', [
+        $this->driver = select('What UI?', [
             'flux' => 'Flux',
         ]);
 
-        $this->setup($mode);
+        $this->setupDriver();
 
         if ($this->hasInstallablePackages($this->packages)) {
             $this->components->info('Installing packages');
@@ -36,21 +38,12 @@ class Ui extends Command
         $this->openDocs();
     }
 
-    protected function setup(string $mode): void
+    protected function setupDriver(): void
     {
-        $method = Str::of($mode)->studly()->prepend('setup')->toString();
+        if ($this->driver === 'flux') {
+            $this->packages['livewire/flux'] = 'require';
 
-        if (method_exists($this, $method)) {
-            $this->$method();
+            $this->docs = 'https://fluxui.dev/docs/installation';
         }
-    }
-
-    protected function setupFlux(): void
-    {
-        $this->packages = [
-            'livewire/flux' => 'require',
-        ];
-
-        $this->docs = 'https://fluxui.dev/docs/installation';
     }
 }
