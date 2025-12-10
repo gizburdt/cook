@@ -36,15 +36,11 @@ class Composer extends BaseComposer
 
     protected function addToConfig(string $key, string $value): int
     {
-        $current = $this->getFromConfig($key);
+        $current = collect($this->getFromConfig($key));
 
-        if (in_array($value, $current)) {
-            return 0;
-        }
-
-        $current[] = $value;
-
-        return $this->setConfig($key, $current);
+        return $current->doesntContain($value)
+            ? $this->setConfig($key, $current->push($value)->all())
+            : 0;
     }
 
     protected function setConfig(string $key, mixed $value): int
