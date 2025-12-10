@@ -70,40 +70,22 @@ class Health extends Command
 
     protected function addRoutes(): void
     {
-        $file = base_path('routes/web.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
+        $this->applyVisitors(base_path('routes/web.php'), [
             AddHealthRoute::class,
         ]);
-
-        $this->files->put($file, $content);
     }
 
     protected function addSchedule(): void
     {
-        $file = base_path('routes/console.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
+        $this->applyVisitors(base_path('routes/console.php'), [
             AddHealthSchedule::class,
         ]);
-
-        $this->files->put($file, $content);
     }
 
     protected function addChecks(): void
     {
-        $file = app_path('Providers/AppServiceProvider.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
+        $this->applyVisitors(app_path('Providers/AppServiceProvider.php'), [
             AddHealthChecks::class,
         ]);
-
-        $this->files->put($file, $content);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Illuminate\Filesystem\Filesystem;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Echo_;
 use PhpParser\NodeVisitorAbstract;
@@ -127,6 +128,30 @@ PHP;
         ->toContain('public function handle');
 });
 
+it('applies visitors to file and writes result', function () {
+    $tempFile = sys_get_temp_dir().'/cook-test-'.uniqid().'.php';
+
+    file_put_contents($tempFile, <<<'PHP'
+<?php
+
+echo 'original';
+PHP);
+
+    $parser = createPhpParserWithFilesystem();
+
+    $parser->testApplyVisitors($tempFile, [
+        ReplaceEchoVisitor::class,
+    ]);
+
+    $result = file_get_contents($tempFile);
+
+    expect($result)
+        ->toContain('modified')
+        ->not->toContain('original');
+
+    unlink($tempFile);
+});
+
 function createPhpParser(): object
 {
     return new class
@@ -141,6 +166,26 @@ function createPhpParser(): object
         public function testNewParser(): \PhpParser\Parser
         {
             return $this->newParser();
+        }
+    };
+}
+
+function createPhpParserWithFilesystem(): object
+{
+    return new class
+    {
+        use UsesPhpParser;
+
+        protected Filesystem $files;
+
+        public function __construct()
+        {
+            $this->files = new Filesystem;
+        }
+
+        public function testApplyVisitors(string $file, array $visitors): void
+        {
+            $this->applyVisitors($file, $visitors);
         }
     };
 }

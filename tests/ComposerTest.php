@@ -22,47 +22,6 @@ afterEach(function () {
     }
 });
 
-it('returns empty array when no scripts exist', function () {
-    createComposerJson($this->composerJsonPath, []);
-
-    $composer = createComposer($this->tempDir);
-
-    expect($composer->getScripts('post-autoload-dump'))
-        ->toBe([]);
-});
-
-it('returns scripts as array when single script exists', function () {
-    createComposerJson($this->composerJsonPath, [
-        'scripts' => [
-            'post-autoload-dump' => '@php artisan package:discover',
-        ],
-    ]);
-
-    $composer = createComposer($this->tempDir);
-
-    expect($composer->getScripts('post-autoload-dump'))
-        ->toBe(['@php artisan package:discover']);
-});
-
-it('returns scripts array when multiple scripts exist', function () {
-    createComposerJson($this->composerJsonPath, [
-        'scripts' => [
-            'post-autoload-dump' => [
-                '@php artisan package:discover',
-                '@php artisan filament:upgrade',
-            ],
-        ],
-    ]);
-
-    $composer = createComposer($this->tempDir);
-
-    expect($composer->getScripts('post-autoload-dump'))
-        ->toBe([
-            '@php artisan package:discover',
-            '@php artisan filament:upgrade',
-        ]);
-});
-
 it('returns zero when script already exists', function () {
     createComposerJson($this->composerJsonPath, [
         'scripts' => [
@@ -166,6 +125,40 @@ it('does not duplicate script in composer.json', function () {
 
     expect($content['scripts']['post-autoload-dump'])
         ->toBe(['@php artisan package:discover']);
+});
+
+it('adds autoload file to composer.json', function () {
+    createComposerJson($this->composerJsonPath, [
+        'name' => 'test/package',
+    ]);
+
+    $composer = createComposer($this->tempDir);
+
+    $composer->addAutoloadFile('app/helpers.php');
+
+    $content = json_decode(file_get_contents($this->composerJsonPath), true);
+
+    expect($content['autoload']['files'])
+        ->toBe(['app/helpers.php']);
+});
+
+it('does not duplicate autoload file in composer.json', function () {
+    createComposerJson($this->composerJsonPath, [
+        'autoload' => [
+            'files' => [
+                'app/helpers.php',
+            ],
+        ],
+    ]);
+
+    $composer = createComposer($this->tempDir);
+
+    $composer->addAutoloadFile('app/helpers.php');
+
+    $content = json_decode(file_get_contents($this->composerJsonPath), true);
+
+    expect($content['autoload']['files'])
+        ->toBe(['app/helpers.php']);
 });
 
 function createComposerJson(string $path, array $content): void

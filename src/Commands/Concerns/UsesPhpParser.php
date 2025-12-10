@@ -9,6 +9,15 @@ use PhpParser\PrettyPrinter\Standard;
 
 trait UsesPhpParser
 {
+    protected function applyVisitors(string $file, array $visitors): void
+    {
+        $content = $this->files->get($file);
+
+        $content = $this->parseContent($content, $visitors);
+
+        $this->files->put($file, $content);
+    }
+
     protected function parseContent(string $content, array $visitors): string
     {
         $parser = $this->newParser();

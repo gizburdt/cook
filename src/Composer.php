@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Composer as BaseComposer;
 
 class Composer extends BaseComposer
@@ -27,20 +28,20 @@ class Composer extends BaseComposer
         return $this->addToConfig('autoload.files', $file);
     }
 
-    public function getFromConfig(string $key): array
-    {
-        $config = $this->getComposerConfig();
-
-        return (array) (data_get($config, $key) ?? []);
-    }
-
     protected function addToConfig(string $key, string $value): int
     {
-        $current = collect($this->getFromConfig($key));
+        $current = $this->getFromConfig($key);
 
         return $current->doesntContain($value)
             ? $this->setConfig($key, $current->push($value)->all())
             : 0;
+    }
+
+    protected function getFromConfig(string $key): Collection
+    {
+        $config = $this->getComposerConfig();
+
+        return collect(data_get($config, $key) ?? []);
     }
 
     protected function setConfig(string $key, mixed $value): int

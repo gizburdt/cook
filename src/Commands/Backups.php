@@ -84,27 +84,15 @@ class Backups extends Command
 
     protected function addConfig(): void
     {
-        $file = config_path('filesystems.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
+        $this->applyVisitors(config_path('filesystems.php'), [
             new AddBackupsDisk($this->driver),
         ]);
-
-        $this->files->put($file, $content);
     }
 
     protected function addSchedule(): void
     {
-        $file = base_path('routes/console.php');
-
-        $content = $this->files->get($file);
-
-        $content = $this->parseContent($content, [
+        $this->applyVisitors(base_path('routes/console.php'), [
             AddBackupsSchedule::class,
         ]);
-
-        $this->files->put($file, $content);
     }
 }
