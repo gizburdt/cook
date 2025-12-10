@@ -38,7 +38,8 @@ it('has protected methods for publishable groups', function () {
 });
 
 it('has all command classes available', function () {
-    expect(Install::class)->toBeString()
+    expect(Install::class)
+        ->toBeString()
         ->and(Publish::class)->toBeString()
         ->and(Operations::class)->toBeString()
         ->and(Base::class)->toBeString()
@@ -53,14 +54,16 @@ it('has all command classes available', function () {
 it('has operations publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/operations';
 
-    expect(file_exists($basePath.'/config/one-time-operations.php'))->toBeTrue()
+    expect(file_exists($basePath.'/config/one-time-operations.php'))
+        ->toBeTrue()
         ->and(file_exists($basePath.'/stubs/one-time-operation.stub'))->toBeTrue();
 });
 
 it('has base publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/base';
 
-    expect(is_dir($basePath.'/stubs'))->toBeTrue()
+    expect(is_dir($basePath.'/stubs'))
+        ->toBeTrue()
         ->and(file_exists($basePath.'/Http/Resources/Resource.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Models/Model.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Models/Pivot.php'))->toBeTrue()
@@ -71,7 +74,8 @@ it('has base publishable files', function () {
 it('has code quality publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/code-quality';
 
-    expect(is_dir($basePath.'/.github'))->toBeTrue()
+    expect(is_dir($basePath.'/.github'))
+        ->toBeTrue()
         ->and(file_exists($basePath.'/config/essentials.php'))->toBeTrue()
         ->and(file_exists($basePath.'/config/insights.php'))->toBeTrue()
         ->and(file_exists($basePath.'/phpstan.neon'))->toBeTrue()
@@ -82,20 +86,23 @@ it('has code quality publishable files', function () {
 it('has ai publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/ai';
 
-    expect(is_dir($basePath.'/.ai'))->toBeTrue()
+    expect(is_dir($basePath.'/.ai'))
+        ->toBeTrue()
         ->and(is_dir($basePath.'/.claude'))->toBeTrue();
 });
 
 it('has filament publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/filament';
 
-    expect(is_dir($basePath.'/Filament'))->toBeTrue();
+    expect(is_dir($basePath.'/Filament'))
+        ->toBeTrue();
 });
 
 it('has health publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/health';
 
-    expect(file_exists($basePath.'/config/health.php'))->toBeTrue()
+    expect(file_exists($basePath.'/config/health.php'))
+        ->toBeTrue()
         ->and(file_exists($basePath.'/Support/Notifiable.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Support/Notification.php'))->toBeTrue();
 });
@@ -103,7 +110,8 @@ it('has health publishable files', function () {
 it('has backups publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/backups';
 
-    expect(file_exists($basePath.'/config/backup.php'))->toBeTrue();
+    expect(file_exists($basePath.'/config/backup.php'))
+        ->toBeTrue();
 });
 
 it('has protected methods for all publish groups', function () {
@@ -114,7 +122,8 @@ it('has protected methods for all publish groups', function () {
 });
 
 it('has health command class available', function () {
-    expect(Gizburdt\Cook\Commands\Health::class)->toBeString()
+    expect(Gizburdt\Cook\Commands\Health::class)
+        ->toBeString()
         ->and(Gizburdt\Cook\Commands\FailedJobMonitor::class)->toBeString();
 });
 
@@ -123,7 +132,7 @@ it('health config has result stores configured', function () {
 
     expect($content)
         ->toContain('result_stores')
-        ->and($content)->toContain('JsonFileHealthResultStore::class');
+        ->toContain('JsonFileHealthResultStore::class');
 });
 
 it('health config has notifications configured', function () {
@@ -131,8 +140,8 @@ it('health config has notifications configured', function () {
 
     expect($content)
         ->toContain('notifications')
-        ->and($content)->toContain("'enabled' => true")
-        ->and($content)->toContain('App\Support\Health\Notifiable::class');
+        ->toContain("'enabled' => true")
+        ->toContain('App\Support\Health\Notifiable::class');
 });
 
 it('health config has discord webhook url setting', function () {
@@ -140,8 +149,8 @@ it('health config has discord webhook url setting', function () {
 
     expect($content)
         ->toContain("'discord'")
-        ->and($content)->toContain("'webhook_url'")
-        ->and($content)->toContain('HEALTH_DISCORD_WEBHOOK_URL');
+        ->toContain("'webhook_url'")
+        ->toContain('HEALTH_DISCORD_WEBHOOK_URL');
 });
 
 it('health notification file has to discord method', function () {
@@ -149,7 +158,7 @@ it('health notification file has to discord method', function () {
 
     expect($content)
         ->toContain('public function toDiscord()')
-        ->and($content)->toContain('DiscordMessage');
+        ->toContain('DiscordMessage');
 });
 
 it('health notifiable file has route notification for discord method', function () {
@@ -157,7 +166,7 @@ it('health notifiable file has route notification for discord method', function 
 
     expect($content)
         ->toContain('public function routeNotificationForDiscord()')
-        ->and($content)->toContain("config('health.notifications.discord.webhook_url')");
+        ->toContain("config('health.notifications.discord.webhook_url')");
 });
 
 it('backup config has backup source settings', function () {
@@ -165,9 +174,9 @@ it('backup config has backup source settings', function () {
 
     expect($content)
         ->toContain("'backup'")
-        ->and($content)->toContain("'name'")
-        ->and($content)->toContain("'source'")
-        ->and($content)->toContain("'destination'");
+        ->toContain("'name'")
+        ->toContain("'source'")
+        ->toContain("'destination'");
 });
 
 it('backup config has notifications configured for discord', function () {
@@ -175,9 +184,9 @@ it('backup config has notifications configured for discord', function () {
 
     expect($content)
         ->toContain("'notifications'")
-        ->and($content)->toContain("'discord'")
-        ->and($content)->toContain("'webhook_url'")
-        ->and($content)->toContain('BACKUP_DISCORD_WEBHOOK_URL');
+        ->toContain("'discord'")
+        ->toContain("'webhook_url'")
+        ->toContain('BACKUP_DISCORD_WEBHOOK_URL');
 });
 
 it('backup config has monitor backups settings', function () {
@@ -185,7 +194,7 @@ it('backup config has monitor backups settings', function () {
 
     expect($content)
         ->toContain("'monitor_backups'")
-        ->and($content)->toContain("'health_checks'");
+        ->toContain("'health_checks'");
 });
 
 it('backup config has cleanup strategy configured', function () {
@@ -193,8 +202,8 @@ it('backup config has cleanup strategy configured', function () {
 
     expect($content)
         ->toContain("'cleanup'")
-        ->and($content)->toContain("'strategy'")
-        ->and($content)->toContain("'default_strategy'");
+        ->toContain("'strategy'")
+        ->toContain("'default_strategy'");
 });
 
 it('backup config uses backups disk for destination', function () {
@@ -202,7 +211,7 @@ it('backup config uses backups disk for destination', function () {
 
     expect($content)
         ->toContain("'disks'")
-        ->and($content)->toContain("'backups'");
+        ->toContain("'backups'");
 });
 
 it('registers composer as singleton', function () {
@@ -211,7 +220,8 @@ it('registers composer as singleton', function () {
 
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'register');
 
-    expect($reflection->isPublic())->toBeTrue();
+    expect($reflection->isPublic())
+        ->toBeTrue();
 });
 
 it('registers all commands in boot method', function () {
@@ -220,16 +230,16 @@ it('registers all commands in boot method', function () {
 
     expect($content)
         ->toContain('Install::class')
-        ->and($content)->toContain('Base::class')
-        ->and($content)->toContain('Ai::class')
-        ->and($content)->toContain('CodeQuality::class')
-        ->and($content)->toContain('Operations::class')
-        ->and($content)->toContain('Health::class')
-        ->and($content)->toContain('FailedJobMonitor::class')
-        ->and($content)->toContain('Backups::class')
-        ->and($content)->toContain('Filament::class')
-        ->and($content)->toContain('Ui::class')
-        ->and($content)->toContain('Packages::class');
+        ->toContain('Base::class')
+        ->toContain('Ai::class')
+        ->toContain('CodeQuality::class')
+        ->toContain('Operations::class')
+        ->toContain('Health::class')
+        ->toContain('FailedJobMonitor::class')
+        ->toContain('Backups::class')
+        ->toContain('Filament::class')
+        ->toContain('Ui::class')
+        ->toContain('Packages::class');
 });
 
 it('has files helper method', function () {
@@ -242,96 +252,103 @@ it('publishes base group with correct tag', function () {
 
     expect($content)
         ->toContain("'cook-base'")
-        ->and($content)->toContain("'cook-ai'")
-        ->and($content)->toContain("'cook-code-quality'")
-        ->and($content)->toContain("'cook-operations'")
-        ->and($content)->toContain("'cook-health'")
-        ->and($content)->toContain("'cook-failed-job-monitor'")
-        ->and($content)->toContain("'cook-backups'")
-        ->and($content)->toContain("'cook-filament'");
+        ->toContain("'cook-ai'")
+        ->toContain("'cook-code-quality'")
+        ->toContain("'cook-operations'")
+        ->toContain("'cook-health'")
+        ->toContain("'cook-failed-job-monitor'")
+        ->toContain("'cook-backups'")
+        ->toContain("'cook-filament'");
 });
 
 it('base method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'base');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'stubs' => 'stubs'")
-        ->and($content)->toContain("'Models/Model.php' => 'app/Models/Model.php'")
-        ->and($content)->toContain("'Models/Pivot.php' => 'app/Models/Pivot.php'");
+        ->toContain("'Models/Model.php' => 'app/Models/Model.php'")
+        ->toContain("'Models/Pivot.php' => 'app/Models/Pivot.php'");
 });
 
 it('ai method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'ai');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'.ai' => '.ai'")
-        ->and($content)->toContain("'.claude' => '.claude'");
+        ->toContain("'.claude' => '.claude'");
 });
 
 it('code quality method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'codeQuality');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'.github' => '.github'")
-        ->and($content)->toContain("'phpstan.neon' => 'phpstan.neon'")
-        ->and($content)->toContain("'pint.json' => 'pint.json'")
-        ->and($content)->toContain("'rector.php' => 'rector.php'");
+        ->toContain("'phpstan.neon' => 'phpstan.neon'")
+        ->toContain("'pint.json' => 'pint.json'")
+        ->toContain("'rector.php' => 'rector.php'");
 });
 
 it('operations method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'operations');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'config/one-time-operations.php' => 'config/one-time-operations.php'")
-        ->and($content)->toContain("'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub'");
+        ->toContain("'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub'");
 });
 
 it('health method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'health');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'config/health.php' => 'config/health.php'")
-        ->and($content)->toContain("'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php'")
-        ->and($content)->toContain("'Support/Notification.php' => 'app/Support/Health/Notification.php'");
+        ->toContain("'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php'")
+        ->toContain("'Support/Notification.php' => 'app/Support/Health/Notification.php'");
 });
 
 it('failed job monitor method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'failedJobMonitor');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
         ->toContain("'config/failed-job-monitor.php' => 'config/failed-job-monitor.php'")
-        ->and($content)->toContain("'Support/Notifiable.php' => 'app/Support/FailedJobMonitor/Notifiable.php'")
-        ->and($content)->toContain("'Support/Notification.php' => 'app/Support/FailedJobMonitor/Notification.php'");
+        ->toContain("'Support/Notifiable.php' => 'app/Support/FailedJobMonitor/Notifiable.php'")
+        ->toContain("'Support/Notification.php' => 'app/Support/FailedJobMonitor/Notification.php'");
 });
 
 it('backups method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'backups');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
@@ -342,7 +359,8 @@ it('backups method is protected and returns array', function () {
 it('filament method is protected and returns array', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'filament');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
@@ -353,5 +371,6 @@ it('filament method is protected and returns array', function () {
 it('files helper method is protected', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'files');
 
-    expect($reflection->isProtected())->toBeTrue();
+    expect($reflection->isProtected())
+        ->toBeTrue();
 });

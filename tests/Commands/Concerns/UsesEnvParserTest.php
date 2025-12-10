@@ -128,10 +128,8 @@ it('correctly detects existing variable with hasVariable', function () {
 
     expect($parser->testHasVariable($content, 'APP_NAME'))
         ->toBeTrue()
-        ->and($parser->testHasVariable($content, 'APP_ENV'))
-        ->toBeTrue()
-        ->and($parser->testHasVariable($content, 'NON_EXISTENT'))
-        ->toBeFalse();
+        ->and($parser->testHasVariable($content, 'APP_ENV'))->toBeTrue()
+        ->and($parser->testHasVariable($content, 'NON_EXISTENT'))->toBeFalse();
 });
 
 it('handles empty values correctly', function () {

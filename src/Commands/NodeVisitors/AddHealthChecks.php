@@ -10,6 +10,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Nop;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
@@ -105,18 +106,6 @@ class AddHealthChecks extends NodeVisitorAbstract
             return null;
         }
 
-        $lastUseIndex = null;
-
-        foreach ($nodes as $index => $node) {
-            if ($node instanceof Use_) {
-                $lastUseIndex = $index;
-            }
-        }
-
-        if ($lastUseIndex === null) {
-            return null;
-        }
-
         $newUseStatements = [];
 
         foreach ($missingUseStatements as $useStatement) {
@@ -125,9 +114,42 @@ class AddHealthChecks extends NodeVisitorAbstract
             ]);
         }
 
+        // Handle namespaced files where use statements are inside the Namespace node
+        if (isset($nodes[0]) && $nodes[0] instanceof Namespace_) {
+            $lastUseIndex = $this->findLastUseIndex($nodes[0]->stmts);
+
+            if ($lastUseIndex === null) {
+                return null;
+            }
+
+            array_splice($nodes[0]->stmts, $lastUseIndex + 1, 0, $newUseStatements);
+
+            return $nodes;
+        }
+
+        // Handle non-namespaced files
+        $lastUseIndex = $this->findLastUseIndex($nodes);
+
+        if ($lastUseIndex === null) {
+            return null;
+        }
+
         array_splice($nodes, $lastUseIndex + 1, 0, $newUseStatements);
 
         return $nodes;
+    }
+
+    protected function findLastUseIndex(array $nodes): ?int
+    {
+        $lastUseIndex = null;
+
+        foreach ($nodes as $index => $node) {
+            if ($node instanceof Use_) {
+                $lastUseIndex = $index;
+            }
+        }
+
+        return $lastUseIndex;
     }
 
     protected function createHealthChecksMethod(): ClassMethod
