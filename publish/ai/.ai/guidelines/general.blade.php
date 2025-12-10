@@ -32,7 +32,7 @@
     }
 </code-snippet>
 @endverbatim
-- Always include a blank line between new statements, tests included
+- Always include a blank line between new statements, in all folders off the application
 @verbatim
 <code-snippet name="Whitespace" lang="php">
     $foo = 'bar';
