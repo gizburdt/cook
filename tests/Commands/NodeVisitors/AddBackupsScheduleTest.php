@@ -190,10 +190,8 @@ PHP;
         AddBackupsSchedule::class,
     ]);
 
-    expect(substr_count($result, "Schedule::command('backup:clean')"))
-        ->toBe(1)
-        ->and(substr_count($result, "Schedule::command('backup:run')"))
-        ->toBe(1);
+    expect(substr_count($result, "Schedule::command('backup:clean')"))->toBe(1)
+        ->and(substr_count($result, "Schedule::command('backup:run')"))->toBe(1);
 });
 
 function createAddBackupsScheduleParser(): object

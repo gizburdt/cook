@@ -126,8 +126,7 @@ it('correctly detects existing variable with hasVariable', function () {
 
     $parser = createEnvParser($this->tempDir);
 
-    expect($parser->testHasVariable($content, 'APP_NAME'))
-        ->toBeTrue()
+    expect($parser->testHasVariable($content, 'APP_NAME'))->toBeTrue()
         ->and($parser->testHasVariable($content, 'APP_ENV'))->toBeTrue()
         ->and($parser->testHasVariable($content, 'NON_EXISTENT'))->toBeFalse();
 });

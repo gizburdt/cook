@@ -204,10 +204,8 @@ PHP;
         AddHealthChecks::class,
     ]);
 
-    expect(substr_count($result, 'use Spatie\Health\Facades\Health'))
-        ->toBe(1)
-        ->and(substr_count($result, 'use Spatie\Health\Checks\Checks\CacheCheck'))
-        ->toBe(1);
+    expect(substr_count($result, 'use Spatie\Health\Facades\Health'))->toBe(1)
+        ->and(substr_count($result, 'use Spatie\Health\Checks\Checks\CacheCheck'))->toBe(1);
 });
 
 it('preserves existing boot method content', function () {

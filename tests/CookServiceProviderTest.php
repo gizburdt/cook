@@ -38,8 +38,7 @@ it('has protected methods for publishable groups', function () {
 });
 
 it('has all command classes available', function () {
-    expect(Install::class)
-        ->toBeString()
+    expect(Install::class)->toBeString()
         ->and(Publish::class)->toBeString()
         ->and(Operations::class)->toBeString()
         ->and(Base::class)->toBeString()
@@ -54,16 +53,14 @@ it('has all command classes available', function () {
 it('has operations publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/operations';
 
-    expect(file_exists($basePath.'/config/one-time-operations.php'))
-        ->toBeTrue()
+    expect(file_exists($basePath.'/config/one-time-operations.php'))->toBeTrue()
         ->and(file_exists($basePath.'/stubs/one-time-operation.stub'))->toBeTrue();
 });
 
 it('has base publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/base';
 
-    expect(is_dir($basePath.'/stubs'))
-        ->toBeTrue()
+    expect(is_dir($basePath.'/stubs'))->toBeTrue()
         ->and(file_exists($basePath.'/Http/Resources/Resource.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Models/Model.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Models/Pivot.php'))->toBeTrue()
@@ -74,8 +71,7 @@ it('has base publishable files', function () {
 it('has code quality publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/code-quality';
 
-    expect(is_dir($basePath.'/.github'))
-        ->toBeTrue()
+    expect(is_dir($basePath.'/.github'))->toBeTrue()
         ->and(file_exists($basePath.'/config/essentials.php'))->toBeTrue()
         ->and(file_exists($basePath.'/config/insights.php'))->toBeTrue()
         ->and(file_exists($basePath.'/phpstan.neon'))->toBeTrue()
@@ -86,8 +82,7 @@ it('has code quality publishable files', function () {
 it('has ai publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/ai';
 
-    expect(is_dir($basePath.'/.ai'))
-        ->toBeTrue()
+    expect(is_dir($basePath.'/.ai'))->toBeTrue()
         ->and(is_dir($basePath.'/.claude'))->toBeTrue();
 });
 
@@ -101,8 +96,7 @@ it('has filament publishable files', function () {
 it('has health publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/health';
 
-    expect(file_exists($basePath.'/config/health.php'))
-        ->toBeTrue()
+    expect(file_exists($basePath.'/config/health.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Support/Notifiable.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Support/Notification.php'))->toBeTrue();
 });
@@ -122,8 +116,7 @@ it('has protected methods for all publish groups', function () {
 });
 
 it('has health command class available', function () {
-    expect(Gizburdt\Cook\Commands\Health::class)
-        ->toBeString()
+    expect(Gizburdt\Cook\Commands\Health::class)->toBeString()
         ->and(Gizburdt\Cook\Commands\FailedJobMonitor::class)->toBeString();
 });
 
@@ -226,6 +219,7 @@ it('registers composer as singleton', function () {
 
 it('registers all commands in boot method', function () {
     $reflection = new ReflectionMethod(CookServiceProvider::class, 'boot');
+
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)

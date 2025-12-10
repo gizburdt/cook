@@ -3,8 +3,7 @@
 it('has failed job monitor publishable files', function () {
     $basePath = dirname(__DIR__, 2).'/publish/failed-job-monitor';
 
-    expect(file_exists($basePath.'/Support/Notifiable.php'))
-        ->toBeTrue()
+    expect(file_exists($basePath.'/Support/Notifiable.php'))->toBeTrue()
         ->and(file_exists($basePath.'/Support/Notification.php'))->toBeTrue()
         ->and(file_exists($basePath.'/config/failed-job-monitor.php'))->toBeTrue();
 });
