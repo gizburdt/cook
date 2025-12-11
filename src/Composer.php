@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Composer as BaseComposer;
 
@@ -9,11 +10,12 @@ class Composer extends BaseComposer
 {
     public function installPackages(array $packages, string $extra = ''): int
     {
-        $extra = $extra ? (array) $extra : [];
-
-        $packages = collect($packages)->prepend('require')->toArray();
-
-        $command = array_merge($this->findComposer(), $packages, $extra);
+        $command = collect($this->findComposer())
+            ->push('require')
+            ->push($packages)
+            ->push(Arr::wrap($extra))
+            ->flatten()
+            ->toArray();
 
         return $this->getProcess($command)->run();
     }
@@ -30,11 +32,19 @@ class Composer extends BaseComposer
 
     protected function addToConfig(string $key, string $value): int
     {
-        $current = $this->getFromConfig($key);
+        $config = $this->getComposerConfig();
 
-        return $current->doesntContain($value)
-            ? $this->setConfig($key, $current->push($value)->all())
-            : 0;
+        $current = collect(data_get($config, $key) ?? []);
+
+        if ($current->doesntContain($value)) {
+            $current->push($value);
+
+            data_set($config, $key, $current->toArray());
+
+            return $this->writeComposerConfig($config);
+        }
+
+        return 0;
     }
 
     protected function getFromConfig(string $key): Collection
@@ -42,15 +52,6 @@ class Composer extends BaseComposer
         $config = $this->getComposerConfig();
 
         return collect(data_get($config, $key) ?? []);
-    }
-
-    protected function setConfig(string $key, mixed $value): int
-    {
-        $config = $this->getComposerConfig();
-
-        data_set($config, $key, $value);
-
-        return $this->writeComposerConfig($config);
     }
 
     protected function getComposerConfig(): array
