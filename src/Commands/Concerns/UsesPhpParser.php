@@ -46,6 +46,7 @@ trait UsesPhpParser
         // Simple check: serialize and compare
         // New nodes means the structure has changed
         $oldSerialized = serialize($this->getNodeStructure($old));
+
         $newSerialized = serialize($this->getNodeStructure($new));
 
         return $oldSerialized !== $newSerialized;
