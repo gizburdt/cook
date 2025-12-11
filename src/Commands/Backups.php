@@ -80,14 +80,14 @@ class Backups extends Command
 
     protected function addConfig(): void
     {
-        $this->applyVisitors(config_path('filesystems.php'), [
+        $this->applyPhpVisitors(config_path('filesystems.php'), [
             new AddBackupsDisk($this->driver),
         ]);
     }
 
     protected function addSchedule(): void
     {
-        $this->applyVisitors(base_path('routes/console.php'), [
+        $this->applyPhpVisitors(base_path('routes/console.php'), [
             AddBackupsSchedule::class,
         ]);
     }

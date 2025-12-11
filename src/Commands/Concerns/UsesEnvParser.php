@@ -6,12 +6,12 @@ trait UsesEnvParser
 {
     protected function addEnvVariables(array $variables): void
     {
-        $this->addVariablesToFile(base_path('.env'), $variables);
+        $this->addEnvVariablesToFile(base_path('.env'), $variables);
 
-        $this->addVariablesToFile(base_path('.env.example'), $variables);
+        $this->addEnvVariablesToFile(base_path('.env.example'), $variables);
     }
 
-    protected function addVariablesToFile(string $file, array $variables): void
+    protected function addEnvVariablesToFile(string $file, array $variables): void
     {
         if (! $this->files->exists($file)) {
             return;
@@ -25,7 +25,7 @@ trait UsesEnvParser
                     return '';
                 }
 
-                if (! $this->hasVariable($content, $key)) {
+                if (! $this->hasEnvVariable($content, $key)) {
                     return "{$key}={$value}";
                 }
 
@@ -41,7 +41,7 @@ trait UsesEnvParser
         $this->files->put($file, $content);
     }
 
-    protected function hasVariable(string $content, string $key): bool
+    protected function hasEnvVariable(string $content, string $key): bool
     {
         return preg_match('/^'.preg_quote($key, '/').'=/m', $content) === 1;
     }

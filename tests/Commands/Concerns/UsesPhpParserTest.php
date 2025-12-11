@@ -160,12 +160,12 @@ function createPhpParser(): object
 
         public function testParseContent(string $content, array $visitors): string
         {
-            return $this->parseContent($content, $visitors);
+            return $this->parsePhpContent($content, $visitors);
         }
 
         public function testNewParser(): \PhpParser\Parser
         {
-            return $this->newParser();
+            return $this->newPhpParser();
         }
     };
 }
@@ -185,7 +185,7 @@ function createPhpParserWithFilesystem(): object
 
         public function testApplyVisitors(string $file, array $visitors): void
         {
-            $this->applyVisitors($file, $visitors);
+            $this->applyPhpVisitors($file, $visitors);
         }
     };
 }

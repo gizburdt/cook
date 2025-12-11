@@ -176,12 +176,12 @@ function createEnvParser(string $tempDir): object
 
         public function testAddVariablesToFile(string $file, array $variables): void
         {
-            $this->addVariablesToFile($file, $variables);
+            $this->addEnvVariablesToFile($file, $variables);
         }
 
         public function testHasVariable(string $content, string $key): bool
         {
-            return $this->hasVariable($content, $key);
+            return $this->hasEnvVariable($content, $key);
         }
     };
 }

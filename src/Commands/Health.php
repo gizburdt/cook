@@ -66,21 +66,21 @@ class Health extends Command
 
     protected function addRoutes(): void
     {
-        $this->applyVisitors(base_path('routes/web.php'), [
+        $this->applyPhpVisitors(base_path('routes/web.php'), [
             AddHealthRoute::class,
         ]);
     }
 
     protected function addSchedule(): void
     {
-        $this->applyVisitors(base_path('routes/console.php'), [
+        $this->applyPhpVisitors(base_path('routes/console.php'), [
             AddHealthSchedule::class,
         ]);
     }
 
     protected function addChecks(): void
     {
-        $this->applyVisitors(app_path('Providers/AppServiceProvider.php'), [
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
             AddHealthChecks::class,
         ]);
     }

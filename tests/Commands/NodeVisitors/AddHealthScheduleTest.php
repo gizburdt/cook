@@ -140,7 +140,7 @@ function createAddHealthScheduleParser(): object
 
         public function testParseContent(string $content, array $visitors): string
         {
-            return $this->parseContent($content, $visitors);
+            return $this->parsePhpContent($content, $visitors);
         }
     };
 }

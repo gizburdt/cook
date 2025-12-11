@@ -4,40 +4,41 @@ namespace Gizburdt\Cook\Commands\Concerns;
 
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 
 trait UsesPhpParser
 {
-    protected function applyVisitors(string $file, array $visitors): void
+    protected function applyPhpVisitors(string $file, array $visitors): void
     {
         $content = $this->files->get($file);
 
-        $content = $this->parseContent($content, $visitors);
+        $content = $this->parsePhpContent($content, $visitors);
 
         $this->files->put($file, $content);
     }
 
-    protected function parseContent(string $content, array $visitors): string
+    protected function parsePhpContent(string $content, array $visitors): string
     {
-        $parser = $this->newParser();
+        $parser = $this->newPhpParser();
 
         [$old, $tokens] = [
             $parser->parse($content),
             $parser->getTokens(),
         ];
 
-        $new = $this->traverse($old, $visitors);
+        $new = $this->traversePhpNodes($old, $visitors);
 
         return (new Standard)->printFormatPreserving($new, $old, $tokens);
     }
 
-    protected function newParser(): \PhpParser\Parser
+    protected function newPhpParser(): Parser
     {
         return (new ParserFactory)->createForNewestSupportedVersion();
     }
 
-    protected function traverse(array $nodes, array $visitors): array
+    protected function traversePhpNodes(array $nodes, array $visitors): array
     {
         $traverser = new NodeTraverser;
 
