@@ -29,31 +29,4 @@
             ->message->not->toBe('bar')
     </code-snippet>
 @endverbatim
-- Keep assertion of an `expect()` on the same line when the `expect()` has only one assertion. Put it on a new line when it has more assertions
-@verbatim
-    <code-snippet name="Expect" lang="php">
-        expect($user)->toBeInstanceOf(User::class)
-            ->and($post)->toBeInstanceOf(Post::class)
-
-        expect($user)
-            ->toBeInstanceOf(User::class)
-            ->id->toBe(1)
-            ->and($post)->toBeInstanceOf(Post::class)
-    </code-snippet>
-@endverbatim
-- Keep `->and()` and the subsequent assertion on the same line. When multiple assertions will follow, put them on a new line
-@verbatim
-    <code-snippet name="And" lang="php">
-        expect($user)
-            ->toBeInstanceOf(User::class)
-            ->and($post)->toBeInstanceOf(Post::class);
-
-        expect($user)
-            ->toBeInstanceOf(User::class)
-            ->and($post)
-            ->toBeInstanceOf(Post::class)
-            ->message->toBe('foo')
-            ->id->toBe(1);
-    </code-snippet>
-@endverbatim
 
