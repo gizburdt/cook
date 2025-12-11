@@ -6,6 +6,17 @@ use Illuminate\Support\Collection;
 
 trait InstallsPackages
 {
+    protected function tryInstallPackages(): void
+    {
+        if (! $this->hasInstallablePackages($this->packages)) {
+            return;
+        }
+
+        $this->components->info('Installing packages');
+
+        $this->installPackages($this->packages);
+    }
+
     protected function installPackages(array $packages): void
     {
         if (! $this->hasInstallablePackages($packages)) {

@@ -28,11 +28,7 @@ class Ui extends Command
 
         $this->setupDriver();
 
-        if ($this->hasInstallablePackages($this->packages)) {
-            $this->components->info('Installing packages');
-
-            $this->installPackages($this->packages);
-        }
+        $this->tryInstallPackages();
 
         $this->openDocs();
     }

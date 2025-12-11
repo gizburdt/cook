@@ -40,11 +40,7 @@ class Backups extends Command
             '--force' => $this->option('force'),
         ]);
 
-        if ($this->hasInstallablePackages($this->packages)) {
-            $this->components->info('Installing packages');
-
-            $this->installPackages($this->packages);
-        }
+        $this->tryInstallPackages();
 
         $this->addCode();
     }

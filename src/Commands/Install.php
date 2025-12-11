@@ -83,10 +83,6 @@ class Install extends Command
 
     protected function core(): void
     {
-        if ($this->hasInstallablePackages($this->packages)) {
-            $this->components->info('Installing packages');
-
-            $this->installPackages($this->packages);
-        }
+        $this->tryInstallPackages();
     }
 }
