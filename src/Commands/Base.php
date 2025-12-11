@@ -3,6 +3,7 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 use Illuminate\Support\Str;
 
@@ -21,13 +22,17 @@ class Base extends Command
             '--force' => $this->option('force'),
         ]);
 
+        $this->components->info('Updating composer.json');
+
+        $this->composer->addAutoloadFile('app/Support/helpers.php');
+
         $this->components->info('Replacing Eloquent Model');
 
         $this->replaceEloquentModel();
 
-        $this->components->info('Updating composer.json');
+        $this->components->info('Adding password rules');
 
-        $this->composer->addAutoloadFile('app/Support/helpers.php');
+        $this->addPasswordRules();
     }
 
     protected function replaceEloquentModel(): void
@@ -43,7 +48,7 @@ class Base extends Command
         $this->withProgressBar($files, function ($file) {
             $content = $this->files->get($file);
 
-            $content = $this->parseContent($content, [
+            $content = $this->parsePhpContent($content, [
                 RemoveEloquentModel::class,
             ]);
 
@@ -51,5 +56,12 @@ class Base extends Command
         });
 
         $this->line("\n");
+    }
+
+    protected function addPasswordRules(): void
+    {
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
+            AddPasswordRules::class,
+        ]);
     }
 }
