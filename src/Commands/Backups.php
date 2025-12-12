@@ -29,9 +29,10 @@ class Backups extends Command
     public function handle(): void
     {
         $this->driver = select('Which driver?', [
+            'minio' => 'MinIO',
+            'google' => 'Google',
             'local' => 'Local',
-            'google' => 'Google Drive',
-        ], 'google');
+        ], 'minio');
 
         $this->setupDriver();
 
@@ -66,10 +67,20 @@ class Backups extends Command
 
         if ($this->driver === 'google') {
             $this->addEnvVariables([
-                'GOOGLE_DRIVE_CLIENT_ID' => '',
-                'GOOGLE_DRIVE_CLIENT_SECRET' => '',
-                'GOOGLE_DRIVE_REFRESH_TOKEN' => '',
-                'GOOGLE_DRIVE_FOLDER' => '',
+                'BACKUP_GOOGLE_CLIENT_ID' => '',
+                'BACKUP_GOOGLE_CLIENT_SECRET' => '',
+                'BACKUP_GOOGLE_REFRESH_TOKEN' => '',
+                'BACKUP_GOOGLE_FOLDER' => '',
+            ]);
+        }
+
+        if ($this->driver === 'minio') {
+            $this->addEnvVariables([
+                'BACKUP_S3_KEY' => '',
+                'BACKUP_S3_SECRET' => '',
+                'BACKUP_S3_BUCKET' => '',
+                'BACKUP_S3_ENDPOINT' => '',
+                'BACKUP_S3_REGION' => 'eu-central-1',
             ]);
         }
 

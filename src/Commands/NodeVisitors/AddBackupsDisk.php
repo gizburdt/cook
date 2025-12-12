@@ -58,6 +58,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
         $code = match ($this->driver) {
             'local' => $this->getLocalDiskCode(),
             'google' => $this->getGoogleDiskCode(),
+            'minio' => $this->getMinioDiskCode(),
         };
 
         $parser = (new ParserFactory)->createForNewestSupportedVersion();
@@ -93,10 +94,31 @@ PHP;
 return [
     'backups' => [
         'driver' => 'google',
-        'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
-        'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
-        'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
-        'folder' => env('GOOGLE_DRIVE_FOLDER'),
+        'clientId' => env('BACKUP_GOOGLE_CLIENT_ID'),
+        'clientSecret' => env('BACKUP_GOOGLE_CLIENT_SECRET'),
+        'refreshToken' => env('BACKUP_GOOGLE_REFRESH_TOKEN'),
+        'folder' => env('BACKUP_GOOGLE_FOLDER'),
+    ],
+];
+PHP;
+    }
+
+    protected function getMinioDiskCode(): string
+    {
+        return <<<'PHP'
+<?php
+return [
+    'backups' => [
+        'driver' => 's3',
+        'key' => env('BACKUP_S3_KEY'),
+        'secret' => env('BACKUP_S3_SECRET'),
+        'region' => env('BACKUP_S3_REGION'),
+        'bucket' => env('BACKUP_S3_BUCKET'),
+        'url' => env('BACKUP_S3_URL'),
+        'endpoint' => env('BACKUP_S3_ENDPOINT'),
+        'use_path_style_endpoint' => false,
+        'throw' => false,
+        'report' => false,
     ],
 ];
 PHP;

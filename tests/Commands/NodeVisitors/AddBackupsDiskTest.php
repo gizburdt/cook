@@ -56,10 +56,43 @@ PHP;
     expect($result)
         ->toContain("'backups'")
         ->toContain("'driver' => 'google'")
-        ->toContain('GOOGLE_DRIVE_CLIENT_ID')
-        ->toContain('GOOGLE_DRIVE_CLIENT_SECRET')
-        ->toContain('GOOGLE_DRIVE_REFRESH_TOKEN')
-        ->toContain('GOOGLE_DRIVE_FOLDER');
+        ->toContain('BACKUP_GOOGLE_CLIENT_ID')
+        ->toContain('BACKUP_GOOGLE_CLIENT_SECRET')
+        ->toContain('BACKUP_GOOGLE_REFRESH_TOKEN')
+        ->toContain('BACKUP_GOOGLE_FOLDER');
+});
+
+it('adds minio backups disk to filesystems config', function () {
+    $parser = createAddBackupsDiskParser();
+
+    $content = <<<'PHP'
+<?php
+
+return [
+
+    'disks' => [
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+    ],
+
+];
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        new AddBackupsDisk('minio'),
+    ]);
+
+    expect($result)
+        ->toContain("'backups'")
+        ->toContain("'driver' => 's3'")
+        ->toContain('BACKUP_S3_KEY')
+        ->toContain('BACKUP_S3_SECRET')
+        ->toContain('BACKUP_S3_REGION')
+        ->toContain('BACKUP_S3_BUCKET')
+        ->toContain('BACKUP_S3_URL')
+        ->toContain('BACKUP_S3_ENDPOINT');
 });
 
 it('does not add backups disk if it already exists', function () {
