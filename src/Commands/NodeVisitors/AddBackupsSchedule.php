@@ -95,9 +95,7 @@ class AddBackupsSchedule extends NodeVisitorAbstract
             array_splice($nodes, $lastUseIndex + 1, 0, [$useStatement]);
         }
 
-        $needsNop = ! $this->hasBackupCleanCommand || ! $this->hasBackupRunCommand;
-
-        if ($needsNop) {
+        if (! $this->hasBackupCleanCommand || ! $this->hasBackupRunCommand) {
             $nodes[] = new Nop;
         }
 
@@ -106,6 +104,8 @@ class AddBackupsSchedule extends NodeVisitorAbstract
         }
 
         if (! $this->hasBackupRunCommand) {
+            $nodes[] = new Nop;
+
             $nodes[] = $this->createBackupRunCommand();
         }
 
