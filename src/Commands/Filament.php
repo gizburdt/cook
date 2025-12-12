@@ -3,10 +3,13 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Commands\NodeVisitors\AddFilamentConfiguration;
 
 class Filament extends Command
 {
     use InstallsPackages;
+    use UsesPhpParser;
 
     protected $signature = 'cook:filament {--force}';
 
@@ -32,8 +35,17 @@ class Filament extends Command
 
         $this->composer->addScript('post-autoload-dump', '@php artisan filament:upgrade');
 
-        // todo: add developer login to PortalProvider
+        $this->components->info('Adding configuration');
+
+        $this->addConfiguration();
 
         $this->openDocs();
+    }
+
+    protected function addConfiguration(): void
+    {
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
+            AddFilamentConfiguration::class,
+        ]);
     }
 }
