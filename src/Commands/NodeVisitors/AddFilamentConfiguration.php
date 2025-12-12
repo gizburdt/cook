@@ -16,7 +16,7 @@ class AddFilamentConfiguration extends ProviderMethodVisitor
 
     protected function getMethodName(): string
     {
-        return 'livewire';
+        return 'filament';
     }
 
     protected function createMethod(): ClassMethod
@@ -24,7 +24,7 @@ class AddFilamentConfiguration extends ProviderMethodVisitor
         $code = <<<'PHP'
 <?php
 class Temp {
-    protected function livewire(): void
+    protected function filament(): void
     {
         Table::configureUsing(function (Table $table) {
             $table
