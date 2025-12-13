@@ -70,6 +70,7 @@ class CookServiceProvider extends ServiceProvider
             'Models/Concerns' => 'app/Models/Concerns',
             'Policies/Policy.php' => 'app/Policies/Policy.php',
             'Support/helpers.php' => 'app/Support/helpers.php',
+            'routes/local.php' => 'routes/local.php',
         ], 'base');
     }
 

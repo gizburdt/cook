@@ -3,6 +3,7 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 use Illuminate\Support\Str;
@@ -33,6 +34,10 @@ class Base extends Command
         $this->components->info('Adding password rules');
 
         $this->addPasswordRules();
+
+        $this->components->info('Adding local routes');
+
+        $this->addLocalRoutes();
     }
 
     protected function replaceEloquentModel(): void
@@ -62,6 +67,13 @@ class Base extends Command
     {
         $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
             AddPasswordRules::class,
+        ]);
+    }
+
+    protected function addLocalRoutes(): void
+    {
+        $this->applyPhpVisitors(base_path('bootstrap/app.php'), [
+            AddLocalRoutes::class,
         ]);
     }
 }

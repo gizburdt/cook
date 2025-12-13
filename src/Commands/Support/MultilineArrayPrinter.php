@@ -16,10 +16,10 @@ class MultilineArrayPrinter extends Standard
         // Check if we should format as multiline (more than 1 item)
         if (count($node->items) > 1) {
             if ($syntax === Array_::KIND_SHORT) {
-                return '[' . $this->pCommaSeparatedMultiline($node->items, true) . ']';
+                return '['.$this->pCommaSeparatedMultiline($node->items, true).']';
             }
 
-            return 'array(' . $this->pCommaSeparatedMultiline($node->items, true) . ')';
+            return 'array('.$this->pCommaSeparatedMultiline($node->items, true).')';
         }
 
         // Single item or empty - use default formatting
@@ -41,12 +41,12 @@ class MultilineArrayPrinter extends Standard
                 continue;
             }
 
-            $result .= $this->nl . $this->p($node) . ',';
+            $result .= $this->nl.$this->p($node).',';
         }
 
         $this->outdent();
 
-        return $result . $this->nl;
+        return $result.$this->nl;
     }
 
     protected function pExpr_MethodCall(MethodCall $node): string
@@ -96,10 +96,10 @@ class MultilineArrayPrinter extends Standard
         $this->indent();
 
         foreach ($calls as $call) {
-            $result .= $this->nl . '->' . $this->p($call['name']);
+            $result .= $this->nl.'->'.$this->p($call['name']);
 
             if (! empty($call['args'])) {
-                $result .= '(' . $this->pMaybeMultiline($call['args']) . ')';
+                $result .= '('.$this->pMaybeMultiline($call['args']).')';
             } else {
                 $result .= '()';
             }
