@@ -24,7 +24,7 @@ PHP;
 
     $result = $parser->testParseContent($content, [
         AddPasswordRules::class,
-    ]);
+    ], 'app/Providers/AppServiceProvider.php');
 
     expect($result)
         ->toContain('protected function passwordRules(): void')
@@ -56,11 +56,44 @@ PHP;
 
     $result = $parser->testParseContent($content, [
         AddPasswordRules::class,
-    ]);
+    ], 'app/Providers/AppServiceProvider.php');
 
     // Verify multiline formatting by checking that -> appears at start of lines (with indentation)
     expect($result)
         ->toMatch('/return Password::min\(8\)\s+->mixedCase\(\)\s+->numbers\(\)\s+->symbols\(\)/s');
+});
+
+it('adds one blank line between methods', function () {
+    $parser = createAddPasswordRulesParser();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+
+    public function existingMethod(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddPasswordRules::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    // Check for one blank line between existingMethod() and passwordRules() methods
+    expect($result)
+        ->toMatch('/existingMethod\(\): void[\s]*\{[\s]*\/\/[\s]*\}[\s]*\n[\s]*\n[\s]*protected function passwordRules\(\)/s');
 });
 
 it('adds password use statement', function () {
@@ -156,9 +189,9 @@ function createAddPasswordRulesParser(): object
     {
         use UsesPhpParser;
 
-        public function testParseContent(string $content, array $visitors): string
+        public function testParseContent(string $content, array $visitors, ?string $file = null): string
         {
-            return $this->parsePhpContent($content, $visitors);
+            return $this->parsePhpContent($content, $visitors, $file);
         }
     };
 }

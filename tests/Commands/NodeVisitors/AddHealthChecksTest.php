@@ -236,15 +236,107 @@ PHP;
         ->toContain('$this->registerPolicies()');
 });
 
+it('formats health checks array with each check on new line', function () {
+    $parser = createAddHealthChecksParser();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthChecks::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    // Check that each health check is on a new line in the array
+    expect($result)
+        ->toMatch('/Health::checks\(\[[\s]+CacheCheck::new\(\),[\s]+CpuLoadCheck::new\(\)/s')
+        ->toMatch('/DatabaseCheck::new\(\),[\s]+DatabaseSizeCheck::new\(\)/s')
+        ->toMatch('/RedisCheck::new\(\),[\s]+RedisMemoryUsageCheck::new\(\)/s');
+});
+
+it('formats method chains on new lines within health checks', function () {
+    $parser = createAddHealthChecksParser();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthChecks::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    // Check that method chains are on new lines
+    expect($result)
+        ->toMatch('/CpuLoadCheck::new\(\)[\s]+->failWhenLoadIsHigherInTheLast5Minutes\(2\.0\)[\s]+->failWhenLoadIsHigherInTheLast15Minutes\(1\.5\)/s')
+        ->toMatch('/RedisMemoryUsageCheck::new\(\)[\s]+->warnWhenAboveMb\(900\)[\s]+->failWhenAboveMb\(1000\)/s');
+});
+
+it('adds one blank line between methods', function () {
+    $parser = createAddHealthChecksParser();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+
+    public function existingMethod(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthChecks::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    // Check for one blank line between existingMethod() and healthChecks() methods
+    expect($result)
+        ->toMatch('/existingMethod\(\): void[\s]*\{[\s]*\/\/[\s]*\}[\s]*\n[\s]*\n[\s]*protected function healthChecks\(\)/s');
+});
+
 function createAddHealthChecksParser(): object
 {
     return new class
     {
         use UsesPhpParser;
 
-        public function testParseContent(string $content, array $visitors): string
+        public function testParseContent(string $content, array $visitors, ?string $file = null): string
         {
-            return $this->parsePhpContent($content, $visitors);
+            return $this->parsePhpContent($content, $visitors, $file);
         }
     };
 }

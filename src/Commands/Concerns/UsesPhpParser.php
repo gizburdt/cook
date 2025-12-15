@@ -15,12 +15,12 @@ trait UsesPhpParser
     {
         $content = $this->files->get($file);
 
-        $content = $this->parsePhpContent($content, $visitors);
+        $content = $this->parsePhpContent($content, $visitors, $file);
 
         $this->files->put($file, $content);
     }
 
-    protected function parsePhpContent(string $content, array $visitors): string
+    protected function parsePhpContent(string $content, array $visitors, ?string $file = null): string
     {
         $parser = $this->newPhpParser();
 
@@ -31,6 +31,9 @@ trait UsesPhpParser
 
         $new = $this->traversePhpNodes($old, $visitors);
 
+        // Always use MultilineArrayPrinter for AppServiceProvider to maintain consistent formatting
+        $isAppServiceProvider = $file && str_ends_with($file, 'Providers/AppServiceProvider.php');
+
         // Only use prettyPrintFile for specific visitors that need it
         // All other visitors should preserve formatting to keep comments and whitespace
         foreach ($visitors as $visitor) {
@@ -38,7 +41,13 @@ trait UsesPhpParser
 
             // AddLocalRoutes needs prettyPrintFile for proper multiline argument formatting
             // AddPasswordRules needs prettyPrintFile for proper multiline method chain formatting
-            if (str_contains($visitorClass, 'AddLocalRoutes') || str_contains($visitorClass, 'AddPasswordRules')) {
+            // AddFilamentConfiguration needs prettyPrintFile to preserve blank lines between statements
+            // AddHealthChecks needs prettyPrintFile to preserve blank lines between statements
+            if (str_contains($visitorClass, 'AddLocalRoutes') ||
+                str_contains($visitorClass, 'AddPasswordRules') ||
+                str_contains($visitorClass, 'AddFilamentConfiguration') ||
+                str_contains($visitorClass, 'AddHealthChecks') ||
+                $isAppServiceProvider) {
                 return (new MultilineArrayPrinter)->prettyPrintFile($new);
             }
         }

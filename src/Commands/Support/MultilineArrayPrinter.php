@@ -7,10 +7,53 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Stmt\If_;
+use PhpParser\Node\Stmt\Nop;
 use PhpParser\PrettyPrinter\Standard;
 
 class MultilineArrayPrinter extends Standard
 {
+    protected function pStmts(array $nodes, bool $indent = true): string
+    {
+        if ($indent) {
+            $this->indent();
+        }
+
+        $result = '';
+        $previousNode = null;
+
+        foreach ($nodes as $node) {
+            $comments = $node->getComments();
+            if ($comments) {
+                $result .= $this->nl.$this->pComments($comments);
+                if ($node instanceof Nop) {
+                    continue;
+                }
+            }
+
+            // For Nop nodes, just add a newline
+            if ($node instanceof Nop) {
+                $result .= $this->nl;
+
+                continue;
+            }
+
+            // Add extra newline before Expression statements if previous was also an Expression
+            if ($previousNode instanceof \PhpParser\Node\Stmt\Expression &&
+                $node instanceof \PhpParser\Node\Stmt\Expression) {
+                $result .= $this->nl;
+            }
+
+            $result .= $this->nl.$this->p($node);
+            $previousNode = $node;
+        }
+
+        if ($indent) {
+            $this->outdent();
+        }
+
+        return $result;
+    }
+
     protected function pExpr_Array(Array_ $node): string
     {
         $syntax = $node->getAttribute('kind', Array_::KIND_SHORT);
