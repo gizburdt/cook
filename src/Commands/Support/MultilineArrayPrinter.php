@@ -3,8 +3,10 @@
 namespace Gizburdt\Cook\Commands\Support;
 
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Stmt\If_;
 use PhpParser\PrettyPrinter\Standard;
 
 class MultilineArrayPrinter extends Standard
@@ -51,12 +53,27 @@ class MultilineArrayPrinter extends Standard
 
     protected function pExpr_MethodCall(MethodCall $node): string
     {
+        // Check if this method has multiple named arguments
+        if ($this->hasMultipleNamedArgs($node->args)) {
+            return $this->pMethodCallWithMultilineArgs($node);
+        }
+
         // Check if this is a chained method call with more than one method
         if ($this->hasMultipleMethodCalls($node)) {
             return $this->pMethodCallMultiline($node);
         }
 
         return parent::pExpr_MethodCall($node);
+    }
+
+    protected function pExpr_StaticCall(StaticCall $node): string
+    {
+        // Check if this static call has multiple named arguments
+        if ($this->hasMultipleNamedArgs($node->args)) {
+            return $this->pStaticCallWithMultilineArgs($node);
+        }
+
+        return parent::pExpr_StaticCall($node);
     }
 
     protected function hasMultipleMethodCalls(MethodCall $node): bool
@@ -99,13 +116,178 @@ class MultilineArrayPrinter extends Standard
             $result .= $this->nl.'->'.$this->p($call['name']);
 
             if (! empty($call['args'])) {
-                $result .= '('.$this->pMaybeMultiline($call['args']).')';
+                // Check if we should use multiline formatting for args
+                if ($this->hasMultipleNamedArgs($call['args'])) {
+                    $result .= '(';
+
+                    $this->indent();
+
+                    foreach ($call['args'] as $arg) {
+                        $result .= $this->nl;
+
+                        if ($arg->name !== null) {
+                            $result .= $this->p($arg->name).': ';
+                        }
+
+                        $result .= $this->p($arg->value).',';
+                    }
+
+                    $this->outdent();
+
+                    $result .= $this->nl.')';
+                } else {
+                    $result .= '('.$this->pMaybeMultiline($call['args']).')';
+                }
             } else {
                 $result .= '()';
             }
         }
 
         $this->outdent();
+
+        return $result;
+    }
+
+    protected function pExpr_Closure(Closure $node): string
+    {
+        $result = 'function';
+
+        if ($node->static) {
+            $result = 'static '.$result;
+        }
+
+        if ($node->byRef) {
+            $result .= '&';
+        }
+
+        $result .= '(';
+
+        if (! empty($node->params)) {
+            $result .= $this->pCommaSeparated($node->params);
+        }
+
+        $result .= ')';
+
+        if (! empty($node->uses)) {
+            $result .= ' use('.$this->pCommaSeparated($node->uses).')';
+        }
+
+        if ($node->returnType !== null) {
+            $result .= ': '.$this->p($node->returnType);
+        }
+
+        $result .= ' {';
+
+        $this->indent();
+
+        foreach ($node->stmts as $stmt) {
+            $result .= $this->nl.$this->p($stmt);
+        }
+
+        $this->outdent();
+
+        $result .= $this->nl.'}';
+
+        return $result;
+    }
+
+    protected function pStmt_If(If_ $node): string
+    {
+        $result = 'if ('.$this->p($node->cond).') {';
+
+        $this->indent();
+
+        foreach ($node->stmts as $stmt) {
+            $result .= $this->nl.$this->p($stmt);
+        }
+
+        $this->outdent();
+
+        $result .= $this->nl.'}';
+
+        if (! empty($node->elseifs)) {
+            foreach ($node->elseifs as $elseif) {
+                $result .= ' '.$this->p($elseif);
+            }
+        }
+
+        if ($node->else !== null) {
+            $result .= ' '.$this->p($node->else);
+        }
+
+        return $result;
+    }
+
+    protected function hasMultipleNamedArgs(array $args): bool
+    {
+        if (count($args) <= 1) {
+            return false;
+        }
+
+        // Check if any argument has a name (named argument)
+        $hasNamedArgs = false;
+
+        foreach ($args as $arg) {
+            if ($arg->name !== null) {
+                $hasNamedArgs = true;
+
+                break;
+            }
+        }
+
+        return $hasNamedArgs;
+    }
+
+    protected function pMethodCallWithMultilineArgs(MethodCall $node): string
+    {
+        $result = $this->p($node->var).'->'.$this->p($node->name).'(';
+
+        if (! empty($node->args)) {
+            $this->indent();
+
+            foreach ($node->args as $arg) {
+                $result .= $this->nl;
+
+                if ($arg->name !== null) {
+                    $result .= $this->p($arg->name).': ';
+                }
+
+                $result .= $this->p($arg->value).',';
+            }
+
+            $this->outdent();
+
+            $result .= $this->nl;
+        }
+
+        $result .= ')';
+
+        return $result;
+    }
+
+    protected function pStaticCallWithMultilineArgs(StaticCall $node): string
+    {
+        $result = $this->p($node->class).'::'.$this->p($node->name).'(';
+
+        if (! empty($node->args)) {
+            $this->indent();
+
+            foreach ($node->args as $arg) {
+                $result .= $this->nl;
+
+                if ($arg->name !== null) {
+                    $result .= $this->p($arg->name).': ';
+                }
+
+                $result .= $this->p($arg->value).',';
+            }
+
+            $this->outdent();
+
+            $result .= $this->nl;
+        }
+
+        $result .= ')';
 
         return $result;
     }

@@ -31,6 +31,16 @@ trait UsesPhpParser
 
         $new = $this->traversePhpNodes($old, $visitors);
 
+        // Check if using AddLocalRoutes visitor, use MultilineArrayPrinter
+        // to ensure proper formatting of method arguments
+        foreach ($visitors as $visitor) {
+            $visitorClass = is_string($visitor) ? $visitor : get_class($visitor);
+
+            if (str_contains($visitorClass, 'AddLocalRoutes')) {
+                return (new MultilineArrayPrinter)->prettyPrintFile($new);
+            }
+        }
+
         // Check if new nodes were added (methods, array items, etc.)
         // If so, use MultilineArrayPrinter for better formatting
         // Otherwise use printFormatPreserving to keep comments and formatting
