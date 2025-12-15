@@ -31,6 +31,11 @@ class Composer extends BaseComposer
         return $this->addToConfig('autoload.files', $file);
     }
 
+    public function allowPlugin(string $plugin): int
+    {
+        return $this->addToConfigAssoc('config.allow-plugins', $plugin, true);
+    }
+
     protected function addToConfig(string $key, string $value): int
     {
         $config = $this->getComposerConfig();
@@ -41,6 +46,25 @@ class Composer extends BaseComposer
             $current->push($value);
 
             data_set($config, $key, $current->toArray());
+
+            return $this->writeComposerConfig($config);
+        }
+
+        return 0;
+    }
+
+    protected function addToConfigAssoc(string $key, string $configKey, mixed $value): int
+    {
+        $config = $this->getComposerConfig();
+
+        $current = data_get($config, $key, []);
+
+        if (! isset($current[$configKey])) {
+            $current[$configKey] = $value;
+
+            ksort($current);
+
+            data_set($config, $key, $current);
 
             return $this->writeComposerConfig($config);
         }

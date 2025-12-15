@@ -33,6 +33,8 @@ class CodeQuality extends Command
             '--force' => $this->option('force'),
         ]);
 
+        $this->composer->allowPlugin('dealerdirect/phpcodesniffer-composer-installer');
+
         $this->tryInstallPackages();
     }
 }
