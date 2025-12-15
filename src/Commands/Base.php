@@ -6,6 +6,7 @@ use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
+use Gizburdt\Cook\Commands\NodeVisitors\RemoveHealthRoute;
 use Illuminate\Support\Str;
 
 class Base extends Command
@@ -38,6 +39,10 @@ class Base extends Command
         $this->components->info('Adding local routes');
 
         $this->addLocalRoutes();
+
+        $this->components->info('Removing health route');
+
+        $this->removeHealthRoute();
     }
 
     protected function replaceEloquentModel(): void
@@ -74,6 +79,13 @@ class Base extends Command
     {
         $this->applyPhpVisitors(base_path('bootstrap/app.php'), [
             AddLocalRoutes::class,
+        ]);
+    }
+
+    protected function removeHealthRoute(): void
+    {
+        $this->applyPhpVisitors(base_path('bootstrap/app.php'), [
+            RemoveHealthRoute::class,
         ]);
     }
 }
