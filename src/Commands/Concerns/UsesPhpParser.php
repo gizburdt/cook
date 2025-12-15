@@ -37,7 +37,8 @@ trait UsesPhpParser
             $visitorClass = is_string($visitor) ? $visitor : get_class($visitor);
 
             // AddLocalRoutes needs prettyPrintFile for proper multiline argument formatting
-            if (str_contains($visitorClass, 'AddLocalRoutes')) {
+            // AddPasswordRules needs prettyPrintFile for proper multiline method chain formatting
+            if (str_contains($visitorClass, 'AddLocalRoutes') || str_contains($visitorClass, 'AddPasswordRules')) {
                 return (new MultilineArrayPrinter)->prettyPrintFile($new);
             }
         }
