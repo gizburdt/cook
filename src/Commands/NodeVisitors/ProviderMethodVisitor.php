@@ -69,9 +69,9 @@ abstract class ProviderMethodVisitor extends NodeVisitorAbstract
                 )
             );
 
-            // If boot method has existing content, add a blank line after the method call
+            // If boot method has existing content, add a blank line before the method call
             if (! empty($node->stmts)) {
-                $node->stmts = array_merge([$methodCall, new Nop], $node->stmts);
+                $node->stmts = array_merge($node->stmts, [new Nop, $methodCall]);
             } else {
                 $node->stmts = [$methodCall];
             }
