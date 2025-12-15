@@ -20,18 +20,10 @@ trait UsesEnvParser
         $content = $this->files->get($file);
 
         $newVariables = collect($variables)
-            ->map(function ($value, $key) use ($content) {
-                if ($value === null || is_int($key)) {
-                    return '';
-                }
-
-                if (! $this->hasEnvVariable($content, $key)) {
-                    return "{$key}={$value}";
-                }
-
-                return null;
-            })
-            ->filter()
+            ->reject(fn ($value, $key) => is_int($key))
+            ->reject(fn ($value, $key) => $value === null)
+            ->reject(fn ($value, $key) => $this->hasEnvVariable($content, $key))
+            ->map(fn ($value, $key) => "{$key}={$value}")
             ->implode("\n");
 
         if ($newVariables !== '') {
