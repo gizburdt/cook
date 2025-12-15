@@ -25,7 +25,7 @@ class Ai extends Command
 
         $this->tryInstallPackages();
 
-        $this->call('boost:install');
+        $this->callInNewProcess('boost:install');
 
         $this->components->info('Updating composer.json');
 

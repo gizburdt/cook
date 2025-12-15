@@ -5,7 +5,7 @@ namespace Gizburdt\Cook\Commands;
 use Gizburdt\Cook\Composer;
 use Illuminate\Console\Command as ConsoleCommand;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Process;
 
 use function Laravel\Prompts\confirm;
 
@@ -20,6 +20,14 @@ abstract class Command extends ConsoleCommand
 
     abstract public function handle();
 
+    protected function callInNewProcess($command): bool
+    {
+        $result = Process::path(base_path())->tty()
+            ->run("php artisan {$command}");
+
+        return ! $result->failed();
+    }
+
     protected function openDocs(): void
     {
         if (! isset($this->docs)) {
@@ -27,9 +35,7 @@ abstract class Command extends ConsoleCommand
         }
 
         if (confirm('Open docs?', default: false)) {
-            $process = new Process(['open', $this->docs]);
-
-            $process->run();
+            Process::path(base_path())->run(['open', $this->docs]);
         }
     }
 }

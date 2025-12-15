@@ -15,52 +15,52 @@ class Install extends Command
         $arguments = ['--force' => $this->option('force')];
 
         // Base
-        if (confirm(label: 'Install base?', hint: 'Recommended on new installation.')) {
+        if (confirm('Install base?', hint: 'Recommended on new installation.')) {
             $this->call('cook:base', $arguments);
         }
 
         // AI
-        if (confirm(label: 'Install ai?')) {
+        if (confirm('Install ai?')) {
             $this->call('cook:ai', $arguments);
         }
 
         // Code quality
-        if (confirm(label: 'Install code quality?')) {
+        if (confirm('Install code quality?')) {
             $this->call('cook:code-quality', $arguments);
         }
 
         // Operations
-        if (confirm(label: 'Install operations?')) {
+        if (confirm('Install operations?')) {
             $this->call('cook:operations', $arguments);
         }
 
         // Health
-        if (confirm(label: 'Run cook:health?')) {
+        if (confirm('Run cook:health?')) {
             $this->call('cook:health', $arguments);
         }
 
         // Failed job monitor
-        if (confirm(label: 'Run cook:failed-job-monitor?')) {
+        if (confirm('Run cook:failed-job-monitor?')) {
             $this->call('cook:failed-job-monitor', $arguments);
         }
 
         // Backups
-        if (confirm(label: 'Run cook:backups?')) {
+        if (confirm('Run cook:backups?')) {
             $this->call('cook:backups', $arguments);
         }
 
         // Filament
-        if (confirm(label: 'Install Filament?')) {
+        if (confirm('Install Filament?')) {
             $this->call('cook:filament', $arguments);
         }
 
         // UI
-        if (confirm(label: 'Install UI?')) {
+        if (confirm('Install UI?')) {
             $this->call('cook:ui', $arguments);
         }
 
         // Packages
-        if (confirm(label: 'Install extra packages?')) {
+        if (confirm('Install extra packages?')) {
             $this->call('cook:packages', $arguments);
         }
     }
