@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
@@ -11,11 +12,22 @@ use Illuminate\Support\Str;
 
 class Base extends Command
 {
+    use InstallsPackages;
     use UsesPhpParser;
 
     protected $signature = 'cook:base {--force}';
 
     protected $description = 'Install base';
+
+    protected array $packages = [
+        'barryvdh/laravel-debugbar' => 'dev',
+        'laracasts/presenter' => 'require',
+        'laravel/horizon' => 'require',
+        'laravel/pail' => 'dev',
+        'laravel/prompts' => 'require',
+        'lorisleiva/laravel-actions' => 'require',
+        'spatie/laravel-ray' => 'require',
+    ];
 
     public function handle(): void
     {
@@ -23,6 +35,8 @@ class Base extends Command
             '--tag' => 'cook-base',
             '--force' => $this->option('force'),
         ]);
+
+        $this->tryInstallPackages();
 
         $this->components->info('Updating composer.json');
 

@@ -2,36 +2,20 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-
 use function Laravel\Prompts\confirm;
 
 class Install extends Command
 {
-    use InstallsPackages;
-
     protected $signature = 'cook:install {--force}';
 
     protected $description = 'Install';
 
-    protected array $packages = [
-        'barryvdh/laravel-debugbar' => 'dev',
-        'laracasts/presenter' => 'require',
-        'laravel/horizon' => 'require',
-        'laravel/pail' => 'dev',
-        'laravel/prompts' => 'require',
-        'lorisleiva/laravel-actions' => 'require',
-        'spatie/laravel-ray' => 'require',
-    ];
-
     public function handle(): void
     {
-        $this->core();
-
         $arguments = ['--force' => $this->option('force')];
 
         // Base
-        if (confirm(label: 'Install base?')) {
+        if (confirm(label: 'Install base?', hint: 'Recommended on new installation.')) {
             $this->call('cook:base', $arguments);
         }
 
@@ -79,10 +63,5 @@ class Install extends Command
         if (confirm(label: 'Install extra packages?')) {
             $this->call('cook:packages', $arguments);
         }
-    }
-
-    protected function core(): void
-    {
-        $this->tryInstallPackages();
     }
 }
