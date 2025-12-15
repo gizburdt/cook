@@ -68,7 +68,12 @@ class AddBackupsDisk extends NodeVisitorAbstract
         /** @var Array_ $array */
         $array = $ast[0]->expr;
 
-        return $array->items[0];
+        $item = $array->items[0];
+
+        // Mark this as a new item that needs a blank line before it
+        $item->setAttribute('needsBlankLine', true);
+
+        return $item;
     }
 
     protected function getLocalDiskCode(): string
