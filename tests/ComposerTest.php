@@ -93,6 +93,22 @@ it('builds correct command for install packages with extra', function () {
         ->toContain('--dev');
 });
 
+it('filters empty strings from command when extra is empty', function () {
+    createComposerJson($this->composerJsonPath, []);
+
+    $capturedCommand = null;
+
+    $composer = createComposerWithProcessCapture($this->tempDir, $capturedCommand);
+
+    $composer->installPackages(['laravel/sanctum'], '');
+
+    expect($capturedCommand)
+        ->not->toBeNull()
+        ->toContain('require')
+        ->toContain('laravel/sanctum')
+        ->not->toContain('');
+});
+
 it('actually writes script to composer.json when no scripts exist', function () {
     createComposerJson($this->composerJsonPath, [
         'name' => 'test/package',

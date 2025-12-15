@@ -15,6 +15,7 @@ class Composer extends BaseComposer
             ->push($packages)
             ->push(Arr::wrap($extra))
             ->flatten()
+            ->filter(fn ($value) => $value !== '')
             ->toArray();
 
         return $this->getProcess($command)->run();
