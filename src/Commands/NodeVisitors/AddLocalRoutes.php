@@ -58,9 +58,33 @@ class AddLocalRoutes extends NodeVisitorAbstract
             return null;
         }
 
-        $thenArg = $this->createThenArgument();
+        // Check if 'then' argument already exists
+        $thenArgIndex = null;
 
-        $node->args[] = $thenArg;
+        foreach ($node->args as $index => $arg) {
+            if ($arg->name instanceof Identifier && $arg->name->name === 'then') {
+                $thenArgIndex = $index;
+
+                break;
+            }
+        }
+
+        if ($thenArgIndex !== null) {
+            // Update existing 'then' argument
+            $existingClosure = $node->args[$thenArgIndex]->value;
+
+            if ($existingClosure instanceof Closure) {
+                // Add our if statement to the existing closure
+                $ifStmt = $this->createIfStatement();
+
+                $existingClosure->stmts[] = $ifStmt;
+            }
+        } else {
+            // Add new 'then' argument
+            $thenArg = $this->createThenArgument();
+
+            $node->args[] = $thenArg;
+        }
 
         return $node;
     }
@@ -92,7 +116,7 @@ class AddLocalRoutes extends NodeVisitorAbstract
         return $nodes;
     }
 
-    protected function createThenArgument(): Arg
+    protected function createIfStatement(): If_
     {
         $ifCondition = new FuncCall(
             new Name('app'),
@@ -124,7 +148,7 @@ class AddLocalRoutes extends NodeVisitorAbstract
             ]
         );
 
-        $ifStmt = new If_(
+        return new If_(
             $ifCondition,
             [
                 'stmts' => [
@@ -132,6 +156,11 @@ class AddLocalRoutes extends NodeVisitorAbstract
                 ],
             ]
         );
+    }
+
+    protected function createThenArgument(): Arg
+    {
+        $ifStmt = $this->createIfStatement();
 
         $closure = new Closure([
             'stmts' => [$ifStmt],
