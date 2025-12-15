@@ -15,7 +15,7 @@ class Base extends Command
 
     protected $signature = 'cook:base {--force}';
 
-    protected $description = 'Install classes, helpers, stubs';
+    protected $description = 'Install base';
 
     public function handle(): void
     {

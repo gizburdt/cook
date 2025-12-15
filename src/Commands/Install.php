@@ -31,7 +31,7 @@ class Install extends Command
         $arguments = ['--force' => $this->option('force')];
 
         // Base
-        if (confirm(label: 'Install base (classes, helpers, stubs)?')) {
+        if (confirm(label: 'Install base?')) {
             $this->call('cook:base', $arguments);
         }
 
