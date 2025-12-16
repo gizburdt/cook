@@ -86,6 +86,11 @@ class MultilineArrayPrinter extends Standard
                 continue;
             }
 
+            // Add extra newline for nodes marked with needsBlankLine
+            if ($node->getAttribute('needsBlankLine') === true) {
+                $result .= $this->nl;
+            }
+
             $result .= $this->nl.$this->p($node).',';
         }
 

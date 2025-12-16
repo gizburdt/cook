@@ -43,17 +43,28 @@ trait UsesPhpParser
             // AddPasswordRules needs prettyPrintFile for proper multiline method chain formatting
             // AddFilamentConfiguration needs prettyPrintFile to preserve blank lines between statements
             // AddHealthChecks needs prettyPrintFile to preserve blank lines between statements
+            // AddBackupsDisk needs prettyPrintFile to remove blank lines when removing existing backups disk
             if (str_contains($visitorClass, 'AddLocalRoutes') ||
                 str_contains($visitorClass, 'AddPasswordRules') ||
                 str_contains($visitorClass, 'AddFilamentConfiguration') ||
                 str_contains($visitorClass, 'AddHealthChecks') ||
+                str_contains($visitorClass, 'AddBackupsDisk') ||
                 $isAppServiceProvider) {
-                return (new MultilineArrayPrinter)->prettyPrintFile($new);
+                return $this->removeDoubleBlankLines(
+                    (new MultilineArrayPrinter)->prettyPrintFile($new)
+                );
             }
         }
 
         // For all other cases, use printFormatPreserving to keep comments and formatting
-        return (new FormatPreservingPrinter)->printFormatPreserving($new, $old, $tokens);
+        return $this->removeDoubleBlankLines(
+            (new FormatPreservingPrinter)->printFormatPreserving($new, $old, $tokens)
+        );
+    }
+
+    protected function removeDoubleBlankLines(string $content): string
+    {
+        return preg_replace("/\n{3,}/", "\n\n", $content);
     }
 
     protected function newPhpParser(): Parser

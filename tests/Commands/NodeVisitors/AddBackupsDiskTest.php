@@ -95,7 +95,7 @@ PHP;
         ->toContain('BACKUP_S3_ENDPOINT');
 });
 
-it('does not add backups disk if it already exists', function () {
+it('replaces existing backups disk with new one', function () {
     $parser = createAddBackupsDiskParser();
 
     $content = <<<'PHP'
@@ -123,8 +123,8 @@ PHP;
     ]);
 
     expect($result)
-        ->toContain('existing-backups')
-        ->not->toContain("storage_path('backups')");
+        ->toContain("storage_path('backups')")
+        ->not->toContain('existing-backups');
 });
 
 it('preserves existing disks when adding backups', function () {

@@ -11,31 +11,10 @@ use PhpParser\ParserFactory;
 
 class AddBackupsDisk extends NodeVisitorAbstract
 {
-    protected bool $hasBackupsDisk = false;
-
     public function __construct(protected string $driver) {}
-
-    public function enterNode(Node $node)
-    {
-        if (! $node instanceof ArrayItem) {
-            return null;
-        }
-
-        if (! $node->key instanceof String_ || $node->key->value !== 'backups') {
-            return null;
-        }
-
-        $this->hasBackupsDisk = true;
-
-        return null;
-    }
 
     public function leaveNode(Node $node)
     {
-        if ($this->hasBackupsDisk) {
-            return null;
-        }
-
         if (! $node instanceof ArrayItem) {
             return null;
         }
@@ -48,27 +27,42 @@ class AddBackupsDisk extends NodeVisitorAbstract
             return null;
         }
 
+        $this->removeBackupsDisk($node->value);
+
+        // Voeg nieuwe backups disk toe
         $node->value->items[] = $this->createBackupsDisk();
 
         return $node;
     }
 
+    protected function removeBackupsDisk(Array_ $array): void
+    {
+        $array->items = collect($array->items)
+            ->reject($this->isBackupsDisk(...))
+            ->values()
+            ->all();
+    }
+
+    protected function isBackupsDisk($item): bool
+    {
+        return $item instanceof ArrayItem
+            && $item->key instanceof String_
+            && $item->key->value === 'backups';
+    }
+
     protected function createBackupsDisk(): ArrayItem
     {
         $code = match ($this->driver) {
-            'local' => $this->getLocalDiskCode(),
-            'google' => $this->getGoogleDiskCode(),
-            'minio' => $this->getMinioDiskCode(),
+            'local' => $this->localDiskCode(),
+            'google' => $this->googleDiskCode(),
+            'minio' => $this->minioDiskCode(),
         };
 
         $parser = (new ParserFactory)->createForNewestSupportedVersion();
 
         $ast = $parser->parse($code);
 
-        /** @var Array_ $array */
-        $array = $ast[0]->expr;
-
-        $item = $array->items[0];
+        $item = $ast[0]->expr->items[0];
 
         // Mark this as a new item that needs a blank line before it
         $item->setAttribute('needsBlankLine', true);
@@ -76,7 +70,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
         return $item;
     }
 
-    protected function getLocalDiskCode(): string
+    protected function localDiskCode(): string
     {
         return <<<'PHP'
 <?php
@@ -92,7 +86,7 @@ return [
 PHP;
     }
 
-    protected function getGoogleDiskCode(): string
+    protected function googleDiskCode(): string
     {
         return <<<'PHP'
 <?php
@@ -108,7 +102,7 @@ return [
 PHP;
     }
 
-    protected function getMinioDiskCode(): string
+    protected function minioDiskCode(): string
     {
         return <<<'PHP'
 <?php
