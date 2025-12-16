@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddBackupsSchedule;
 
 it('adds backup clean command to console routes', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -26,7 +25,7 @@ PHP;
 });
 
 it('adds backup run command to console routes', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -48,7 +47,7 @@ PHP;
 });
 
 it('adds schedule use statement', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -70,7 +69,7 @@ PHP;
 });
 
 it('does not add schedule use statement if it already exists', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -93,7 +92,7 @@ PHP;
 });
 
 it('does not add backup clean command if it already exists', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -112,7 +111,7 @@ PHP;
 });
 
 it('does not add backup run command if it already exists', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -131,7 +130,7 @@ PHP;
 });
 
 it('adds only missing backup commands', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -154,7 +153,7 @@ PHP;
 });
 
 it('preserves existing schedules when adding backup schedules', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -175,7 +174,7 @@ PHP;
 });
 
 it('handles nested method calls when detecting existing backup commands', function () {
-    $parser = createAddBackupsScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -194,15 +193,21 @@ PHP;
         ->and(substr_count($result, "Schedule::command('backup:run')"))->toBe(1);
 });
 
-function createAddBackupsScheduleParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds blank line before schedule commands but not between them', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('emails:send')->daily();
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddBackupsSchedule::class,
+    ]);
+
+    expect($result)
+        ->toMatch('/\n\nSchedule::command\(\'backup:clean\'\).*\nSchedule::command\(\'backup:run\'\)/s');
+});

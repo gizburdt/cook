@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddHealthRoute;
 
 it('adds health route to web routes file', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -25,7 +24,7 @@ PHP;
 });
 
 it('adds health controller use statement', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -46,7 +45,7 @@ PHP;
 });
 
 it('does not add route if it already exists', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -70,7 +69,7 @@ PHP;
 });
 
 it('does not add use statement if it already exists', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -92,7 +91,7 @@ PHP;
 });
 
 it('preserves existing routes when adding health route', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -119,7 +118,7 @@ PHP;
 });
 
 it('adds both use statement and route when neither exists', function () {
-    $parser = createAddHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -140,15 +139,23 @@ PHP;
         ->toContain("Route::get('health', HealthCheckJsonResultsController::class)");
 });
 
-function createAddHealthRouteParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds blank line before health route', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthRoute::class,
+    ]);
+
+    expect($result)
+        ->toMatch('/\}\);\n\nRoute::get\(\'health\'/s');
+});

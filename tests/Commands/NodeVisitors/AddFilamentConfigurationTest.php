@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddFilamentConfiguration;
 
 it('adds filament configuration method to app service provider', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -35,7 +34,7 @@ PHP;
 });
 
 it('adds blank lines between statements in filament method', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -65,8 +64,8 @@ PHP;
         ->toMatch('/TextEntry::configureUsing\([^}]+\}\);[\s]*\n[\s]*\n[\s]*TextColumn::configureUsing/s');
 });
 
-it('formats table pagination options on multiple lines', function () {
-    $parser = createAddFilamentConfigurationParser();
+it('formats table pagination options on same line', function () {
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -88,14 +87,13 @@ PHP;
         AddFilamentConfiguration::class,
     ], 'app/Providers/AppServiceProvider.php');
 
-    // Check that pagination options array is on multiple lines
     expect($result)
-        ->toMatch('/->paginationPageOptions\(\[[\s]+10,[\s]+25,[\s]+50,[\s]+100,?[\s]*\]\)/s')
+        ->toContain('->paginationPageOptions([10, 25, 50, 100])')
         ->toContain('->defaultPaginationPageOption(50)');
 });
 
 it('adds method call to boot method', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -118,11 +116,11 @@ PHP;
     ], 'app/Providers/AppServiceProvider.php');
 
     expect($result)
-        ->toContain('$this->filament()');
+        ->toMatch('/\/\/\s*\n\s*\n\s*\$this->filament\(\)/');
 });
 
 it('adds filament use statements', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -152,7 +150,7 @@ PHP;
 });
 
 it('adds one blank line between methods', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -185,7 +183,7 @@ PHP;
 });
 
 it('does not duplicate filament method if it already exists', function () {
-    $parser = createAddFilamentConfigurationParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -216,15 +214,64 @@ PHP;
         ->toBe(1);
 });
 
-function createAddFilamentConfigurationParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds configuration to existing filament method', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors, ?string $file = null): string
-        {
-            return $this->parsePhpContent($content, $visitors, $file);
-        }
-    };
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+
+    protected function filament(): void
+    {
+        // existing method
+    }
 }
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toContain('Table::configureUsing')
+        ->toContain('TextInput::configureUsing')
+        ->toContain('TextEntry::configureUsing')
+        ->toContain('TextColumn::configureUsing');
+});
+
+it('adds filament method call at the bottom of boot method', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        $this->existingCall();
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch('/\$this->existingCall\(\);.*\$this->filament\(\);[\s]*\}/s');
+});

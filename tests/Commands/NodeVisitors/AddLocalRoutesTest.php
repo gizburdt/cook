@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
 
 it('adds local routes to withRouting without then parameter', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -38,7 +37,7 @@ PHP;
 });
 
 it('adds local routes to existing empty then closure', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -73,7 +72,7 @@ PHP;
 });
 
 it('adds local routes to existing then closure with code', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -113,7 +112,7 @@ PHP;
 });
 
 it('adds Route use statement when not present', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -145,7 +144,7 @@ PHP;
 });
 
 it('does not add Route use statement if already present', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -178,7 +177,7 @@ PHP;
 });
 
 it('does not add local routes if already present', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -216,7 +215,7 @@ PHP;
 });
 
 it('adds use statement after existing use statements', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -250,7 +249,7 @@ PHP;
 });
 
 it('preserves existing routes when adding local routes', function () {
-    $parser = createAddLocalRoutesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -288,15 +287,36 @@ PHP;
         ->toContain('then: function');
 });
 
-function createAddLocalRoutesParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('formats withRouting correctly when then parameter does not exist', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        //
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })
+    ->create();
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddLocalRoutes::class,
+    ]);
+
+    expect($result)
+        ->toMatch('/->withRouting\(\n {8}web:/s')
+        ->toMatch('/\n {8}commands:/s')
+        ->toMatch('/\n {8}then: function \(\) \{\n {12}if \(app\(\)->environment\(\'local\'\)\) \{\n {16}Route::middleware\(\'web\'\)->group\(base_path\(\'routes\/local\.php\'\)\);\n {12}\}\n {8}\}/s');
+});

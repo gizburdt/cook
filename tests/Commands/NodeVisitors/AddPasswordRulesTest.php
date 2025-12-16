@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
 
 it('adds password rules method to app service provider', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -36,7 +35,7 @@ PHP;
 });
 
 it('formats password rules with each method call on new line', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -64,7 +63,7 @@ PHP;
 });
 
 it('adds one blank line between methods', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -97,7 +96,7 @@ PHP;
 });
 
 it('adds password use statement', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -124,7 +123,7 @@ PHP;
 });
 
 it('does not duplicate password rules method if it already exists', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -156,7 +155,7 @@ PHP;
 });
 
 it('does not add password use statement if it already exists', function () {
-    $parser = createAddPasswordRulesParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -183,15 +182,83 @@ PHP;
         ->toBe(1);
 });
 
-function createAddPasswordRulesParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds blank line above password rules method', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors, ?string $file = null): string
-        {
-            return $this->parsePhpContent($content, $visitors, $file);
-        }
-    };
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
 }
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddPasswordRules::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch('/\}\n\n {4}protected function passwordRules\(\)/s');
+});
+
+it('adds password rules method call to boot method', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddPasswordRules::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toContain('$this->passwordRules()');
+});
+
+it('adds password rules method call at the bottom of boot method', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        $this->existingCall();
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddPasswordRules::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch('/\$this->existingCall\(\);.*\$this->passwordRules\(\);[\s]*\}/s');
+});

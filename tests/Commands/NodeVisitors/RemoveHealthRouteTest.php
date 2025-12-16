@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveHealthRoute;
 
 it('removes health parameter from withRouting', function () {
-    $parser = createRemoveHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -39,7 +38,7 @@ PHP;
 });
 
 it('preserves other parameters when removing health', function () {
-    $parser = createRemoveHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -73,7 +72,7 @@ PHP;
 });
 
 it('does not modify file if health parameter does not exist', function () {
-    $parser = createRemoveHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -107,7 +106,7 @@ PHP;
 });
 
 it('handles health parameter in different positions', function () {
-    $parser = createRemoveHealthRouteParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -132,16 +131,3 @@ PHP;
         ->toContain("web: __DIR__ . '/../routes/web.php'")
         ->toContain("commands: __DIR__ . '/../routes/console.php'");
 });
-
-function createRemoveHealthRouteParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
-
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}

@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddHealthChecks;
 
 it('adds health checks method to app service provider', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -35,7 +34,7 @@ PHP;
 });
 
 it('adds health checks call to boot method', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -62,7 +61,7 @@ PHP;
 });
 
 it('adds missing use statements for health checks in non-namespaced files', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -92,7 +91,7 @@ PHP;
 });
 
 it('adds use statements in namespaced files', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -121,7 +120,7 @@ PHP;
 });
 
 it('does not duplicate health checks method if it already exists', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -153,7 +152,7 @@ PHP;
 });
 
 it('does not duplicate health checks call if it already exists in boot', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -180,7 +179,7 @@ PHP;
 });
 
 it('does not add use statements that already exist', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -209,7 +208,7 @@ PHP;
 });
 
 it('preserves existing boot method content', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -237,7 +236,7 @@ PHP;
 });
 
 it('formats health checks array with each check on new line', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -267,7 +266,7 @@ PHP;
 });
 
 it('formats method chains on new lines within health checks', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -295,8 +294,41 @@ PHP;
         ->toMatch('/RedisMemoryUsageCheck::new\(\)[\s]+->warnWhenAboveMb\(900\)[\s]+->failWhenAboveMb\(1000\)/s');
 });
 
+it('indents health checks array items and method chains correctly', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthChecks::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch('/Health::checks\(\[\n {12}CacheCheck::new\(\)/s')
+        ->toMatch('/\n {12}DatabaseCheck::new\(\)/s')
+        ->toMatch('/\n {12}RedisCheck::new\(\)/s')
+        ->toMatch('/\n {12}CpuLoadCheck::new\(\)\n {16}->failWhenLoadIsHigherInTheLast5Minutes/s')
+        ->toMatch('/\n {16}->failWhenLoadIsHigherInTheLast15Minutes/s')
+        ->toMatch('/\n {12}RedisMemoryUsageCheck::new\(\)\n {16}->warnWhenAboveMb/s')
+        ->toMatch('/\n {16}->failWhenAboveMb/s');
+});
+
 it('adds one blank line between methods', function () {
-    $parser = createAddHealthChecksParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -328,15 +360,29 @@ PHP;
         ->toMatch('/existingMethod\(\): void[\s]*\{[\s]*\/\/[\s]*\}[\s]*\n[\s]*\n[\s]*protected function healthChecks\(\)/s');
 });
 
-function createAddHealthChecksParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds health checks method call at the bottom of boot method', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors, ?string $file = null): string
-        {
-            return $this->parsePhpContent($content, $visitors, $file);
-        }
-    };
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        $this->existingCall();
+    }
 }
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthChecks::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch('/\$this->existingCall\(\);.*\$this->healthChecks\(\);[\s]*\}/s');
+});

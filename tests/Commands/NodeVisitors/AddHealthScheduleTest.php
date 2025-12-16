@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddHealthSchedule;
 
 it('adds health schedule command to console routes', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -26,7 +25,7 @@ PHP;
 });
 
 it('adds schedule use statement', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -48,7 +47,7 @@ PHP;
 });
 
 it('adds health command use statement', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -70,7 +69,7 @@ PHP;
 });
 
 it('does not add schedule use statement if it already exists', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -93,7 +92,7 @@ PHP;
 });
 
 it('does not add health command if it already exists', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -113,7 +112,7 @@ PHP;
 });
 
 it('preserves existing schedules when adding health schedule', function () {
-    $parser = createAddHealthScheduleParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -132,15 +131,21 @@ PHP;
         ->toContain('Schedule::command(RunHealthChecksCommand::class)->everyMinute()');
 });
 
-function createAddHealthScheduleParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
+it('adds blank line before health schedule', function () {
+    $parser = createPhpParserHelper();
 
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('emails:send')->daily();
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthSchedule::class,
+    ]);
+
+    expect($result)
+        ->toMatch('/->daily\(\);\n\nSchedule::command\(RunHealthChecksCommand::class\)/s');
+});

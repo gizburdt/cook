@@ -1,10 +1,9 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 
 it('removes eloquent model use statement', function () {
-    $parser = createRemoveEloquentModelParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -30,7 +29,7 @@ PHP;
 });
 
 it('preserves other use statements when removing eloquent model', function () {
-    $parser = createRemoveEloquentModelParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -59,7 +58,7 @@ PHP;
 });
 
 it('does nothing when eloquent model use statement does not exist', function () {
-    $parser = createRemoveEloquentModelParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -84,7 +83,7 @@ PHP;
 });
 
 it('handles files without any use statements', function () {
-    $parser = createRemoveEloquentModelParser();
+    $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
 <?php
@@ -105,16 +104,3 @@ PHP;
         ->toContain('namespace App\Models')
         ->toContain('class User');
 });
-
-function createRemoveEloquentModelParser(): object
-{
-    return new class
-    {
-        use UsesPhpParser;
-
-        public function testParseContent(string $content, array $visitors): string
-        {
-            return $this->parsePhpContent($content, $visitors);
-        }
-    };
-}

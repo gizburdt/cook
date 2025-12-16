@@ -3,7 +3,6 @@
 namespace Gizburdt\Cook\Commands\Concerns;
 
 use Gizburdt\Cook\Commands\Support\FormatPreservingPrinter;
-use Gizburdt\Cook\Commands\Support\MultilineArrayPrinter;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\Parser;
@@ -31,40 +30,7 @@ trait UsesPhpParser
 
         $new = $this->traversePhpNodes($old, $visitors);
 
-        // Always use MultilineArrayPrinter for AppServiceProvider to maintain consistent formatting
-        $isAppServiceProvider = $file && str_ends_with($file, 'Providers/AppServiceProvider.php');
-
-        // Only use prettyPrintFile for specific visitors that need it
-        // All other visitors should preserve formatting to keep comments and whitespace
-        foreach ($visitors as $visitor) {
-            $visitorClass = is_string($visitor) ? $visitor : get_class($visitor);
-
-            // AddLocalRoutes needs prettyPrintFile for proper multiline argument formatting
-            // AddPasswordRules needs prettyPrintFile for proper multiline method chain formatting
-            // AddFilamentConfiguration needs prettyPrintFile to preserve blank lines between statements
-            // AddHealthChecks needs prettyPrintFile to preserve blank lines between statements
-            // AddBackupsDisk needs prettyPrintFile to remove blank lines when removing existing backups disk
-            if (str_contains($visitorClass, 'AddLocalRoutes') ||
-                str_contains($visitorClass, 'AddPasswordRules') ||
-                str_contains($visitorClass, 'AddFilamentConfiguration') ||
-                str_contains($visitorClass, 'AddHealthChecks') ||
-                str_contains($visitorClass, 'AddBackupsDisk') ||
-                $isAppServiceProvider) {
-                return $this->removeDoubleBlankLines(
-                    (new MultilineArrayPrinter)->prettyPrintFile($new)
-                );
-            }
-        }
-
-        // For all other cases, use printFormatPreserving to keep comments and formatting
-        return $this->removeDoubleBlankLines(
-            (new FormatPreservingPrinter)->printFormatPreserving($new, $old, $tokens)
-        );
-    }
-
-    protected function removeDoubleBlankLines(string $content): string
-    {
-        return preg_replace("/\n{3,}/", "\n\n", $content);
+        return (new FormatPreservingPrinter)->printFormatPreserving($new, $old, $tokens);
     }
 
     protected function newPhpParser(): Parser
