@@ -37,6 +37,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
 
         $newArray = new Array_(array_merge($existingItems, [$backupsItem]), ['kind' => Array_::KIND_SHORT]);
         $newArray->setAttribute('multiline', true);
+        $newArray->setAttribute('paddedMultiline', true);
 
         $node->value = $newArray;
 
@@ -46,6 +47,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
     protected function getExistingItems(Array_ $array): array
     {
         $items = [];
+        $isFirst = true;
 
         foreach ($array->items as $item) {
             if ($item === null) {
@@ -56,6 +58,11 @@ class AddBackupsDisk extends NodeVisitorAbstract
                 continue;
             }
 
+            if (! $isFirst) {
+                $item->setAttribute('newlineBefore', true);
+            }
+
+            $isFirst = false;
             $items[] = $item;
         }
 

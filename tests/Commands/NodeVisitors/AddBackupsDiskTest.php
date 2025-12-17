@@ -365,3 +365,103 @@ PHP;
     expect($result)
         ->toContain('Filesystem Disks');
 });
+
+it('adds blank lines between all disk items including existing ones', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+return [
+
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+        ],
+
+        's3' => [
+            'driver' => 's3',
+            'bucket' => 'my-bucket',
+        ],
+
+    ],
+
+];
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        new AddBackupsDisk('local'),
+    ]);
+
+    // Check blank lines between all disk items
+    expect($result)
+        ->toMatch('/\'local\'\s*=>\s*\[[^\]]+\],\s*\n\s*\n\s*\'public\'/s')
+        ->toMatch('/\'public\'\s*=>\s*\[[^\]]+\],\s*\n\s*\n\s*\'s3\'/s')
+        ->toMatch('/\'s3\'\s*=>\s*\[[^\]]+\],\s*\n\s*\n\s*\'backups\'/s');
+});
+
+it('formats disk config with correct indentation (8 spaces for config keys)', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+return [
+
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+    ],
+
+];
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        new AddBackupsDisk('local'),
+    ]);
+
+    // Check that config keys within backups disk have exactly 12 spaces indentation (3 levels: return array, disks array, backups array)
+    expect($result)
+        ->toMatch('/\'backups\' => \[\n {12}\'driver\' => \'local\',\n {12}\'root\'/s');
+});
+
+it('adds blank line after disks array open bracket and before close bracket', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+return [
+
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+    ],
+
+];
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        new AddBackupsDisk('local'),
+    ]);
+
+    // Check blank line after 'disks' => [ and before ],
+    expect($result)
+        ->toMatch("/'disks' => \\[\\s*\\n\\s*\\n\\s*'local'/s")
+        ->and($result)->toMatch("/'backups' => \\[[^\\]]+\\],\\s*\\n\\s*\\n\\s*\\],/s");
+});

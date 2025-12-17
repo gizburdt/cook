@@ -223,6 +223,9 @@ class FormatPreservingPrinter extends Standard
     {
         $items = [];
         $newlineBefore = [];
+        $isPadded = $node->getAttribute('paddedMultiline', false);
+
+        $this->indent();
 
         foreach ($node->items as $index => $item) {
             if ($item === null) {
@@ -236,7 +239,21 @@ class FormatPreservingPrinter extends Standard
             $newlineBefore[$index] = $item->getAttribute('newlineBefore', false);
         }
 
-        return '['.$this->pCommaSeparatedMultiline($items, true, $newlineBefore).$this->nl.']';
+        $result = '[';
+
+        if ($isPadded) {
+            $result .= $this->nl;
+        }
+
+        $result .= $this->pCommaSeparatedMultiline($items, true, $newlineBefore);
+
+        $this->outdent();
+
+        if ($isPadded) {
+            return $result.$this->nl.$this->nl.']';
+        }
+
+        return $result.$this->nl.']';
     }
 
     protected function pArrayItem(ArrayItem $node): string
@@ -273,7 +290,7 @@ class FormatPreservingPrinter extends Standard
                 $result .= $this->nl;
             }
 
-            $result .= $this->nl.$this->indentCode($item);
+            $result .= $this->nl.$item;
 
             if ($index < count($items) - 1 || $trailingComma) {
                 $result .= ',';
@@ -281,10 +298,5 @@ class FormatPreservingPrinter extends Standard
         }
 
         return $result;
-    }
-
-    protected function indentCode(string $code): string
-    {
-        return preg_replace('/\n(?!$|'.$this->nl.')/', $this->nl.'    ', '    '.$code);
     }
 }
