@@ -16,24 +16,30 @@ use PhpParser\NodeVisitorAbstract;
 
 class AddHealthSchedule extends NodeVisitorAbstract
 {
-    protected bool $hasSchedule = false;
+    protected bool $hasHealthSchedule = false;
+
+    protected bool $hasHeartbeatSchedule = false;
 
     protected bool $hasScheduleUse = false;
 
-    protected bool $hasCommandUse = false;
+    protected bool $hasHealthCommandUse = false;
+
+    protected bool $hasHeartbeatCommandUse = false;
 
     public function beforeTraverse(array $nodes)
     {
-        $this->hasSchedule = $this->scheduleExists($nodes);
+        $this->hasHealthSchedule = $this->healthScheduleExists($nodes);
+        $this->hasHeartbeatSchedule = $this->heartbeatScheduleExists($nodes);
         $this->hasScheduleUse = $this->useStatementExists($nodes, 'Illuminate\Support\Facades\Schedule');
-        $this->hasCommandUse = $this->useStatementExists($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
+        $this->hasHealthCommandUse = $this->useStatementExists($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
+        $this->hasHeartbeatCommandUse = $this->useStatementExists($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
 
         return null;
     }
 
     public function afterTraverse(array $nodes)
     {
-        if ($this->hasSchedule) {
+        if ($this->hasHealthSchedule && $this->hasHeartbeatSchedule) {
             return null;
         }
 
@@ -41,23 +47,37 @@ class AddHealthSchedule extends NodeVisitorAbstract
             $nodes = $this->addUseStatement($nodes, 'Illuminate\Support\Facades\Schedule');
         }
 
-        if (! $this->hasCommandUse) {
+        if (! $this->hasHeartbeatCommandUse && ! $this->hasHeartbeatSchedule) {
+            $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
+        }
+
+        if (! $this->hasHealthCommandUse && ! $this->hasHealthSchedule) {
             $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
         }
 
-        $nodes = $this->addSchedule($nodes);
+        $nodes = $this->addSchedules($nodes);
 
         return $nodes;
     }
 
-    protected function scheduleExists(array $nodes): bool
+    protected function healthScheduleExists(array $nodes): bool
+    {
+        return $this->scheduleExistsForCommand($nodes, 'RunHealthChecksCommand');
+    }
+
+    protected function heartbeatScheduleExists(array $nodes): bool
+    {
+        return $this->scheduleExistsForCommand($nodes, 'ScheduleCheckHeartbeatCommand');
+    }
+
+    protected function scheduleExistsForCommand(array $nodes, string $commandClass): bool
     {
         foreach ($nodes as $node) {
             if (! $node instanceof Expression) {
                 continue;
             }
 
-            if ($this->isHealthScheduleCall($node->expr)) {
+            if ($this->isScheduleCallForCommand($node->expr, $commandClass)) {
                 return true;
             }
         }
@@ -65,10 +85,10 @@ class AddHealthSchedule extends NodeVisitorAbstract
         return false;
     }
 
-    protected function isHealthScheduleCall($expr): bool
+    protected function isScheduleCallForCommand($expr, string $commandClass): bool
     {
         if ($expr instanceof MethodCall) {
-            return $this->isHealthScheduleCall($expr->var);
+            return $this->isScheduleCallForCommand($expr->var, $commandClass);
         }
 
         if (! $expr instanceof StaticCall) {
@@ -86,7 +106,7 @@ class AddHealthSchedule extends NodeVisitorAbstract
         if (isset($expr->args[0]) && $expr->args[0]->value instanceof ClassConstFetch) {
             $classConst = $expr->args[0]->value;
 
-            if ($classConst->class instanceof Name && $classConst->class->toString() === 'RunHealthChecksCommand') {
+            if ($classConst->class instanceof Name && $classConst->class->toString() === $commandClass) {
                 return true;
             }
         }
@@ -132,16 +152,37 @@ class AddHealthSchedule extends NodeVisitorAbstract
         return $nodes;
     }
 
-    protected function addSchedule(array $nodes): array
+    protected function addSchedules(array $nodes): array
     {
-        $schedule = new Expression(
+        $addedAny = false;
+
+        if (! $this->hasHeartbeatSchedule) {
+            $nodes[] = new Nop;
+            $nodes[] = $this->createScheduleExpression('ScheduleCheckHeartbeatCommand');
+            $addedAny = true;
+        }
+
+        if (! $this->hasHealthSchedule) {
+            if (! $addedAny) {
+                $nodes[] = new Nop;
+            }
+
+            $nodes[] = $this->createScheduleExpression('RunHealthChecksCommand');
+        }
+
+        return $nodes;
+    }
+
+    protected function createScheduleExpression(string $commandClass): Expression
+    {
+        return new Expression(
             new MethodCall(
                 new StaticCall(
                     new Name('Schedule'),
                     new Identifier('command'),
                     [
                         new Arg(new ClassConstFetch(
-                            new Name('RunHealthChecksCommand'),
+                            new Name($commandClass),
                             new Identifier('class')
                         )),
                     ]
@@ -149,10 +190,5 @@ class AddHealthSchedule extends NodeVisitorAbstract
                 new Identifier('everyMinute')
             )
         );
-
-        $nodes[] = new Nop;
-        $nodes[] = $schedule;
-
-        return $nodes;
     }
 }
