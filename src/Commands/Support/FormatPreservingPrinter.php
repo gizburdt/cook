@@ -115,42 +115,41 @@ class FormatPreservingPrinter extends Standard
             function ($matches) {
                 $checks = $matches[1];
 
-                // Split by the check boundaries - each check starts with a ClassName::new()
+                // All check classes that need to be on their own line
+                $checkClasses = [
+                    'CacheCheck',
+                    'CpuLoadCheck',
+                    'DatabaseConnectionCountCheck',
+                    'DatabaseCheck',
+                    'DatabaseSizeCheck',
+                    'DebugModeCheck',
+                    'EnvironmentCheck',
+                    'HorizonCheck',
+                    'OptimizedAppCheck',
+                    'QueueCheck',
+                    'RedisCheck',
+                    'RedisMemoryUsageCheck',
+                    'ScheduleCheck',
+                    'SecurityAdvisoriesCheck',
+                    'UsedDiskSpaceCheck',
+                ];
+
+                // Put first check on new line
                 $checks = preg_replace(
-                    '/(CacheCheck::new\(\))/',
+                    '/('.$checkClasses[0].'::new\(\))/',
                     "\n            $1",
-                    $checks
+                    $checks,
+                    1
                 );
-                $checks = preg_replace(
-                    '/, (CpuLoadCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
-                $checks = preg_replace(
-                    '/, (DatabaseCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
-                $checks = preg_replace(
-                    '/, (DatabaseSizeCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
-                $checks = preg_replace(
-                    '/, (RedisCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
-                $checks = preg_replace(
-                    '/, (RedisMemoryUsageCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
-                $checks = preg_replace(
-                    '/, (SecurityAdvisoriesCheck::new\(\))/',
-                    ",\n            $1",
-                    $checks
-                );
+
+                // Put remaining checks on new lines
+                foreach ($checkClasses as $checkClass) {
+                    $checks = preg_replace(
+                        '/, ('.$checkClass.'::new\(\))/',
+                        ",\n            $1",
+                        $checks
+                    );
+                }
 
                 // Format CpuLoadCheck method chain on separate lines
                 $checks = preg_replace(
@@ -159,10 +158,24 @@ class FormatPreservingPrinter extends Standard
                     $checks
                 );
 
+                // Format DatabaseConnectionCountCheck method chain on separate lines
+                $checks = preg_replace(
+                    '/(DatabaseConnectionCountCheck::new\(\))(->warnWhenMoreConnectionsThan\([^)]+\))(->failWhenMoreConnectionsThan\([^)]+\))/',
+                    "$1\n                $2\n                $3",
+                    $checks
+                );
+
                 // Format RedisMemoryUsageCheck method chain on separate lines
                 $checks = preg_replace(
                     '/(RedisMemoryUsageCheck::new\(\))(->warnWhenAboveMb\([^)]+\))(->failWhenAboveMb\([^)]+\))/',
                     "$1\n                $2\n                $3",
+                    $checks
+                );
+
+                // Format ScheduleCheck method chain on separate lines
+                $checks = preg_replace(
+                    '/(ScheduleCheck::new\(\))(->heartbeatMaxAgeInMinutes\([^)]+\))/',
+                    "$1\n                $2",
                     $checks
                 );
 

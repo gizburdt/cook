@@ -33,9 +33,17 @@ class AddHealthChecks extends NodeVisitorAbstract
         'Spatie\Health\Facades\Health',
         'Spatie\Health\Checks\Checks\CacheCheck',
         'Spatie\Health\Checks\Checks\DatabaseCheck',
+        'Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck',
         'Spatie\Health\Checks\Checks\DatabaseSizeCheck',
+        'Spatie\Health\Checks\Checks\DebugModeCheck',
+        'Spatie\Health\Checks\Checks\EnvironmentCheck',
+        'Spatie\Health\Checks\Checks\HorizonCheck',
+        'Spatie\Health\Checks\Checks\OptimizedAppCheck',
+        'Spatie\Health\Checks\Checks\QueueCheck',
         'Spatie\Health\Checks\Checks\RedisCheck',
         'Spatie\Health\Checks\Checks\RedisMemoryUsageCheck',
+        'Spatie\Health\Checks\Checks\ScheduleCheck',
+        'Spatie\Health\Checks\Checks\UsedDiskSpaceCheck',
         'Spatie\CpuLoadHealthCheck\CpuLoadCheck',
         'Spatie\SecurityAdvisoriesHealthCheck\SecurityAdvisoriesCheck',
     ];
@@ -226,11 +234,19 @@ class AddHealthChecks extends NodeVisitorAbstract
         $healthChecks = new Array_([
             new ArrayItem($this->createSimpleCheck('CacheCheck')),
             new ArrayItem($this->createCpuLoadCheck()),
+            new ArrayItem($this->createDatabaseConnectionCountCheck()),
             new ArrayItem($this->createSimpleCheck('DatabaseCheck')),
             new ArrayItem($this->createSimpleCheck('DatabaseSizeCheck')),
+            new ArrayItem($this->createSimpleCheck('DebugModeCheck')),
+            new ArrayItem($this->createSimpleCheck('EnvironmentCheck')),
+            new ArrayItem($this->createSimpleCheck('HorizonCheck')),
+            new ArrayItem($this->createSimpleCheck('OptimizedAppCheck')),
+            new ArrayItem($this->createSimpleCheck('QueueCheck')),
             new ArrayItem($this->createSimpleCheck('RedisCheck')),
             new ArrayItem($this->createRedisMemoryUsageCheck()),
+            new ArrayItem($this->createScheduleCheck()),
             new ArrayItem($this->createSimpleCheck('SecurityAdvisoriesCheck')),
+            new ArrayItem($this->createSimpleCheck('UsedDiskSpaceCheck')),
         ], ['kind' => Array_::KIND_SHORT]);
 
         $healthChecksCall = new Expression(
@@ -285,6 +301,34 @@ class AddHealthChecks extends NodeVisitorAbstract
             ),
             new Identifier('failWhenAboveMb'),
             [new Arg(new Int_(1000))]
+        );
+    }
+
+    protected function createDatabaseConnectionCountCheck(): MethodCall
+    {
+        return new MethodCall(
+            new MethodCall(
+                new StaticCall(
+                    new Name('DatabaseConnectionCountCheck'),
+                    new Identifier('new')
+                ),
+                new Identifier('warnWhenMoreConnectionsThan'),
+                [new Arg(new Int_(50))]
+            ),
+            new Identifier('failWhenMoreConnectionsThan'),
+            [new Arg(new Int_(100))]
+        );
+    }
+
+    protected function createScheduleCheck(): MethodCall
+    {
+        return new MethodCall(
+            new StaticCall(
+                new Name('ScheduleCheck'),
+                new Identifier('new')
+            ),
+            new Identifier('heartbeatMaxAgeInMinutes'),
+            [new Arg(new Int_(2))]
         );
     }
 }

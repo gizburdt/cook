@@ -29,8 +29,20 @@ PHP;
         ->toContain('protected function healthChecks(): void')
         ->toContain('Health::checks([')
         ->toContain('CacheCheck::new()')
+        ->toContain('CpuLoadCheck::new()')
+        ->toContain('DatabaseConnectionCountCheck::new()')
         ->toContain('DatabaseCheck::new()')
-        ->toContain('RedisCheck::new()');
+        ->toContain('DatabaseSizeCheck::new()')
+        ->toContain('DebugModeCheck::new()')
+        ->toContain('EnvironmentCheck::new()')
+        ->toContain('HorizonCheck::new()')
+        ->toContain('OptimizedAppCheck::new()')
+        ->toContain('QueueCheck::new()')
+        ->toContain('RedisCheck::new()')
+        ->toContain('RedisMemoryUsageCheck::new()')
+        ->toContain('ScheduleCheck::new()')
+        ->toContain('SecurityAdvisoriesCheck::new()')
+        ->toContain('UsedDiskSpaceCheck::new()');
 });
 
 it('adds health checks call to boot method', function () {
@@ -85,7 +97,17 @@ PHP;
         ->toContain('use Spatie\Health\Facades\Health')
         ->toContain('use Spatie\Health\Checks\Checks\CacheCheck')
         ->toContain('use Spatie\Health\Checks\Checks\DatabaseCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\DatabaseSizeCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\DebugModeCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\EnvironmentCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\HorizonCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\OptimizedAppCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\QueueCheck')
         ->toContain('use Spatie\Health\Checks\Checks\RedisCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\RedisMemoryUsageCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\ScheduleCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck')
         ->toContain('use Spatie\CpuLoadHealthCheck\CpuLoadCheck')
         ->toContain('use Spatie\SecurityAdvisoriesHealthCheck\SecurityAdvisoriesCheck');
 });
@@ -116,7 +138,9 @@ PHP;
     expect($result)
         ->toContain('use Spatie\Health\Facades\Health')
         ->toContain('use Spatie\Health\Checks\Checks\CacheCheck')
-        ->toContain('use Spatie\Health\Checks\Checks\DatabaseCheck');
+        ->toContain('use Spatie\Health\Checks\Checks\DatabaseCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\HorizonCheck')
+        ->toContain('use Spatie\Health\Checks\Checks\ScheduleCheck');
 });
 
 it('does not duplicate health checks method if it already exists', function () {
@@ -262,7 +286,12 @@ PHP;
     expect($result)
         ->toMatch('/Health::checks\(\[[\s]+CacheCheck::new\(\),[\s]+CpuLoadCheck::new\(\)/s')
         ->toMatch('/DatabaseCheck::new\(\),[\s]+DatabaseSizeCheck::new\(\)/s')
-        ->toMatch('/RedisCheck::new\(\),[\s]+RedisMemoryUsageCheck::new\(\)/s');
+        ->toMatch('/DebugModeCheck::new\(\),[\s]+EnvironmentCheck::new\(\)/s')
+        ->toMatch('/HorizonCheck::new\(\),[\s]+OptimizedAppCheck::new\(\)/s')
+        ->toMatch('/QueueCheck::new\(\),[\s]+RedisCheck::new\(\)/s')
+        ->toMatch('/RedisCheck::new\(\),[\s]+RedisMemoryUsageCheck::new\(\)/s')
+        ->toMatch('/ScheduleCheck::new\(\)[\s]+->heartbeatMaxAgeInMinutes\(2\),[\s]+SecurityAdvisoriesCheck::new\(\)/s')
+        ->toMatch('/SecurityAdvisoriesCheck::new\(\),[\s]+UsedDiskSpaceCheck::new\(\)/s');
 });
 
 it('formats method chains on new lines within health checks', function () {
@@ -291,7 +320,9 @@ PHP;
     // Check that method chains are on new lines
     expect($result)
         ->toMatch('/CpuLoadCheck::new\(\)[\s]+->failWhenLoadIsHigherInTheLast5Minutes\(2\.0\)[\s]+->failWhenLoadIsHigherInTheLast15Minutes\(1\.5\)/s')
-        ->toMatch('/RedisMemoryUsageCheck::new\(\)[\s]+->warnWhenAboveMb\(900\)[\s]+->failWhenAboveMb\(1000\)/s');
+        ->toMatch('/DatabaseConnectionCountCheck::new\(\)[\s]+->warnWhenMoreConnectionsThan\(50\)[\s]+->failWhenMoreConnectionsThan\(100\)/s')
+        ->toMatch('/RedisMemoryUsageCheck::new\(\)[\s]+->warnWhenAboveMb\(900\)[\s]+->failWhenAboveMb\(1000\)/s')
+        ->toMatch('/ScheduleCheck::new\(\)[\s]+->heartbeatMaxAgeInMinutes\(2\)/s');
 });
 
 it('indents health checks array items and method chains correctly', function () {
@@ -321,10 +352,14 @@ PHP;
         ->toMatch('/Health::checks\(\[\n {12}CacheCheck::new\(\)/s')
         ->toMatch('/\n {12}DatabaseCheck::new\(\)/s')
         ->toMatch('/\n {12}RedisCheck::new\(\)/s')
+        ->toMatch('/\n {12}HorizonCheck::new\(\)/s')
         ->toMatch('/\n {12}CpuLoadCheck::new\(\)\n {16}->failWhenLoadIsHigherInTheLast5Minutes/s')
         ->toMatch('/\n {16}->failWhenLoadIsHigherInTheLast15Minutes/s')
+        ->toMatch('/\n {12}DatabaseConnectionCountCheck::new\(\)\n {16}->warnWhenMoreConnectionsThan/s')
+        ->toMatch('/\n {16}->failWhenMoreConnectionsThan/s')
         ->toMatch('/\n {12}RedisMemoryUsageCheck::new\(\)\n {16}->warnWhenAboveMb/s')
-        ->toMatch('/\n {16}->failWhenAboveMb/s');
+        ->toMatch('/\n {16}->failWhenAboveMb/s')
+        ->toMatch('/\n {12}ScheduleCheck::new\(\)\n {16}->heartbeatMaxAgeInMinutes/s');
 });
 
 it('adds one blank line between methods', function () {
