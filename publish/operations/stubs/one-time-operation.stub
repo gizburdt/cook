@@ -4,7 +4,7 @@ use TimoKoerber\LaravelOneTimeOperations\OneTimeOperation;
 
 return new class extends OneTimeOperation
 {
-    protected bool $async = false;
+    protected bool $async = true;
 
     protected string $queue = 'default';
 
