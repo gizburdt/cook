@@ -200,7 +200,7 @@ PHP;
         ->toContain('Schedule::command(RunHealthChecksCommand::class)->everyMinute()');
 });
 
-it('adds blank line before heartbeat schedule', function () {
+it('adds blank line before health schedule', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -216,10 +216,10 @@ PHP;
     ]);
 
     expect($result)
-        ->toMatch('/->daily\(\);\n\nSchedule::command\(ScheduleCheckHeartbeatCommand::class\)/s');
+        ->toMatch('/->daily\(\);\n\nSchedule::command\(RunHealthChecksCommand::class\)/s');
 });
 
-it('adds heartbeat before health schedule without blank line between', function () {
+it('adds health before heartbeat schedule without blank line between', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -235,7 +235,7 @@ PHP;
     ]);
 
     expect($result)
-        ->toMatch('/Schedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);\nSchedule::command\(RunHealthChecksCommand::class\)->everyMinute\(\);/s');
+        ->toMatch('/Schedule::command\(RunHealthChecksCommand::class\)->everyMinute\(\);\nSchedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);/s');
 });
 
 it('adds health schedule if only heartbeat exists', function () {

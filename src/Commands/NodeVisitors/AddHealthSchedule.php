@@ -47,12 +47,12 @@ class AddHealthSchedule extends NodeVisitorAbstract
             $nodes = $this->addUseStatement($nodes, 'Illuminate\Support\Facades\Schedule');
         }
 
-        if (! $this->hasHeartbeatCommandUse && ! $this->hasHeartbeatSchedule) {
-            $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
-        }
-
         if (! $this->hasHealthCommandUse && ! $this->hasHealthSchedule) {
             $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
+        }
+
+        if (! $this->hasHeartbeatCommandUse && ! $this->hasHeartbeatSchedule) {
+            $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
         }
 
         $nodes = $this->addSchedules($nodes);
@@ -156,18 +156,18 @@ class AddHealthSchedule extends NodeVisitorAbstract
     {
         $addedAny = false;
 
-        if (! $this->hasHeartbeatSchedule) {
+        if (! $this->hasHealthSchedule) {
             $nodes[] = new Nop;
-            $nodes[] = $this->createScheduleExpression('ScheduleCheckHeartbeatCommand');
+            $nodes[] = $this->createScheduleExpression('RunHealthChecksCommand');
             $addedAny = true;
         }
 
-        if (! $this->hasHealthSchedule) {
+        if (! $this->hasHeartbeatSchedule) {
             if (! $addedAny) {
                 $nodes[] = new Nop;
             }
 
-            $nodes[] = $this->createScheduleExpression('RunHealthChecksCommand');
+            $nodes[] = $this->createScheduleExpression('ScheduleCheckHeartbeatCommand');
         }
 
         return $nodes;
