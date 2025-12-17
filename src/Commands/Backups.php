@@ -52,6 +52,10 @@ class Backups extends Command
         if ($this->driver === 'google') {
             $this->packages['yaza/laravel-google-drive-storage'] = 'require';
         }
+
+        if ($this->driver === 'minio') {
+            $this->packages['league/flysystem-aws-s3-v3'] = 'require';
+        }
     }
 
     protected function addCode(): void

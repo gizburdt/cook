@@ -154,7 +154,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
             'bucket' => ['env' => 'BACKUP_S3_BUCKET'],
             'url' => ['env' => 'BACKUP_S3_URL'],
             'endpoint' => ['env' => 'BACKUP_S3_ENDPOINT'],
-            'use_path_style_endpoint' => false,
+            'use_path_style_endpoint' => true,
             'throw' => false,
             'report' => false,
         ];
