@@ -3,6 +3,9 @@
 /**
  * https://github.com/spatie/laravel-health/blob/main/config/health.php
  */
+
+use Awssat\Notifications\Channels\DiscordWebhookChannel;
+
 return [
 
     'result_stores' => [
@@ -16,7 +19,7 @@ return [
         'enabled' => true,
 
         'notifications' => [
-            App\Support\Health\Notification::class => ['discord'],
+            App\Support\Health\Notification::class => [DiscordWebhookChannel::class],
         ],
 
         'notifiable' => App\Support\Health\Notifiable::class,

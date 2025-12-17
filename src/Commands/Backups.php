@@ -23,6 +23,7 @@ class Backups extends Command
     protected string $driver;
 
     protected array $packages = [
+        'awssat/discord-notification-channel' => 'require',
         'spatie/laravel-backup' => 'require',
     ];
 

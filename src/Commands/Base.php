@@ -25,7 +25,7 @@ class Base extends Command
         'laravel/horizon' => 'require',
         'laravel/pail' => 'dev',
         'laravel/prompts' => 'require',
-        'lorisleiva/laravel-actions' => 'require'
+        'lorisleiva/laravel-actions' => 'require',
     ];
 
     public function handle(): void
