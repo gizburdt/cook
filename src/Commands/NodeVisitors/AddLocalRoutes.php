@@ -19,29 +19,65 @@ use PhpParser\NodeVisitorAbstract;
 
 class AddLocalRoutes extends NodeVisitorAbstract
 {
+    protected bool $hasRouteUse = false;
+
     protected bool $hasLocalRoutes = false;
 
-    protected bool $hasUseRoute = false;
-
-    protected array $existingUseStatements = [];
-
-    public function enterNode(Node $node)
+    public function beforeTraverse(array $nodes)
     {
-        if ($node instanceof Use_) {
-            foreach ($node->uses as $use) {
-                $this->existingUseStatements[] = $use->name->toString();
+        $this->hasRouteUse = $this->hasUseStatement($nodes, 'Illuminate\Support\Facades\Route');
+        $this->hasLocalRoutes = $this->hasLocalRoutesInWithRouting($nodes);
 
-                if ($use->name->toString() === 'Illuminate\Support\Facades\Route') {
-                    $this->hasUseRoute = true;
+        return null;
+    }
+
+    protected function hasUseStatement(array $nodes, string $class): bool
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof Use_) {
+                foreach ($node->uses as $use) {
+                    if ($use->name->toString() === $class) {
+                        return true;
+                    }
                 }
             }
         }
 
-        if ($node instanceof String_ && $node->value === 'routes/local.php') {
-            $this->hasLocalRoutes = true;
+        return false;
+    }
+
+    protected function hasLocalRoutesInWithRouting(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if ($this->nodeContainsLocalRoutes($node)) {
+                return true;
+            }
         }
 
-        return null;
+        return false;
+    }
+
+    protected function nodeContainsLocalRoutes(Node $node): bool
+    {
+        if ($node instanceof String_ && str_contains($node->value, 'routes/local.php')) {
+            return true;
+        }
+
+        foreach ($node->getSubNodeNames() as $name) {
+            $subNode = $node->$name;
+
+            if (is_array($subNode)) {
+                foreach ($subNode as $child) {
+                    if ($child instanceof Node && $this->nodeContainsLocalRoutes($child)) {
+                        return true;
+                    }
+                }
+            } elseif ($subNode instanceof Node && $this->nodeContainsLocalRoutes($subNode)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function leaveNode(Node $node)
@@ -50,51 +86,26 @@ class AddLocalRoutes extends NodeVisitorAbstract
             return null;
         }
 
-        if (! $node instanceof MethodCall) {
-            return null;
+        if ($node instanceof MethodCall && $node->name instanceof Identifier && $node->name->name === 'withRouting') {
+            $this->addLocalRoutesToWithRouting($node);
+
+            return $node;
         }
 
-        if (! $node->name instanceof Identifier || $node->name->name !== 'withRouting') {
-            return null;
-        }
-
-        // Check if 'then' argument already exists
-        $thenArgIndex = null;
-
-        foreach ($node->args as $index => $arg) {
-            if ($arg->name instanceof Identifier && $arg->name->name === 'then') {
-                $thenArgIndex = $index;
-
-                break;
-            }
-        }
-
-        if ($thenArgIndex !== null) {
-            // Update existing 'then' argument
-            $existingClosure = $node->args[$thenArgIndex]->value;
-
-            if ($existingClosure instanceof Closure) {
-                // Add our if statement to the existing closure
-                $ifStmt = $this->createIfStatement();
-
-                $existingClosure->stmts[] = $ifStmt;
-            }
-        } else {
-            // Add new 'then' argument
-            $thenArg = $this->createThenArgument();
-
-            $node->args[] = $thenArg;
-        }
-
-        return $node;
+        return null;
     }
 
     public function afterTraverse(array $nodes)
     {
-        if ($this->hasLocalRoutes || $this->hasUseRoute) {
+        if ($this->hasRouteUse) {
             return null;
         }
 
+        return $this->addUseStatement($nodes, 'Illuminate\Support\Facades\Route');
+    }
+
+    protected function addUseStatement(array $nodes, string $class): array
+    {
         $lastUseIndex = null;
 
         foreach ($nodes as $index => $node) {
@@ -103,75 +114,83 @@ class AddLocalRoutes extends NodeVisitorAbstract
             }
         }
 
-        if ($lastUseIndex === null) {
-            return null;
-        }
-
         $useStatement = new Use_([
-            new UseItem(new Name('Illuminate\Support\Facades\Route')),
+            new UseItem(new Name($class)),
         ]);
 
-        array_splice($nodes, $lastUseIndex + 1, 0, [$useStatement]);
+        if ($lastUseIndex !== null) {
+            array_splice($nodes, $lastUseIndex + 1, 0, [$useStatement]);
+        }
 
         return $nodes;
     }
 
-    protected function createIfStatement(): If_
+    protected function addLocalRoutesToWithRouting(MethodCall $node): void
     {
-        $ifCondition = new FuncCall(
-            new Name('app'),
-            []
-        );
+        $thenArg = $this->findThenArg($node);
 
-        $ifCondition = new MethodCall(
-            $ifCondition,
-            'environment',
+        if ($thenArg === null) {
+            $node->args[] = new Arg(
+                $this->createThenClosure(),
+                false,
+                false,
+                [],
+                new Identifier('then')
+            );
+        } else {
+            $this->addLocalRoutesToThenClosure($thenArg);
+        }
+    }
+
+    protected function findThenArg(MethodCall $node): ?Arg
+    {
+        foreach ($node->args as $arg) {
+            if ($arg->name instanceof Identifier && $arg->name->name === 'then') {
+                return $arg;
+            }
+        }
+
+        return null;
+    }
+
+    protected function addLocalRoutesToThenClosure(Arg $arg): void
+    {
+        if (! $arg->value instanceof Closure) {
+            return;
+        }
+
+        $arg->value->stmts[] = $this->createLocalRoutesIf();
+    }
+
+    protected function createThenClosure(): Closure
+    {
+        return new Closure([
+            'stmts' => [$this->createLocalRoutesIf()],
+        ]);
+    }
+
+    protected function createLocalRoutesIf(): If_
+    {
+        $condition = new MethodCall(
+            new FuncCall(new Name('app')),
+            new Identifier('environment'),
             [new Arg(new String_('local'))]
         );
 
-        $routeCall = new StaticCall(
-            new Name('Route'),
-            'middleware',
-            [new Arg(new String_('web'))]
-        );
-
-        $routeCall = new MethodCall(
-            $routeCall,
-            'group',
-            [
-                new Arg(
-                    new FuncCall(
-                        new Name('base_path'),
-                        [new Arg(new String_('routes/local.php'))]
-                    )
+        $routeCall = new Expression(
+            new MethodCall(
+                new StaticCall(
+                    new Name('Route'),
+                    new Identifier('middleware'),
+                    [new Arg(new String_('web'))]
                 ),
-            ]
+                new Identifier('group'),
+                [new Arg(new FuncCall(new Name('base_path'), [new Arg(new String_('routes/local.php'))]))]
+            )
         );
 
-        return new If_(
-            $ifCondition,
-            [
-                'stmts' => [
-                    new Expression($routeCall),
-                ],
-            ]
-        );
-    }
-
-    protected function createThenArgument(): Arg
-    {
-        $ifStmt = $this->createIfStatement();
-
-        $closure = new Closure([
-            'stmts' => [$ifStmt],
+        return new If_($condition, [
+            'stmts' => [$routeCall],
         ]);
-
-        return new Arg(
-            $closure,
-            false,
-            false,
-            [],
-            new Identifier('then')
-        );
     }
 }

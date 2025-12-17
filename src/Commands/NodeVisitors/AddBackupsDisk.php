@@ -3,15 +3,20 @@
 namespace Gizburdt\Cook\Commands\NodeVisitors;
 
 use PhpParser\Node;
-use PhpParser\Node\ArrayItem;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\ParserFactory;
 
 class AddBackupsDisk extends NodeVisitorAbstract
 {
-    public function __construct(protected string $driver) {}
+    public function __construct(
+        protected string $driver
+    ) {}
 
     public function leaveNode(Node $node)
     {
@@ -27,99 +32,124 @@ class AddBackupsDisk extends NodeVisitorAbstract
             return null;
         }
 
-        $this->removeBackupsDisk($node->value);
+        $existingItems = $this->getExistingItems($node->value);
+        $backupsItem = $this->createBackupsDiskItem();
 
-        // Voeg nieuwe backups disk toe
-        $node->value->items[] = $this->createBackupsDisk();
+        $newArray = new Array_(array_merge($existingItems, [$backupsItem]), ['kind' => Array_::KIND_SHORT]);
+        $newArray->setAttribute('multiline', true);
+
+        $node->value = $newArray;
 
         return $node;
     }
 
-    protected function removeBackupsDisk(Array_ $array): void
+    protected function getExistingItems(Array_ $array): array
     {
-        $array->items = collect($array->items)
-            ->reject($this->isBackupsDisk(...))
-            ->values()
-            ->all();
+        $items = [];
+
+        foreach ($array->items as $item) {
+            if ($item === null) {
+                continue;
+            }
+
+            if ($item->key instanceof String_ && $item->key->value === 'backups') {
+                continue;
+            }
+
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
-    protected function isBackupsDisk($item): bool
+    protected function createBackupsDiskItem(): ArrayItem
     {
-        return $item instanceof ArrayItem
-            && $item->key instanceof String_
-            && $item->key->value === 'backups';
-    }
-
-    protected function createBackupsDisk(): ArrayItem
-    {
-        $code = match ($this->driver) {
-            'local' => $this->localDiskCode(),
-            'google' => $this->googleDiskCode(),
-            'minio' => $this->minioDiskCode(),
+        $config = match ($this->driver) {
+            'local' => $this->getLocalConfig(),
+            'google' => $this->getGoogleConfig(),
+            'minio' => $this->getMinioConfig(),
+            default => [],
         };
 
-        $parser = (new ParserFactory)->createForNewestSupportedVersion();
+        $items = [];
 
-        $ast = $parser->parse($code);
+        foreach ($config as $key => $value) {
+            $items[] = new ArrayItem(
+                $this->createValue($value),
+                new String_($key)
+            );
+        }
 
-        $item = $ast[0]->expr->items[0];
+        $backupsArray = new Array_($items, ['kind' => Array_::KIND_SHORT]);
+        $backupsArray->setAttribute('multiline', true);
 
-        // Mark this as a new item that needs a blank line before it
-        $item->setAttribute('needsBlankLine', true);
+        $backupsItem = new ArrayItem(
+            $backupsArray,
+            new String_('backups')
+        );
+        $backupsItem->setAttribute('newlineBefore', true);
 
-        return $item;
+        return $backupsItem;
     }
 
-    protected function localDiskCode(): string
+    protected function createValue(mixed $value): Node\Expr
     {
-        return <<<'PHP'
-<?php
-return [
-    'backups' => [
-        'driver' => 'local',
-        'root' => storage_path('backups'),
-        'serve' => true,
-        'throw' => false,
-        'report' => false,
-    ],
-];
-PHP;
+        if (is_bool($value)) {
+            return new ConstFetch(new Name($value ? 'true' : 'false'));
+        }
+
+        if (is_array($value) && isset($value['func'])) {
+            return new FuncCall(
+                new Name($value['func']),
+                [new Arg(new String_($value['arg']))]
+            );
+        }
+
+        if (is_array($value) && isset($value['env'])) {
+            return new FuncCall(
+                new Name('env'),
+                [new Arg(new String_($value['env']))]
+            );
+        }
+
+        return new String_($value);
     }
 
-    protected function googleDiskCode(): string
+    protected function getLocalConfig(): array
     {
-        return <<<'PHP'
-<?php
-return [
-    'backups' => [
-        'driver' => 'google',
-        'clientId' => env('BACKUP_GOOGLE_CLIENT_ID'),
-        'clientSecret' => env('BACKUP_GOOGLE_CLIENT_SECRET'),
-        'refreshToken' => env('BACKUP_GOOGLE_REFRESH_TOKEN'),
-        'folder' => env('BACKUP_GOOGLE_FOLDER'),
-    ],
-];
-PHP;
+        return [
+            'driver' => 'local',
+            'root' => ['func' => 'storage_path', 'arg' => 'backups'],
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+        ];
     }
 
-    protected function minioDiskCode(): string
+    protected function getGoogleConfig(): array
     {
-        return <<<'PHP'
-<?php
-return [
-    'backups' => [
-        'driver' => 's3',
-        'key' => env('BACKUP_S3_KEY'),
-        'secret' => env('BACKUP_S3_SECRET'),
-        'region' => env('BACKUP_S3_REGION'),
-        'bucket' => env('BACKUP_S3_BUCKET'),
-        'url' => env('BACKUP_S3_URL'),
-        'endpoint' => env('BACKUP_S3_ENDPOINT'),
-        'use_path_style_endpoint' => false,
-        'throw' => false,
-        'report' => false,
-    ],
-];
-PHP;
+        return [
+            'driver' => 'google',
+            'clientId' => ['env' => 'BACKUP_GOOGLE_CLIENT_ID'],
+            'clientSecret' => ['env' => 'BACKUP_GOOGLE_CLIENT_SECRET'],
+            'refreshToken' => ['env' => 'BACKUP_GOOGLE_REFRESH_TOKEN'],
+            'folder' => ['env' => 'BACKUP_GOOGLE_FOLDER'],
+        ];
+    }
+
+    protected function getMinioConfig(): array
+    {
+        return [
+            'driver' => 's3',
+            'key' => ['env' => 'BACKUP_S3_KEY'],
+            'secret' => ['env' => 'BACKUP_S3_SECRET'],
+            'region' => ['env' => 'BACKUP_S3_REGION'],
+            'bucket' => ['env' => 'BACKUP_S3_BUCKET'],
+            'url' => ['env' => 'BACKUP_S3_URL'],
+            'endpoint' => ['env' => 'BACKUP_S3_ENDPOINT'],
+            'use_path_style_endpoint' => false,
+            'throw' => false,
+            'report' => false,
+        ];
     }
 }

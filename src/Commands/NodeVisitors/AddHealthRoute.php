@@ -2,7 +2,6 @@
 
 namespace Gizburdt\Cook\Commands\NodeVisitors;
 
-use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\StaticCall;
@@ -17,41 +16,83 @@ use PhpParser\NodeVisitorAbstract;
 
 class AddHealthRoute extends NodeVisitorAbstract
 {
-    protected bool $hasUseStatement = false;
-
     protected bool $hasRoute = false;
 
-    public function enterNode(Node $node)
+    protected bool $hasUseStatement = false;
+
+    public function beforeTraverse(array $nodes)
     {
-        if ($node instanceof Use_) {
-            foreach ($node->uses as $use) {
-                if ($use->name->toString() === 'Spatie\Health\Http\Controllers\HealthCheckJsonResultsController') {
-                    $this->hasUseStatement = true;
-                }
-            }
-        }
-
-        if ($node instanceof Expression && $node->expr instanceof StaticCall) {
-            $call = $node->expr;
-
-            if ($call->name instanceof Identifier && $call->name->name === 'get') {
-                if (isset($call->args[0]) && $call->args[0]->value instanceof String_) {
-                    if ($call->args[0]->value->value === 'health') {
-                        $this->hasRoute = true;
-                    }
-                }
-            }
-        }
+        $this->hasRoute = $this->routeExists($nodes);
+        $this->hasUseStatement = $this->useStatementExists($nodes);
 
         return null;
     }
 
     public function afterTraverse(array $nodes)
     {
-        if ($this->hasUseStatement && $this->hasRoute) {
+        if ($this->hasRoute) {
             return null;
         }
 
+        if (! $this->hasUseStatement) {
+            $nodes = $this->addUseStatement($nodes);
+        }
+
+        $nodes = $this->addRoute($nodes);
+
+        return $nodes;
+    }
+
+    protected function routeExists(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if (! $node instanceof Expression) {
+                continue;
+            }
+
+            if (! $node->expr instanceof StaticCall) {
+                continue;
+            }
+
+            $call = $node->expr;
+
+            if (! $call->class instanceof Name || $call->class->toString() !== 'Route') {
+                continue;
+            }
+
+            if (! $call->name instanceof Identifier || $call->name->name !== 'get') {
+                continue;
+            }
+
+            if (isset($call->args[0]) && $call->args[0]->value instanceof String_) {
+                if ($call->args[0]->value->value === 'health') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function useStatementExists(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if (! $node instanceof Use_) {
+                continue;
+            }
+
+            foreach ($node->uses as $use) {
+                if ($use->name->toString() === 'Spatie\Health\Http\Controllers\HealthCheckJsonResultsController') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function addUseStatement(array $nodes): array
+    {
         $lastUseIndex = null;
 
         foreach ($nodes as $index => $node) {
@@ -60,35 +101,35 @@ class AddHealthRoute extends NodeVisitorAbstract
             }
         }
 
-        if (! $this->hasUseStatement && $lastUseIndex !== null) {
-            $useStatement = new Use_([
-                new UseItem(new Name('Spatie\Health\Http\Controllers\HealthCheckJsonResultsController')),
-            ]);
+        $useStatement = new Use_([
+            new UseItem(new Name('Spatie\Health\Http\Controllers\HealthCheckJsonResultsController')),
+        ]);
 
+        if ($lastUseIndex !== null) {
             array_splice($nodes, $lastUseIndex + 1, 0, [$useStatement]);
         }
 
-        if (! $this->hasRoute) {
-            $route = new Expression(
-                new StaticCall(
-                    new Name('Route'),
-                    'get',
-                    [
-                        new Arg(new String_('health')),
-                        new Arg(
-                            new ClassConstFetch(
-                                new Name('HealthCheckJsonResultsController'),
-                                new Identifier('class')
-                            )
-                        ),
-                    ]
-                )
-            );
+        return $nodes;
+    }
 
-            $nodes[] = new Nop;
+    protected function addRoute(array $nodes): array
+    {
+        $route = new Expression(
+            new StaticCall(
+                new Name('Route'),
+                new Identifier('get'),
+                [
+                    new Arg(new String_('health')),
+                    new Arg(new ClassConstFetch(
+                        new Name('HealthCheckJsonResultsController'),
+                        new Identifier('class')
+                    )),
+                ]
+            )
+        );
 
-            $nodes[] = $route;
-        }
+        $nodes[] = new Nop;
+        $nodes[] = $route;
 
         return $nodes;
     }
