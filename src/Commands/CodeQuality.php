@@ -8,7 +8,7 @@ class CodeQuality extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:code-quality {--force}';
+    protected $signature = 'cook:code-quality {--force} {--skip-pint}';
 
     protected $description = 'Install Essentials, PHPstan, Pint, Rector, GitHub Actions';
 
@@ -36,5 +36,7 @@ class CodeQuality extends Command
         $this->composer->allowPlugin('dealerdirect/phpcodesniffer-composer-installer');
 
         $this->tryInstallPackages();
+
+        $this->runPint();
     }
 }

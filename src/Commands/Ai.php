@@ -8,7 +8,7 @@ class Ai extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:ai {--force}';
+    protected $signature = 'cook:ai {--force} {--skip-pint}';
 
     protected $description = 'Install AI';
 
@@ -30,5 +30,7 @@ class Ai extends Command
         $this->components->info('Updating composer.json');
 
         $this->composer->addScript('post-update-cmd', '@php artisan boost:update --ansi');
+
+        $this->runPint();
     }
 }

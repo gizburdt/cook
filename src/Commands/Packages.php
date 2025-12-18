@@ -11,7 +11,7 @@ class Packages extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:packages {--force}';
+    protected $signature = 'cook:packages {--force} {--skip-pint}';
 
     protected $description = 'Install packages';
 
@@ -39,6 +39,8 @@ class Packages extends Command
 
             $this->installPackages($devPackages);
         }
+
+        $this->runPint();
     }
 
     protected function selectPackages(array $chosen, string $scope): array

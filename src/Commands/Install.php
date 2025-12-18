@@ -12,7 +12,10 @@ class Install extends Command
 
     public function handle(): void
     {
-        $arguments = ['--force' => $this->option('force')];
+        $arguments = [
+            '--force' => $this->option('force'),
+            '--skip-pint' => true,
+        ];
 
         // Base
         if (confirm('Install base?', hint: 'Recommended on new installation.')) {
@@ -63,5 +66,7 @@ class Install extends Command
         if (confirm('Install extra packages?')) {
             $this->call('cook:packages', $arguments);
         }
+
+        $this->runPint();
     }
 }

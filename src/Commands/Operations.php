@@ -8,7 +8,7 @@ class Operations extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:operations {--force}';
+    protected $signature = 'cook:operations {--force} {--skip-pint}';
 
     protected $description = 'Publish one-time-operations files';
 
@@ -24,5 +24,7 @@ class Operations extends Command
         ]);
 
         $this->tryInstallPackages();
+
+        $this->runPint();
     }
 }

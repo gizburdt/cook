@@ -11,7 +11,7 @@ class Filament extends Command
     use InstallsPackages;
     use UsesPhpParser;
 
-    protected $signature = 'cook:filament {--force}';
+    protected $signature = 'cook:filament {--force} {--skip-pint}';
 
     protected $description = 'Install Filament';
 
@@ -38,6 +38,8 @@ class Filament extends Command
         $this->components->info('Adding configuration');
 
         $this->addConfiguration();
+
+        $this->runPint();
 
         $this->openDocs();
     }

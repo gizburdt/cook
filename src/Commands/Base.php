@@ -15,7 +15,7 @@ class Base extends Command
     use InstallsPackages;
     use UsesPhpParser;
 
-    protected $signature = 'cook:base {--force}';
+    protected $signature = 'cook:base {--force} {--skip-pint}';
 
     protected $description = 'Install base';
 
@@ -100,5 +100,7 @@ class Base extends Command
         $this->applyPhpVisitors(base_path('bootstrap/app.php'), [
             RemoveHealthRoute::class,
         ]);
+
+        $this->runPint();
     }
 }

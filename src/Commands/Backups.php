@@ -16,7 +16,7 @@ class Backups extends Command
     use UsesEnvParser;
     use UsesPhpParser;
 
-    protected $signature = 'cook:backups {--force}';
+    protected $signature = 'cook:backups {--force} {--skip-pint}';
 
     protected $description = 'Install backups';
 
@@ -99,6 +99,8 @@ class Backups extends Command
         $this->applyPhpVisitors(config_path('filesystems.php'), [
             new AddBackupsDisk($this->driver),
         ]);
+
+        $this->runPint();
     }
 
     protected function addSchedule(): void

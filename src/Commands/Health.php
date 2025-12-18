@@ -15,7 +15,7 @@ class Health extends Command
     use UsesEnvParser;
     use UsesPhpParser;
 
-    protected $signature = 'cook:health {--force}';
+    protected $signature = 'cook:health {--force} {--skip-pint}';
 
     protected $description = 'Install Health';
 
@@ -60,6 +60,8 @@ class Health extends Command
         $this->addEnvVariables([
             'HEALTH_DISCORD_WEBHOOK_URL' => '',
         ]);
+
+        $this->runPint();
 
         $this->openDocs();
     }

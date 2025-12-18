@@ -10,7 +10,7 @@ class FailedJobMonitor extends Command
     use InstallsPackages;
     use UsesEnvParser;
 
-    protected $signature = 'cook:failed-job-monitor {--force}';
+    protected $signature = 'cook:failed-job-monitor {--force} {--skip-pint}';
 
     protected $description = 'Install Failed Job Monitor';
 
@@ -33,5 +33,7 @@ class FailedJobMonitor extends Command
         $this->addEnvVariables([
             'FAILED_JOB_DISCORD_WEBHOOK_URL' => '',
         ]);
+
+        $this->runPint();
     }
 }

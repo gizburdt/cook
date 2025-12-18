@@ -10,7 +10,7 @@ class Ui extends Command
 {
     use InstallsPackages;
 
-    protected $signature = 'cook:ui {--force}';
+    protected $signature = 'cook:ui {--force} {--skip-pint}';
 
     protected $description = 'Install UI';
 
@@ -29,6 +29,8 @@ class Ui extends Command
         $this->setupDriver();
 
         $this->tryInstallPackages();
+
+        $this->runPint();
 
         $this->openDocs();
     }

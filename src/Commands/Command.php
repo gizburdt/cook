@@ -20,6 +20,17 @@ abstract class Command extends ConsoleCommand
 
     abstract public function handle();
 
+    protected function runPint(): void
+    {
+        if ($this->hasOption('skip-pint') && $this->option('skip-pint')) {
+            return;
+        }
+
+        $this->components->info('Running Pint');
+
+        Process::path(base_path())->run('vendor/bin/pint --dirty');
+    }
+
     protected function callInNewProcess($command): bool
     {
         $result = Process::path(base_path())->tty()
