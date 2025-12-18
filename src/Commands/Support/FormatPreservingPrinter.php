@@ -16,11 +16,14 @@ class FormatPreservingPrinter extends Standard
 
     protected bool $hasHealthChecks = false;
 
+    protected bool $hasTableConfigureChain = false;
+
     public function printFormatPreserving(array $stmts, array $origStmts, array $origTokens): string
     {
         $this->methodsNeedingBlankLine = $this->findMethodsNeedingBlankLine($stmts);
         $this->hasPasswordRulesChain = $this->hasPasswordRulesMethodChain($stmts);
         $this->hasHealthChecks = $this->hasHealthChecksMethod($stmts);
+        $this->hasTableConfigureChain = $this->hasTableConfigureChain($stmts);
 
         $result = parent::printFormatPreserving($stmts, $origStmts, $origTokens);
 
@@ -39,6 +42,10 @@ class FormatPreservingPrinter extends Standard
 
         if ($this->hasHealthChecks) {
             $result = $this->formatHealthChecks($result);
+        }
+
+        if ($this->hasTableConfigureChain) {
+            $result = $this->formatTableConfigureChain($result);
         }
 
         return $result;
@@ -105,6 +112,36 @@ class FormatPreservingPrinter extends Standard
         }
 
         return false;
+    }
+
+    protected function hasTableConfigureChain(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof Node\Stmt\Namespace_) {
+                if ($this->hasTableConfigureChain($node->stmts)) {
+                    return true;
+                }
+            }
+
+            if ($node instanceof Node\Stmt\Class_) {
+                foreach ($node->stmts as $stmt) {
+                    if ($stmt instanceof ClassMethod && $stmt->name->name === 'filament') {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function formatTableConfigureChain(string $code): string
+    {
+        return preg_replace(
+            '/(->paginationPageOptions\(\[10, 25, 50, 100\]\))(->defaultPaginationPageOption\(50\))/',
+            "$1\n                $2",
+            $code
+        );
     }
 
     protected function formatHealthChecks(string $code): string

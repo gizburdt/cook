@@ -64,7 +64,7 @@ PHP;
         ->toMatch('/TextEntry::configureUsing\([^}]+\}\);[\s]*\n[\s]*\n[\s]*TextColumn::configureUsing/s');
 });
 
-it('formats table pagination options on same line', function () {
+it('formats table pagination with defaultPaginationPageOption on new line', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -89,7 +89,7 @@ PHP;
 
     expect($result)
         ->toContain('->paginationPageOptions([10, 25, 50, 100])')
-        ->toContain('->defaultPaginationPageOption(50)');
+        ->toMatch('/->paginationPageOptions\(\[10, 25, 50, 100\]\)\s*\n\s+->defaultPaginationPageOption\(50\)/');
 });
 
 it('adds method call to boot method', function () {
