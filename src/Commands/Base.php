@@ -5,6 +5,7 @@ namespace Gizburdt\Cook\Commands;
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
+use Gizburdt\Cook\Commands\NodeVisitors\AddOptimizes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveEloquentModel;
 use Gizburdt\Cook\Commands\NodeVisitors\RemoveHealthRoute;
@@ -49,6 +50,10 @@ class Base extends Command
 
         $this->addPasswordRules();
 
+        $this->components->info('Adding optimizes');
+
+        $this->addOptimizes();
+
         $this->components->info('Adding local routes');
 
         $this->addLocalRoutes();
@@ -85,6 +90,13 @@ class Base extends Command
     {
         $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
             AddPasswordRules::class,
+        ]);
+    }
+
+    protected function addOptimizes(): void
+    {
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
+            AddOptimizes::class,
         ]);
     }
 
