@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\Commands\Concerns\BuildsArtisanCommands;
 use Gizburdt\Cook\Composer;
 use Illuminate\Console\Command as ConsoleCommand;
 use Illuminate\Filesystem\Filesystem;
@@ -11,6 +12,8 @@ use function Laravel\Prompts\confirm;
 
 abstract class Command extends ConsoleCommand
 {
+    use BuildsArtisanCommands;
+
     public function __construct(
         protected Filesystem $files,
         protected Composer $composer
@@ -31,10 +34,12 @@ abstract class Command extends ConsoleCommand
         Process::path(base_path())->run('vendor/bin/pint --dirty');
     }
 
-    protected function callInNewProcess($command): bool
+    protected function callInNewProcess(string $command, array $arguments = []): bool
     {
+        $fullCommand = $this->buildArtisanCommand($command, $arguments);
+
         $result = Process::path(base_path())->tty()
-            ->run("php artisan {$command}");
+            ->run($fullCommand);
 
         return ! $result->failed();
     }

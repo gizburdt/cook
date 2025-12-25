@@ -3,8 +3,8 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\Concerns\UsesJavascriptParser;
+use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddAdminPanelProvider;
 
 class FilamentPanel extends Command
@@ -45,7 +45,7 @@ class FilamentPanel extends Command
 
     protected function installFilamentTheme(): void
     {
-        $this->call('filament:theme', [
+        $this->callInNewProcess('filament:theme', [
             'panel' => 'admin',
         ]);
 
