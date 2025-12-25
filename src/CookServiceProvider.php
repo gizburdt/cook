@@ -138,6 +138,7 @@ class CookServiceProvider extends ServiceProvider
     {
         return $this->files([
             'Filament' => 'app/Filament',
+            'config/filament.php' => 'config/filament.php',
         ], 'filament');
     }
 

@@ -58,9 +58,5 @@ class Filament extends Command
         $this->callInNewProcess('filament:install', [
             '--no-interaction',
         ]);
-
-        $this->callInNewProcess('vendor:publish', [
-            'tag' => 'filament-config',
-        ]);
     }
 }
