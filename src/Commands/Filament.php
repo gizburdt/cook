@@ -39,6 +39,8 @@ class Filament extends Command
 
         $this->addConfiguration();
 
+        $this->installFilament();
+
         $this->runPint();
 
         $this->openDocs();
@@ -48,6 +50,15 @@ class Filament extends Command
     {
         $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
             AddFilamentConfiguration::class,
+        ]);
+    }
+
+    protected function installFilament(): void
+    {
+        $this->callInNewProcess('filament:install', ['--panels']);
+
+        $this->callInNewProcess('vendor:publish', [
+            'tag' => 'filament-config',
         ]);
     }
 }
