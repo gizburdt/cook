@@ -55,7 +55,7 @@ class Filament extends Command
 
     protected function installFilament(): void
     {
-        $this->callInNewProcess('filament:install', ['--panels']);
+        $this->callInNewProcess('filament:install');
 
         $this->callInNewProcess('vendor:publish', [
             'tag' => 'filament-config',

@@ -130,6 +130,34 @@ JS);
         ->toContain('refresh: true');
 });
 
+it('adds input to single-line vite config', function () {
+    file_put_contents($this->viteConfigPath, <<<'JS'
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+    ],
+});
+JS);
+
+    $parser = createJavascriptParser($this->tempDir);
+
+    $result = $parser->testAddInputToViteConfig(
+        $this->viteConfigPath,
+        'resources/css/filament/admin/theme.css'
+    );
+
+    $content = file_get_contents($this->viteConfigPath);
+
+    expect($result)->toBeTrue()
+        ->and($content)->toContain("'resources/css/filament/admin/theme.css'");
+});
+
 it('adds input after first entry in input array', function () {
     file_put_contents($this->viteConfigPath, <<<'JS'
 import { defineConfig } from 'vite';

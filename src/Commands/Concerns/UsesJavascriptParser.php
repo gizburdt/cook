@@ -16,11 +16,21 @@ trait UsesJavascriptParser
             return false;
         }
 
+        // Multi-line format
         $pattern = "/(input:\s*\[\s*\n)(\s*)('[^']+',?\s*\n)/";
 
         $replacement = "$1$2$3$2'{$input}',\n";
 
         $newContent = preg_replace($pattern, $replacement, $content, 1);
+
+        // Single-line format
+        if ($newContent === $content) {
+            $pattern = "/(input:\s*\[)('[^']+')/";
+
+            $replacement = "$1$2, '{$input}'";
+
+            $newContent = preg_replace($pattern, $replacement, $content, 1);
+        }
 
         if ($newContent === $content) {
             return false;
