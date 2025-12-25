@@ -24,6 +24,7 @@ class Filament extends Command
     public array $publishes = [
         'Filament' => 'app/Filament',
         'config/filament.php' => 'config/filament.php',
+        'database/migrations' => 'database/migrations',
     ];
 
     protected array $packages = [
