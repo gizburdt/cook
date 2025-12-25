@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Providers\Filament;
+
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Dashboard;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
