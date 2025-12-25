@@ -31,12 +31,12 @@ class FilamentPanel extends Command
 
         $this->tryInstallPackages();
 
-        $this->addAdminPanelProvider();
+        $this->installAdminPanel();
 
         $this->installFilamentTheme();
     }
 
-    protected function addAdminPanelProvider(): void
+    protected function installAdminPanel(): void
     {
         $this->applyPhpVisitors(base_path('bootstrap/providers.php'), [
             AddAdminPanelProvider::class,
