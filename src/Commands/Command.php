@@ -39,6 +39,14 @@ abstract class Command extends ConsoleCommand
         return ! $result->failed();
     }
 
+    protected function runInNewProcess($command): bool
+    {
+        $result = Process::path(base_path())->tty()
+            ->run($command);
+
+        return ! $result->failed();
+    }
+
     protected function openDocs(): void
     {
         if (! isset($this->docs)) {

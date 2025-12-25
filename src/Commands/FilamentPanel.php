@@ -49,10 +49,14 @@ class FilamentPanel extends Command
             'panel' => 'admin',
         ]);
 
+        // Config
         $themePath = 'resources/css/filament/admin/theme.css';
 
         if ($this->addInputToViteConfig(base_path('vite.config.js'), $themePath)) {
             $this->components->info('Added Filament theme to vite.config.js');
         }
+
+        // NPM
+        $this->runInNewProcess('npm run build');
     }
 }
