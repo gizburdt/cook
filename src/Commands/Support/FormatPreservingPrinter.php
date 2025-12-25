@@ -29,7 +29,7 @@ class FormatPreservingPrinter extends Standard
 
         foreach ($this->methodsNeedingBlankLine as $methodName) {
             $result = preg_replace(
-                '/(\n)([ ]*)(protected function '.preg_quote($methodName).'\()/',
+                '/(\n)([ ]*)((?:protected|public) function '.preg_quote($methodName).'\()/',
                 "$1\n$2$3",
                 $result,
                 1
