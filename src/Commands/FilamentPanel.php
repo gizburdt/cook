@@ -4,14 +4,14 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\Concerns\UsesViteParser;
+use Gizburdt\Cook\Commands\Concerns\UsesJavascriptParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddAdminPanelProvider;
 
 class FilamentPanel extends Command
 {
     use InstallsPackages;
+    use UsesJavascriptParser;
     use UsesPhpParser;
-    use UsesViteParser;
 
     protected $signature = 'cook:filament:panel {--force} {--skip-pint}';
 

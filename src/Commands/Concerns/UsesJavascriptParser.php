@@ -2,7 +2,7 @@
 
 namespace Gizburdt\Cook\Commands\Concerns;
 
-trait UsesViteParser
+trait UsesJavascriptParser
 {
     protected function addInputToViteConfig(string $file, string $input): bool
     {

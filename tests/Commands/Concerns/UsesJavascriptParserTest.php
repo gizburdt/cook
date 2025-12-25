@@ -1,10 +1,10 @@
 <?php
 
-use Gizburdt\Cook\Commands\Concerns\UsesViteParser;
+use Gizburdt\Cook\Commands\Concerns\UsesJavascriptParser;
 use Illuminate\Filesystem\Filesystem;
 
 beforeEach(function () {
-    $this->tempDir = sys_get_temp_dir().'/cook-vite-test-'.uniqid();
+    $this->tempDir = sys_get_temp_dir().'/cook-js-test-'.uniqid();
 
     mkdir($this->tempDir);
 
@@ -39,7 +39,7 @@ export default defineConfig({
 });
 JS);
 
-    $parser = createViteParser($this->tempDir);
+    $parser = createJavascriptParser($this->tempDir);
 
     $result = $parser->testAddInputToViteConfig(
         $this->viteConfigPath,
@@ -71,7 +71,7 @@ export default defineConfig({
 });
 JS);
 
-    $parser = createViteParser($this->tempDir);
+    $parser = createJavascriptParser($this->tempDir);
 
     $result = $parser->testAddInputToViteConfig(
         $this->viteConfigPath,
@@ -82,7 +82,7 @@ JS);
 });
 
 it('returns false when file does not exist', function () {
-    $parser = createViteParser($this->tempDir);
+    $parser = createJavascriptParser($this->tempDir);
 
     $result = $parser->testAddInputToViteConfig(
         $this->viteConfigPath,
@@ -113,7 +113,7 @@ export default defineConfig({
 });
 JS);
 
-    $parser = createViteParser($this->tempDir);
+    $parser = createJavascriptParser($this->tempDir);
 
     $parser->testAddInputToViteConfig(
         $this->viteConfigPath,
@@ -148,7 +148,7 @@ export default defineConfig({
 });
 JS);
 
-    $parser = createViteParser($this->tempDir);
+    $parser = createJavascriptParser($this->tempDir);
 
     $parser->testAddInputToViteConfig(
         $this->viteConfigPath,
@@ -165,11 +165,11 @@ JS);
         ->and($themePos)->toBeLessThan($appJsPos);
 });
 
-function createViteParser(string $tempDir): object
+function createJavascriptParser(string $tempDir): object
 {
     return new class($tempDir)
     {
-        use UsesViteParser;
+        use UsesJavascriptParser;
 
         protected Filesystem $files;
 
