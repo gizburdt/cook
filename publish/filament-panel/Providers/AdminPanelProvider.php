@@ -53,7 +53,9 @@ class AdminPanelProvider extends PanelProvider
                     ->recoverable(),
             ], isRequired: app()->isProduction())
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-                return $builder;
+                return $builder
+                    ->item(...Dashboard::getNavigationItems())
+                    ->groups([]);
             })
             ->middleware([
                 EncryptCookies::class,

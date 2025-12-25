@@ -3,14 +3,12 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-use Gizburdt\Cook\Commands\Concerns\UsesJavascriptParser;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddAdminPanelProvider;
 
 class FilamentPanel extends Command
 {
     use InstallsPackages;
-    use UsesJavascriptParser;
     use UsesPhpParser;
 
     protected $signature = 'cook:filament:panel {--force} {--skip-pint}';
@@ -51,14 +49,36 @@ class FilamentPanel extends Command
             'panel' => 'admin',
         ]);
 
-        // Config
-        // $themePath = 'resources/css/filament/admin/theme.css';
-        //
-        // if ($this->addInputToViteConfig(base_path('vite.config.js'), $themePath)) {
-        //     $this->components->info('Added Filament theme to vite.config.js');
-        // }
+        // CSS
+        $this->appendSourceDirectives();
 
         // NPM
-        // $this->runInNewProcess('npm run build');
+        $this->runInNewProcess('npm run build');
+    }
+
+    protected function appendSourceDirectives(): void
+    {
+        $themePath = resource_path('css/filament/admin/theme.css');
+
+        if (! file_exists($themePath)) {
+            return;
+        }
+
+        $content = file_get_contents($themePath);
+
+        $sources = [
+            "@source '../../../../app/Filament/**/*';",
+            "@source '../../../../resources/views/filament/**/*';",
+        ];
+
+        $missingSources = array_filter($sources, fn ($source) => ! str_contains($content, $source));
+
+        if (empty($missingSources)) {
+            return;
+        }
+
+        $content .= implode("\n", $missingSources);
+
+        file_put_contents($themePath, $content);
     }
 }

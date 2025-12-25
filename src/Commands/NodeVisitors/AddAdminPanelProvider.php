@@ -56,12 +56,24 @@ class AddAdminPanelProvider extends NodeVisitorAbstract
             return null;
         }
 
-        $node->expr->items[] = new ArrayItem(
+        $items = [];
+
+        foreach ($node->expr->items as $item) {
+            $items[] = $item;
+        }
+
+        $newItem = new ArrayItem(
             new ClassConstFetch(
                 new Name($this->providerClass),
                 new Identifier('class')
             )
         );
+        $items[] = $newItem;
+
+        $newArray = new Array_($items, ['kind' => Array_::KIND_SHORT]);
+        $newArray->setAttribute('multiline', true);
+
+        $node->expr = $newArray;
 
         return $node;
     }

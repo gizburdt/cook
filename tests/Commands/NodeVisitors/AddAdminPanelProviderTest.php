@@ -64,5 +64,5 @@ PHP;
     ], 'bootstrap/providers.php');
 
     expect($result)
-        ->toMatch('/AppServiceProvider::class,\s+App\\\\Providers\\\\Filament\\\\AdminPanelProvider::class,/');
+        ->toMatch('/AppServiceProvider::class,\n\s+App\\\\Providers\\\\Filament\\\\AdminPanelProvider::class,/');
 });

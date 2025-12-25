@@ -57,7 +57,8 @@ class Install extends Command
             $this->call('cook:filament', $arguments);
         }
 
-        if ($installFilament && confirm('Install Filament panel?')) {
+        // Filament panel
+        if ($installFilament && confirm('Install Filament panel?', default: false)) {
             $this->call('cook:filament:panel', $arguments);
         }
 
