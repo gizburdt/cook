@@ -51,7 +51,7 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
-        $this->hasUseStatement = $this->useStatementExists($nodes, 'DutchCodingCompany\FilamentAppAuthentication\Contracts\HasAppAuthentication');
+        $this->hasUseStatement = $this->useStatementExists($nodes, 'Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication');
 
         return null;
     }
@@ -131,7 +131,7 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
 
         foreach ($nodes as $node) {
             if ($node instanceof Node\Stmt\Namespace_) {
-                $this->addUseStatementToNamespace($node, 'DutchCodingCompany\FilamentAppAuthentication\Contracts\HasAppAuthentication');
+                $this->addUseStatementToNamespace($node, 'Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication');
 
                 return $nodes;
             }
