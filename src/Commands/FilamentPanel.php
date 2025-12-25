@@ -41,6 +41,8 @@ class FilamentPanel extends Command
         $this->applyPhpVisitors(base_path('bootstrap/providers.php'), [
             AddAdminPanelProvider::class,
         ]);
+
+        $this->callInNewProcess('filament:upgrade');
     }
 
     protected function installFilamentTheme(): void
