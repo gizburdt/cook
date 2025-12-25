@@ -9,6 +9,7 @@ use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\FailedJob;
 use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
+use Gizburdt\Cook\Commands\FilamentPanel;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Operations;
@@ -40,6 +41,7 @@ class CookServiceProvider extends ServiceProvider
             FailedJobMonitor::class,
             Backups::class,
             Filament::class,
+            FilamentPanel::class,
             Ui::class,
             Packages::class,
         ]);
@@ -59,6 +61,8 @@ class CookServiceProvider extends ServiceProvider
         $this->publishes($this->backups(), 'cook-backups');
 
         $this->publishes($this->filament(), 'cook-filament');
+
+        $this->publishes($this->filamentPanel(), 'cook-filament-panel');
     }
 
     protected function base(): array
@@ -135,6 +139,14 @@ class CookServiceProvider extends ServiceProvider
         return $this->files([
             'Filament' => 'app/Filament',
         ], 'filament');
+    }
+
+    protected function filamentPanel(): array
+    {
+        return $this->files([
+            'Providers/AdminPanelProvider.php' => 'app/Providers/Filament/AdminPanelProvider.php',
+            'resources/views/user-menu-before.blade.php' => 'resources/views/filament/user-menu-before.blade.php',
+        ], 'filament-panel');
     }
 
     protected function files(array $files, string $group): array
