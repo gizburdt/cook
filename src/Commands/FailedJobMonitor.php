@@ -14,6 +14,14 @@ class FailedJobMonitor extends Command
 
     protected $description = 'Install Failed Job Monitor';
 
+    public string $publishGroup = 'failed-job-monitor';
+
+    public array $publishes = [
+        'config/failed-job-monitor.php' => 'config/failed-job-monitor.php',
+        'Support/Notifiable.php' => 'app/Support/FailedJobMonitor/Notifiable.php',
+        'Support/Notification.php' => 'app/Support/FailedJobMonitor/Notification.php',
+    ];
+
     protected array $packages = [
         'awssat/discord-notification-channel' => 'require',
         'spatie/laravel-failed-job-monitor' => 'require',

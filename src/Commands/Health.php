@@ -21,6 +21,14 @@ class Health extends Command
 
     protected string $docs = 'https://spatie.be/docs/laravel-health/v1/introduction';
 
+    public string $publishGroup = 'health';
+
+    public array $publishes = [
+        'config/health.php' => 'config/health.php',
+        'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php',
+        'Support/Notification.php' => 'app/Support/Health/Notification.php',
+    ];
+
     protected array $packages = [
         'awssat/discord-notification-channel' => 'require',
         'doctrine/dbal' => 'require',

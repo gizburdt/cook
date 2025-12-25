@@ -22,6 +22,12 @@ class Backups extends Command
 
     protected string $driver;
 
+    public string $publishGroup = 'backups';
+
+    public array $publishes = [
+        'config/backup.php' => 'config/backup.php',
+    ];
+
     protected array $packages = [
         'awssat/discord-notification-channel' => 'require',
         'spatie/laravel-backup' => 'require',

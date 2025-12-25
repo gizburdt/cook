@@ -15,6 +15,13 @@ class FilamentPanel extends Command
 
     protected $description = 'Install Filament panel';
 
+    public string $publishGroup = 'filament-panel';
+
+    public array $publishes = [
+        'Providers/AdminPanelProvider.php' => 'app/Providers/Filament/AdminPanelProvider.php',
+        'resources/views/user-menu-before.blade.php' => 'resources/views/filament/user-menu-before.blade.php',
+    ];
+
     protected array $packages = [
         'dutchcodingcompany/filament-developer-logins' => 'require',
         'filament/filament' => 'require',

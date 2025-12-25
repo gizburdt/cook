@@ -12,6 +12,13 @@ class Operations extends Command
 
     protected $description = 'Publish one-time-operations files';
 
+    public string $publishGroup = 'operations';
+
+    public array $publishes = [
+        'config/one-time-operations.php' => 'config/one-time-operations.php',
+        'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub',
+    ];
+
     protected array $packages = [
         'timokoerber/laravel-one-time-operations' => 'require',
     ];

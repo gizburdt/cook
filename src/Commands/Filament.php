@@ -19,6 +19,13 @@ class Filament extends Command
 
     protected string $docs = 'https://filamentphp.com/docs/4.x/introduction/installation';
 
+    public string $publishGroup = 'filament';
+
+    public array $publishes = [
+        'Filament' => 'app/Filament',
+        'config/filament.php' => 'config/filament.php',
+    ];
+
     protected array $packages = [
         'dutchcodingcompany/filament-developer-logins' => 'require',
         'filament/filament' => 'require',

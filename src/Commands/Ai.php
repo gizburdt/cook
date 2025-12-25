@@ -12,6 +12,13 @@ class Ai extends Command
 
     protected $description = 'Install AI';
 
+    public string $publishGroup = 'ai';
+
+    public array $publishes = [
+        '.ai' => '.ai',
+        '.claude' => '.claude',
+    ];
+
     protected array $packages = [
         'laravel/boost' => 'dev',
     ];

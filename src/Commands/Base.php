@@ -20,6 +20,21 @@ class Base extends Command
 
     protected $description = 'Install base';
 
+    public string $publishGroup = 'base';
+
+    public array $publishes = [
+        'stubs' => 'stubs',
+        'Actions/Action.php' => 'app/Actions/Action.php',
+        'Console/Commands/Optimize.php' => 'app/Console/Commands/Optimize.php',
+        'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
+        'Models/Model.php' => 'app/Models/Model.php',
+        'Models/Pivot.php' => 'app/Models/Pivot.php',
+        'Models/Concerns' => 'app/Models/Concerns',
+        'Policies/Policy.php' => 'app/Policies/Policy.php',
+        'Support/helpers.php' => 'app/Support/helpers.php',
+        'routes/local.php' => 'routes/local.php',
+    ];
+
     protected array $packages = [
         'barryvdh/laravel-debugbar' => 'dev',
         'laracasts/presenter' => 'require',

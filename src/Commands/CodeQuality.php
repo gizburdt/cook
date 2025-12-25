@@ -12,6 +12,17 @@ class CodeQuality extends Command
 
     protected $description = 'Install Essentials, PHPstan, Pint, Rector, GitHub Actions';
 
+    public string $publishGroup = 'code-quality';
+
+    public array $publishes = [
+        '.github' => '.github',
+        'config/essentials.php' => 'config/essentials.php',
+        'config/insights.php' => 'config/insights.php',
+        'phpstan.neon' => 'phpstan.neon',
+        'pint.json' => 'pint.json',
+        'rector.php' => 'rector.php',
+    ];
+
     protected array $packages = [
         'canvural/larastan-strict-rules' => 'dev',
         'driftingly/rector-laravel' => 'dev',
@@ -32,6 +43,8 @@ class CodeQuality extends Command
             '--tag' => 'cook-code-quality',
             '--force' => $this->option('force'),
         ]);
+
+        $this->components->info('Updating composer.json');
 
         $this->composer->allowPlugin('dealerdirect/phpcodesniffer-composer-installer');
 

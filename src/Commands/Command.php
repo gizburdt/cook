@@ -14,6 +14,10 @@ abstract class Command extends ConsoleCommand
 {
     use BuildsArtisanCommands;
 
+    public array $publishes = [];
+
+    public string $publishGroup = '';
+
     public function __construct(
         protected Filesystem $files,
         protected Composer $composer
