@@ -63,12 +63,12 @@ class Install extends Command
         }
 
         // UI
-        if (confirm('Install UI?')) {
+        if (confirm('Install UI?', default: false)) {
             $this->call('cook:ui', $arguments);
         }
 
         // Packages
-        if (confirm('Install extra packages?')) {
+        if (confirm('Install extra packages?', default: false)) {
             $this->call('cook:packages', $arguments);
         }
 
