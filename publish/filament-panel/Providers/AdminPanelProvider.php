@@ -79,7 +79,7 @@ class AdminPanelProvider extends PanelProvider
                     ->enabled(config('app.debug'))
                     ->switchable(false)
                     ->users([
-                        'Admin' => 'mail@gijsjorissen.nl',
+                        'Admin' => 'admin@example.com',
                     ]),
             ]);
     }
