@@ -12,54 +12,74 @@ use PhpParser\NodeVisitorAbstract;
 
 class AddAppAuthenticationMethods extends NodeVisitorAbstract
 {
-    protected array $traitsToAdd = [
-        'InteractsWithAppAuthentication',
-        'InteractsWithAppAuthenticationRecovery',
+    protected bool $hasAppAuthenticationInterface = false;
+
+    protected bool $hasAppAuthenticationRecoveryInterface = false;
+
+    protected bool $hasInteractsWithAppAuthenticationTrait = false;
+
+    protected bool $hasInteractsWithAppAuthenticationRecoveryTrait = false;
+
+    protected array $missingUseStatements = [];
+
+    protected array $requiredUseStatements = [
+        'Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication',
+        'Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery',
+        'Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication',
+        'Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery',
     ];
 
-    protected array $useStatementsToAdd = [
-        'Filament\Auth\MultiFactor\App\InteractsWithAppAuthentication',
-        'Filament\Auth\MultiFactor\App\InteractsWithAppAuthenticationRecovery',
-    ];
-
-    protected array $existingUseStatements = [];
-
-    protected array $existingTraits = [];
-
-    public function beforeTraverse(array $nodes): ?array
+    public function beforeTraverse(array $nodes)
     {
-        $this->existingUseStatements = $this->getExistingUseStatements($nodes);
+        $existingUse = $this->findExistingUseStatements($nodes);
+        $this->missingUseStatements = array_diff($this->requiredUseStatements, $existingUse);
 
         return null;
     }
 
-    protected function getExistingUseStatements(array $nodes): array
+    protected function findExistingUseStatements(array $nodes): array
     {
-        $useStatements = [];
+        $existing = [];
 
         foreach ($nodes as $node) {
             if ($node instanceof Node\Stmt\Namespace_) {
-                $useStatements = array_merge($useStatements, $this->getExistingUseStatements($node->stmts));
+                return $this->findExistingUseStatements($node->stmts);
             }
 
             if ($node instanceof Use_) {
                 foreach ($node->uses as $use) {
-                    $useStatements[] = $use->name->toString();
+                    $existing[] = $use->name->toString();
                 }
             }
         }
 
-        return $useStatements;
+        return $existing;
     }
 
-    public function enterNode(Node $node): ?Node
+    public function enterNode(Node $node)
     {
         if ($node instanceof Class_) {
             foreach ($node->stmts as $stmt) {
                 if ($stmt instanceof TraitUse) {
                     foreach ($stmt->traits as $trait) {
-                        $this->existingTraits[] = $trait->toString();
+                        if ($trait->toString() === 'InteractsWithAppAuthentication') {
+                            $this->hasInteractsWithAppAuthenticationTrait = true;
+                        }
+
+                        if ($trait->toString() === 'InteractsWithAppAuthenticationRecovery') {
+                            $this->hasInteractsWithAppAuthenticationRecoveryTrait = true;
+                        }
                     }
+                }
+            }
+
+            foreach ($node->implements as $implement) {
+                if ($implement->toString() === 'HasAppAuthentication') {
+                    $this->hasAppAuthenticationInterface = true;
+                }
+
+                if ($implement->toString() === 'HasAppAuthenticationRecovery') {
+                    $this->hasAppAuthenticationRecoveryInterface = true;
                 }
             }
         }
@@ -67,10 +87,18 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
         return null;
     }
 
-    public function leaveNode(Node $node): ?Node
+    public function leaveNode(Node $node)
     {
         if ($node instanceof Class_) {
-            $this->addMissingTraits($node);
+            if (! $this->hasAppAuthenticationInterface) {
+                $node->implements[] = new Name('HasAppAuthentication');
+            }
+
+            if (! $this->hasAppAuthenticationRecoveryInterface) {
+                $node->implements[] = new Name('HasAppAuthenticationRecovery');
+            }
+
+            $this->addTraitUses($node);
 
             return $node;
         }
@@ -78,11 +106,52 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
         return null;
     }
 
-    public function afterTraverse(array $nodes): ?array
+    protected function addTraitUses(Class_ $node): void
     {
+        if ($this->hasInteractsWithAppAuthenticationTrait && $this->hasInteractsWithAppAuthenticationRecoveryTrait) {
+            return;
+        }
+
+        $lastTraitIndex = null;
+
+        foreach ($node->stmts as $index => $stmt) {
+            if ($stmt instanceof TraitUse) {
+                $lastTraitIndex = $index;
+            }
+        }
+
+        $traitsToAdd = [];
+
+        if (! $this->hasInteractsWithAppAuthenticationTrait) {
+            $traitsToAdd[] = new TraitUse([new Name('InteractsWithAppAuthentication')]);
+        }
+
+        if (! $this->hasInteractsWithAppAuthenticationRecoveryTrait) {
+            $traitsToAdd[] = new TraitUse([new Name('InteractsWithAppAuthenticationRecovery')]);
+        }
+
+        if (empty($traitsToAdd)) {
+            return;
+        }
+
+        if ($lastTraitIndex !== null) {
+            array_splice($node->stmts, $lastTraitIndex + 1, 0, $traitsToAdd);
+        } else {
+            $node->stmts = array_merge($traitsToAdd, $node->stmts);
+        }
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        if (empty($this->missingUseStatements)) {
+            return null;
+        }
+
         foreach ($nodes as $node) {
             if ($node instanceof Node\Stmt\Namespace_) {
-                $this->addMissingUseStatements($node);
+                foreach ($this->missingUseStatements as $class) {
+                    $this->addUseStatementToNamespace($node, $class);
+                }
 
                 return $nodes;
             }
@@ -91,7 +160,7 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
         return $nodes;
     }
 
-    protected function addMissingUseStatements(Node\Stmt\Namespace_ $namespace): void
+    protected function addUseStatementToNamespace(Node\Stmt\Namespace_ $namespace, string $class): void
     {
         $lastUseIndex = null;
 
@@ -101,41 +170,12 @@ class AddAppAuthenticationMethods extends NodeVisitorAbstract
             }
         }
 
-        foreach ($this->useStatementsToAdd as $class) {
-            if (in_array($class, $this->existingUseStatements)) {
-                continue;
-            }
+        $useStatement = new Use_([
+            new UseItem(new Name($class)),
+        ]);
 
-            $useStatement = new Use_([
-                new UseItem(new Name($class)),
-            ]);
-
-            if ($lastUseIndex !== null) {
-                $lastUseIndex++;
-
-                array_splice($namespace->stmts, $lastUseIndex, 0, [$useStatement]);
-            }
+        if ($lastUseIndex !== null) {
+            array_splice($namespace->stmts, $lastUseIndex + 1, 0, [$useStatement]);
         }
-    }
-
-    protected function addMissingTraits(Class_ $class): void
-    {
-        $traitsToAdd = [];
-
-        foreach ($this->traitsToAdd as $trait) {
-            if (in_array($trait, $this->existingTraits)) {
-                continue;
-            }
-
-            $traitsToAdd[] = new Name($trait);
-        }
-
-        if (empty($traitsToAdd)) {
-            return;
-        }
-
-        $traitUse = new TraitUse($traitsToAdd);
-
-        array_unshift($class->stmts, $traitUse);
     }
 }

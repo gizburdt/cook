@@ -6,7 +6,6 @@ use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
-use Gizburdt\Cook\Commands\Command;
 use Gizburdt\Cook\Commands\FailedJob;
 use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
