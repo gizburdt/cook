@@ -52,7 +52,7 @@ return [
         'enabled' => false,
         'always_send_fresh_results' => true,
         'secret' => env('OH_DEAR_HEALTH_CHECK_SECRET'),
-        'url' => '/oh-dear-health-check-results',
+        'url' => '/health.json',
     ],
 
     'horizon' => [
