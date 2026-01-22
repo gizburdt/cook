@@ -36,7 +36,7 @@ class Ai extends Command
 
         $this->components->info('Updating composer.json');
 
-        $this->composer->addScript('post-update-cmd', '@php artisan boost:update --ansi');
+        $this->composer->addScript('post-update-cmd', '@php -r "file_exists(\'vendor/laravel/boost\') && system(\'php artisan boost:update --ansi\');"');
 
         $this->runPint();
     }
