@@ -23,6 +23,7 @@ class Base extends Command
     public string $publishGroup = 'base';
 
     public array $publishes = [
+        '.github' => '.github',
         'stubs' => 'stubs',
         'Actions/Action.php' => 'app/Actions/Action.php',
         'Console/Commands/Optimize.php' => 'app/Console/Commands/Optimize.php',
