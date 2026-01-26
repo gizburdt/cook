@@ -27,6 +27,7 @@ class CodeQuality extends Command
         'canvural/larastan-strict-rules' => 'dev',
         'driftingly/rector-laravel' => 'dev',
         'larastan/larastan' => 'dev',
+        'laravel/pint' => 'dev',
         'nunomaduro/essentials' => 'require',
         'nunomaduro/phpinsights' => 'dev',
         'pestphp/pest' => 'dev',

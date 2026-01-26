@@ -21,6 +21,14 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Setup application
+        run: |
+          cat <<EOF > .env
+          APP_ENV=local
+          APP_DEBUG=true
+          MAIL_FROM_ADDRESS=noreply@example.org
+          EOF
+
       - name: Update dependencies
         run: composer update --no-interaction --prefer-dist
 
