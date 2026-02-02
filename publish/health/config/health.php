@@ -24,7 +24,7 @@ return [
 
         'notifiable' => App\Support\Health\Notifiable::class,
 
-        'throttle_notifications_for_minutes' => 60,
+        'throttle_notifications_for_minutes' => 120,
         'throttle_notifications_key' => 'health:latestNotificationSentAt:',
 
         'mail' => [
