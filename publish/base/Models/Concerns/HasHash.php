@@ -7,7 +7,7 @@ trait HasHash
     protected static function bootHasHash(): void
     {
         static::creating(function ($model) {
-            $model->hash = uniqid();
+            $model->hash ??= uniqid();
         });
     }
 }
