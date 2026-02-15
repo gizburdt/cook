@@ -55,10 +55,6 @@ class Health extends Command
 
         $this->addChecks();
 
-        $this->components->info('Adding route');
-
-        $this->addRoutes();
-
         $this->components->info('Adding schedule');
 
         $this->addSchedule();
@@ -74,6 +70,9 @@ class Health extends Command
         $this->openDocs();
     }
 
+    /**
+     * Disabled; we don't need a route by default.
+     */
     protected function addRoutes(): void
     {
         $this->applyPhpVisitors(base_path('routes/web.php'), [

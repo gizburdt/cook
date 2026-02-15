@@ -1,14 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan make:filament-resource:*)",
+      "Bash(php artisan make:factory:*)",
+      "Bash(php artisan make:filament-*)",
       "Bash(php artisan make:model:*)",
+      "Bash(php artisan make:observer:*)",
+      "Bash(php artisan make:seeder:*)",
       "Bash(php artisan make:test:*)",
       "Bash(php artisan migrate:fresh:*)",
       "Bash(php artisan test:*)",
       "Bash(php artisan tinker:*)",
       "Bash(npm run build:*)",
       "Bash(vendor/bin/pint:*)",
+      "mcp__chrome-devtools__*",
       "mcp__herd__*",
       "mcp__laravel-boost__*"
     ]
