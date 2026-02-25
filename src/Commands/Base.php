@@ -27,6 +27,7 @@ class Base extends Command
         'stubs' => 'stubs',
         'Actions/Action.php' => 'app/Actions/Action.php',
         'Console/Commands/Optimize.php' => 'app/Console/Commands/Optimize.php',
+        'Http/Middleware' => 'app/Http/Middleware',
         'Http/Resources/Resource.php' => 'app/Http/Resources/Resource.php',
         'Models/Model.php' => 'app/Models/Model.php',
         'Models/Pivot.php' => 'app/Models/Pivot.php',
