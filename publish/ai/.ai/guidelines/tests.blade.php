@@ -13,20 +13,20 @@
 @endverbatim
 - Place each attribute assertion on a new line
 @verbatim
-    <code-snippet name="Assertions" lang="php">
-        expect($user)
-            ->toBeInstanceOf(User::class)
-            ->type->toBe('foo')
-            ->message->toBe('bar')
-    </code-snippet>
+<code-snippet name="Assertions" lang="php">
+    expect($user)
+        ->toBeInstanceOf(User::class)
+        ->type->toBe('foo')
+        ->message->toBe('bar')
+</code-snippet>
 @endverbatim
 - Keep `->not` on the same line as the attribute assertion
 @verbatim
-    <code-snippet name="Not" lang="php">
-        expect($user)
-            ->not->toBeInstanceOf(OtherUser::class)
-            ->type->not->toBe('foo')
-            ->message->not->toBe('bar')
-    </code-snippet>
+<code-snippet name="Not" lang="php">
+    expect($user)
+        ->not->toBeInstanceOf(OtherUser::class)
+        ->type->not->toBe('foo')
+        ->message->not->toBe('bar')
+</code-snippet>
 @endverbatim
 

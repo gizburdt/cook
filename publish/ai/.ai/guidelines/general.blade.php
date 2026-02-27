@@ -14,8 +14,6 @@
 
 ## Code
 - Use simplified FQNs whenever possible. If the name is already taken, create an alias.
-- Don't use `private` properties and methods, rather use `protected`
-- Don't use the `compact` function in PHP
 @verbatim
 <code-snippet name="FQN" lang="php">
     use App\Models\User;
@@ -32,6 +30,8 @@
     }
 </code-snippet>
 @endverbatim
+- Don't use `private` properties and methods, rather use `protected`
+- Don't use the `compact` function in PHP
 - Always include a blank line between new statements, in all folders off the application
 @verbatim
 <code-snippet name="Whitespace" lang="php">

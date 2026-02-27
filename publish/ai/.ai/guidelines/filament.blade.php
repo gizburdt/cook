@@ -8,27 +8,29 @@ When Filament is used in this project, there will be a lot of code and existing 
 - Ignore SoftDeletes completely in Filament, so no filters, custom queries, restore and force delete actions
 - Use the `Filament\Support\Icons\Heroicon` class when setting icons
 - Use `->visible()` rather than `->hidden()`
+
+## Resources
 - Use an empty line between components and columns
 @verbatim
 <code-snippet name="Components" lang="php">
     public static function configure(Form $form): Form
     {
-        return $form->components([
-            TextInput::make('name'),
+    return $form->components([
+    TextInput::make('name'),
 
-            TextInput::make('email'),
-        ]);
+    TextInput::make('email'),
+    ]);
     }
 </code-snippet>
 
 <code-snippet name="Columns" lang="php">
     public static function configure(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('name'),
+    return $table->columns([
+    TextColumn::make('name'),
 
-            TextColumn::make('email'),
-        ]);
+    TextColumn::make('email'),
+    ]);
     }
 </code-snippet>
 @endverbatim

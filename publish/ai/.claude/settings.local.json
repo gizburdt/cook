@@ -13,8 +13,13 @@
       "Bash(npm run build:*)",
       "Bash(vendor/bin/pint:*)",
       "mcp__chrome-devtools__*",
+      "mcp__context7__*",
+      "mcp__flare__*",
+      "mcp__github__*",
       "mcp__herd__*",
-      "mcp__laravel-boost__*"
+      "mcp__laravel-boost__*",
+      "mcp__nightwatch__*",
+      "mcp__playwright__*"
     ]
   },
   "enableAllProjectMcpServers": true,
