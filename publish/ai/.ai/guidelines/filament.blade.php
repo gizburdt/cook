@@ -52,9 +52,6 @@ When Filament is used in this project, there will be a lot of code and existing 
 ## Resources
 - Add `getLabel()`, `getPluralLabel()` and `getNavigationLabel()` methods with a `__()` to all resources, at the bottom
 
-## RelationManagers
-- RelationManagers are placed in the resource’s directory by default, but in practice, they can be used across multiple resources. Therefore, place RelationManagers in `app/Filament/RelationManagers`
-
 ## Enums
 - When Enums are used in this project, add `implements HasLabel` from Filament
 - Use `Enum::class` as parameter to `Select::options()`
