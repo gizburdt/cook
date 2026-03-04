@@ -20,6 +20,7 @@ return [
                 'exclude' => [
                     base_path('vendor'),
                     base_path('node_modules'),
+                    storage_path('framework'),
                 ],
                 'follow_links' => false,
                 'ignore_unreadable_directories' => false,
@@ -46,13 +47,16 @@ return [
             'disks' => [
                 'backups',
             ],
+            'continue_on_failure' => false,
         ],
 
-        'temporary_directory' => storage_path('app/temp'),
+        'temporary_directory' => storage_path('app/backup-temp'),
 
         'password' => env('BACKUP_ARCHIVE_PASSWORD'),
 
         'encryption' => 'default',
+
+        'verify_backup' => false,
 
         'tries' => 1,
 
@@ -91,6 +95,10 @@ return [
             'webhook_url' => env('BACKUP_DISCORD_WEBHOOK_URL', ''),
             'username' => '',
             'avatar_url' => '',
+        ],
+
+        'webhook' => [
+            'url' => '',
         ],
     ],
 
