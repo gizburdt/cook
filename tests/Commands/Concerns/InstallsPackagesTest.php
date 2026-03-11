@@ -126,6 +126,45 @@ it('handles missing packages array in composer.lock', function () {
         ->toBeEmpty();
 });
 
+it('returns true when packages can be removed', function () {
+    createComposerLock($this->composerLockPath, [
+        'packages-dev' => [
+            ['name' => 'phpunit/phpunit'],
+        ],
+    ]);
+
+    $installer = createPackageInstaller($this->tempDir);
+
+    expect($installer->testHasRemovablePackages(['phpunit/phpunit' => 'dev']))
+        ->toBeTrue();
+});
+
+it('returns false when packages to remove are not installed', function () {
+    createComposerLock($this->composerLockPath, [
+        'packages' => [
+            ['name' => 'laravel/framework'],
+        ],
+    ]);
+
+    $installer = createPackageInstaller($this->tempDir);
+
+    expect($installer->testHasRemovablePackages(['phpunit/phpunit' => 'dev']))
+        ->toBeFalse();
+});
+
+it('returns false for empty remove packages array', function () {
+    createComposerLock($this->composerLockPath, [
+        'packages-dev' => [
+            ['name' => 'phpunit/phpunit'],
+        ],
+    ]);
+
+    $installer = createPackageInstaller($this->tempDir);
+
+    expect($installer->testHasRemovablePackages([]))
+        ->toBeFalse();
+});
+
 function createComposerLock(string $path, array $content): void
 {
     file_put_contents($path, json_encode($content, JSON_PRETTY_PRINT));
@@ -138,6 +177,7 @@ function createPackageInstaller(string $tempDir): object
         use InstallsPackages {
             getInstalledPackages as traitGetInstalledPackages;
             hasInstallablePackages as traitHasInstallablePackages;
+            hasRemovablePackages as traitHasRemovablePackages;
         }
 
         public function __construct(protected string $basePath) {}
@@ -150,6 +190,11 @@ function createPackageInstaller(string $tempDir): object
         public function testHasInstallablePackages(array $packages): bool
         {
             return $this->hasInstallablePackages($packages);
+        }
+
+        public function testHasRemovablePackages(array $packages): bool
+        {
+            return $this->hasRemovablePackages($packages);
         }
 
         protected function getInstalledPackages(): Collection

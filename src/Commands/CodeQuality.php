@@ -3,6 +3,7 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Illuminate\Support\Facades\Process;
 
 class CodeQuality extends Command
 {
@@ -21,6 +22,10 @@ class CodeQuality extends Command
         'phpstan.neon' => 'phpstan.neon',
         'pint.json' => 'pint.json',
         'rector.php' => 'rector.php',
+    ];
+
+    protected array $removePackages = [
+        'phpunit/phpunit' => 'dev',
     ];
 
     protected array $packages = [
@@ -49,8 +54,19 @@ class CodeQuality extends Command
 
         $this->composer->allowPlugin('dealerdirect/phpcodesniffer-composer-installer');
 
+        $this->tryRemovePackages();
+
         $this->tryInstallPackages();
 
+        $this->initPest();
+
         $this->runPint();
+    }
+
+    protected function initPest(): void
+    {
+        $this->components->info('Initializing Pest');
+
+        Process::path(base_path())->run('vendor/bin/pest --init');
     }
 }

@@ -17,6 +17,42 @@ trait InstallsPackages
         $this->installPackages($this->packages);
     }
 
+    protected function tryRemovePackages(): void
+    {
+        if (! property_exists($this, 'removePackages') || empty($this->removePackages)) {
+            return;
+        }
+
+        if (! $this->hasRemovablePackages($this->removePackages)) {
+            return;
+        }
+
+        $this->components->info('Removing packages');
+
+        $installed = $this->getInstalledPackages();
+
+        $packageGroups = collect($this->removePackages)
+            ->filter(fn ($group, $package) => $installed->contains($package))
+            ->groupBy(fn ($group) => $group, preserveKeys: true);
+
+        $packageGroups->each(function ($packages, $group) {
+            $packages = $packages->keys()->values();
+
+            $this->components->bulletList($packages->all());
+
+            $this->composer->removePackages($packages->all(), dev: $group === 'dev');
+        });
+    }
+
+    protected function hasRemovablePackages(array $packages): bool
+    {
+        $installed = $this->getInstalledPackages();
+
+        return collect($packages)->keys()
+            ->filter(fn ($package) => $installed->contains($package))
+            ->isNotEmpty();
+    }
+
     protected function installPackages(array $packages): void
     {
         if (! $this->hasInstallablePackages($packages)) {
