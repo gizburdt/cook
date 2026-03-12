@@ -12,6 +12,7 @@ use Gizburdt\Cook\Commands\Filament;
 use Gizburdt\Cook\Commands\FilamentPanel;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
+use Gizburdt\Cook\Commands\Mcp;
 use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Ui;
@@ -33,6 +34,7 @@ class CookServiceProvider extends ServiceProvider
         Backups::class,
         Filament::class,
         FilamentPanel::class,
+        Mcp::class,
         Ui::class,
         Packages::class,
     ];

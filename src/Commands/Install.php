@@ -62,6 +62,11 @@ class Install extends Command
             $this->call('cook:filament:panel', $arguments);
         }
 
+        // MCP
+        if (confirm('Install MCP?', default: false)) {
+            $this->call('cook:mcp', $arguments);
+        }
+
         // UI
         if (confirm('Install UI?', default: false)) {
             $this->call('cook:ui', $arguments);
