@@ -20,6 +20,8 @@ class Backups extends Command
 
     protected $description = 'Install backups';
 
+    protected string $docs = 'https://spatie.be/docs/laravel-backup/v10/introduction';
+
     protected string $driver;
 
     public string $publishGroup = 'backups';
@@ -51,6 +53,8 @@ class Backups extends Command
         $this->tryInstallPackages();
 
         $this->addCode();
+
+        $this->openDocs();
     }
 
     protected function setupDriver(): void

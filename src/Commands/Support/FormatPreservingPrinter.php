@@ -18,12 +18,15 @@ class FormatPreservingPrinter extends Standard
 
     protected bool $hasTableConfigureChain = false;
 
+    protected bool $hasUserMenuItems = false;
+
     public function printFormatPreserving(array $stmts, array $origStmts, array $origTokens): string
     {
         $this->methodsNeedingBlankLine = $this->findMethodsNeedingBlankLine($stmts);
         $this->hasPasswordRulesChain = $this->hasPasswordRulesMethodChain($stmts);
         $this->hasHealthChecks = $this->hasHealthChecksMethod($stmts);
         $this->hasTableConfigureChain = $this->hasTableConfigureChain($stmts);
+        $this->hasUserMenuItems = $this->hasUserMenuItemsMethod($stmts);
 
         $result = parent::printFormatPreserving($stmts, $origStmts, $origTokens);
 
@@ -46,6 +49,10 @@ class FormatPreservingPrinter extends Standard
 
         if ($this->hasTableConfigureChain) {
             $result = $this->formatTableConfigureChain($result);
+        }
+
+        if ($this->hasUserMenuItems) {
+            $result = $this->formatUserMenuItems($result);
         }
 
         return $result;
@@ -224,6 +231,65 @@ class FormatPreservingPrinter extends Standard
             },
             $code
         );
+    }
+
+    protected function hasUserMenuItemsMethod(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof Node\Stmt\Namespace_) {
+                if ($this->hasUserMenuItemsMethod($node->stmts)) {
+                    return true;
+                }
+            }
+
+            if ($node instanceof Node\Stmt\Class_) {
+                foreach ($node->stmts as $stmt) {
+                    if ($stmt instanceof ClassMethod && $stmt->name->name === 'panel') {
+                        if ($stmt->getAttribute('formatUserMenuItems')) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function formatUserMenuItems(string $code): string
+    {
+        // Put ->userMenuItems( on its own line after the preceding method call
+        $code = preg_replace(
+            '/(\))(->userMenuItems\()/',
+            "$1\n            $2",
+            $code
+        );
+
+        // Indent array contents: Action chain and closing bracket
+        $code = preg_replace_callback(
+            '/->userMenuItems\(\[\n(.*?)\n(\s*)\]\)/s',
+            function ($matches) {
+                $content = $matches[1];
+
+                // Indent Action::make to 16 spaces
+                $content = preg_replace('/^(\s*)Action::make/m', '                Action::make', $content);
+
+                // Indent Action sub-methods to 20 spaces
+                $content = preg_replace('/^(\s*)(->(?:label|url|icon)\()/m', '                    $2', $content);
+
+                return "->userMenuItems([\n{$content}\n            ])";
+            },
+            $code
+        );
+
+        // Break the Action chain onto separate lines
+        $code = preg_replace(
+            "/(Action::make\('[^']+'\))(->label\(.*?\))(->url\(fn\(\).*?\)\))(->icon\([^)]+\))/",
+            "$1\n                    $2\n                    $3\n                    $4",
+            $code
+        );
+
+        return $code;
     }
 
     protected function findMethodsNeedingBlankLine(array $nodes): array

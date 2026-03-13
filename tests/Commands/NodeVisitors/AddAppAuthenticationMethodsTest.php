@@ -1,6 +1,7 @@
 <?php
 
 use Gizburdt\Cook\Commands\NodeVisitors\AddAppAuthenticationMethods;
+use Gizburdt\Cook\Commands\NodeVisitors\AddCanAccessPanel;
 
 it('adds HasAppAuthentication and HasAppAuthenticationRecovery implements to class without implements', function () {
     $parser = createPhpParserHelper();
@@ -284,7 +285,7 @@ class User extends Authenticatable
 PHP;
 
     $result = $parser->testParseContent($content, [
-        \Gizburdt\Cook\Commands\NodeVisitors\AddCanAccessPanel::class,
+        AddCanAccessPanel::class,
         AddAppAuthenticationMethods::class,
     ], 'app/Models/User.php');
 

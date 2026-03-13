@@ -9,6 +9,7 @@ use Gizburdt\Cook\Commands\CodeQuality;
 use Gizburdt\Cook\Commands\FailedJob;
 use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
+use Gizburdt\Cook\Commands\FilamentApiTokens;
 use Gizburdt\Cook\Commands\FilamentPanel;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
@@ -27,6 +28,7 @@ class CookServiceProvider extends ServiceProvider
         //
         Base::class,
         Ai::class,
+        Mcp::class,
         CodeQuality::class,
         Operations::class,
         Health::class,
@@ -34,7 +36,7 @@ class CookServiceProvider extends ServiceProvider
         Backups::class,
         Filament::class,
         FilamentPanel::class,
-        Mcp::class,
+        FilamentApiTokens::class,
         Ui::class,
         Packages::class,
     ];

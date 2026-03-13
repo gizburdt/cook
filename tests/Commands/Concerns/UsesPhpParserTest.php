@@ -3,8 +3,10 @@
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Illuminate\Filesystem\Filesystem;
 use PhpParser\Node;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Echo_;
 use PhpParser\NodeVisitorAbstract;
+use PhpParser\Parser;
 
 it('parses and preserves php content', function () {
     $parser = createPhpParser();
@@ -82,7 +84,7 @@ it('creates a valid parser instance', function () {
     $parser = createPhpParser();
 
     expect($parser->testNewParser())
-        ->toBeInstanceOf(\PhpParser\Parser::class);
+        ->toBeInstanceOf(Parser::class);
 });
 
 it('preserves formatting when no changes are made', function () {
@@ -163,7 +165,7 @@ function createPhpParser(): object
             return $this->parsePhpContent($content, $visitors);
         }
 
-        public function testNewParser(): \PhpParser\Parser
+        public function testNewParser(): Parser
         {
             return $this->newPhpParser();
         }
@@ -195,7 +197,7 @@ class ReplaceEchoVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof Echo_) {
-            $node->exprs[0] = new \PhpParser\Node\Scalar\String_('modified');
+            $node->exprs[0] = new String_('modified');
         }
 
         return $node;
@@ -206,7 +208,7 @@ class UppercaseEchoVisitor extends NodeVisitorAbstract
 {
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Echo_ && $node->exprs[0] instanceof \PhpParser\Node\Scalar\String_) {
+        if ($node instanceof Echo_ && $node->exprs[0] instanceof String_) {
             $node->exprs[0]->value = strtoupper($node->exprs[0]->value);
         }
 

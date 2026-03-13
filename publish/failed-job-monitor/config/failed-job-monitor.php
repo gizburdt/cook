@@ -1,5 +1,7 @@
 <?php
 
+use App\Support\FailedJobMonitor\Notifiable;
+use App\Support\FailedJobMonitor\Notification;
 use Awssat\Notifications\Channels\DiscordWebhookChannel;
 
 /**
@@ -7,9 +9,9 @@ use Awssat\Notifications\Channels\DiscordWebhookChannel;
  */
 return [
 
-    'notification' => App\Support\FailedJobMonitor\Notification::class,
+    'notification' => Notification::class,
 
-    'notifiable' => App\Support\FailedJobMonitor\Notifiable::class,
+    'notifiable' => Notifiable::class,
 
     'notificationFilter' => null,
 

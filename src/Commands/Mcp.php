@@ -17,11 +17,15 @@ class Mcp extends Command
 
     protected $description = 'Install MCP';
 
+    protected string $docs = 'https://laravel.com/docs/12.x/mcp';
+
+    protected string $driver;
+
     public string $publishGroup = 'mcp';
 
     public array $publishes = [
         'routes/ai.php' => 'routes/ai.php',
-        'Mcp' => 'app/Mcp'
+        'Mcp' => 'app/Mcp',
     ];
 
     protected array $packages = [
@@ -40,15 +44,17 @@ class Mcp extends Command
         $this->installApi();
 
         $this->runPint();
+
+        $this->openDocs();
     }
 
     protected function installApi(): void
     {
-        $driver = select(__('Which authentication?'), [
+        $this->driver = select(__('Which authentication?'), [
             'sanctum' => 'Sanctum',
         ]);
 
-        match ($driver) {
+        match ($this->driver) {
             'passport' => $this->installPassport(),
             default => $this->installSanctum(),
         };

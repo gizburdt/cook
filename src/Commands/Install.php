@@ -27,6 +27,11 @@ class Install extends Command
             $this->call('cook:ai', $arguments);
         }
 
+        // MCP
+        if (confirm('Install MCP?', default: false)) {
+            $this->call('cook:mcp', $arguments);
+        }
+
         // Code quality
         if (confirm('Install code quality?')) {
             $this->call('cook:code-quality', $arguments);
@@ -62,9 +67,9 @@ class Install extends Command
             $this->call('cook:filament:panel', $arguments);
         }
 
-        // MCP
-        if (confirm('Install MCP?', default: false)) {
-            $this->call('cook:mcp', $arguments);
+        // Filament api tokens
+        if ($installFilament && confirm('Install Filament Api Tokens?', default: false)) {
+            $this->call('cook:filament:api-tokens', $arguments);
         }
 
         // UI

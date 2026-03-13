@@ -4,12 +4,15 @@
  * https://github.com/spatie/laravel-health/blob/main/config/health.php
  */
 
+use App\Support\Health\Notifiable;
+use App\Support\Health\Notification;
 use Awssat\Notifications\Channels\DiscordWebhookChannel;
+use Spatie\Health\ResultStores\JsonFileHealthResultStore;
 
 return [
 
     'result_stores' => [
-        Spatie\Health\ResultStores\JsonFileHealthResultStore::class => [
+        JsonFileHealthResultStore::class => [
             'disk' => 'local',
             'path' => 'health.json',
         ],
@@ -19,10 +22,10 @@ return [
         'enabled' => true,
 
         'notifications' => [
-            App\Support\Health\Notification::class => [DiscordWebhookChannel::class],
+            Notification::class => [DiscordWebhookChannel::class],
         ],
 
-        'notifiable' => App\Support\Health\Notifiable::class,
+        'notifiable' => Notifiable::class,
 
         'throttle_notifications_for_minutes' => 120,
         'throttle_notifications_key' => 'health:latestNotificationSentAt:',

@@ -12,6 +12,8 @@ class Operations extends Command
 
     protected $description = 'Publish one-time-operations files';
 
+    protected string $docs = 'https://github.com/TimoKoerber/laravel-one-time-operations';
+
     public string $publishGroup = 'operations';
 
     public array $publishes = [
@@ -33,5 +35,7 @@ class Operations extends Command
         $this->tryInstallPackages();
 
         $this->runPint();
+
+        $this->openDocs();
     }
 }

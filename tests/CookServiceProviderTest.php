@@ -4,17 +4,20 @@ use Gizburdt\Cook\Commands\Ai;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
+use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
+use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
 use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
 use Gizburdt\Cook\Commands\Publish;
 use Gizburdt\Cook\Commands\Ui;
 use Gizburdt\Cook\CookServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 it('extends service provider', function () {
     expect(CookServiceProvider::class)
-        ->toExtend(Illuminate\Support\ServiceProvider::class);
+        ->toExtend(ServiceProvider::class);
 });
 
 it('has register method', function () {
@@ -116,8 +119,8 @@ it('has protected methods for all publish groups', function () {
 });
 
 it('has health command class available', function () {
-    expect(Gizburdt\Cook\Commands\Health::class)->toBeString()
-        ->and(Gizburdt\Cook\Commands\FailedJobMonitor::class)->toBeString();
+    expect(Health::class)->toBeString()
+        ->and(FailedJobMonitor::class)->toBeString();
 });
 
 it('health config has result stores configured', function () {
