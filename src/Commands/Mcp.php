@@ -64,7 +64,7 @@ class Mcp extends Command
     {
         $this->components->info('Install Sanctum');
 
-        $this->runInNewProcess('php artisan install:api');
+        $this->runInNewProcess('php artisan install:api --without-migration-prompt');
 
         $this->applyPhpVisitors(app_path('Models/User.php'), [
             AddSanctumHasApiTokens::class,
