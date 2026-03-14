@@ -20,7 +20,7 @@ use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitorAbstract;
 
-class AddUserMenuItems extends NodeVisitorAbstract
+class AddApiTokensUserMenuItem extends NodeVisitorAbstract
 {
     protected bool $hasUserMenuItems = false;
 

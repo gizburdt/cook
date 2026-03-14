@@ -4,7 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\NodeVisitors\AddUserMenuItems;
+use Gizburdt\Cook\Commands\NodeVisitors\AddApiTokensUserMenuItem;
 
 use function Laravel\Prompts\select;
 
@@ -49,7 +49,7 @@ class FilamentApiTokens extends Command
     protected function addCode(): void
     {
         $this->applyPhpVisitors('app/Providers/Filament/AdminPanelProvider.php', [
-            AddUserMenuItems::class,
+            AddApiTokensUserMenuItem::class,
         ]);
     }
 }

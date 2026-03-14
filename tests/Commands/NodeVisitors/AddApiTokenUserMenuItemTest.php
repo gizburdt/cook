@@ -1,6 +1,6 @@
 <?php
 
-use Gizburdt\Cook\Commands\NodeVisitors\AddUserMenuItems;
+use Gizburdt\Cook\Commands\NodeVisitors\AddApiTokensUserMenuItem;
 
 it('adds userMenuItems after profile in the panel method chain', function () {
     $parser = createPhpParserHelper();
@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
 PHP;
 
     $result = $parser->testParseContent($content, [
-        AddUserMenuItems::class,
+        AddApiTokensUserMenuItem::class,
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect($result)
@@ -59,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
 PHP;
 
     $result = $parser->testParseContent($content, [
-        AddUserMenuItems::class,
+        AddApiTokensUserMenuItem::class,
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect($result)
@@ -101,7 +101,7 @@ class AdminPanelProvider extends PanelProvider
 PHP;
 
     $result = $parser->testParseContent($content, [
-        AddUserMenuItems::class,
+        AddApiTokensUserMenuItem::class,
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect(substr_count($result, 'userMenuItems'))
@@ -131,7 +131,7 @@ class AdminPanelProvider extends PanelProvider
 PHP;
 
     $result = $parser->testParseContent($content, [
-        AddUserMenuItems::class,
+        AddApiTokensUserMenuItem::class,
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect($result)
@@ -166,7 +166,7 @@ class AdminPanelProvider extends PanelProvider
 PHP;
 
     $result = $parser->testParseContent($content, [
-        AddUserMenuItems::class,
+        AddApiTokensUserMenuItem::class,
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect(substr_count($result, 'use Filament\Actions\Action;'))
