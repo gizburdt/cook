@@ -12,7 +12,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class ApiTokens extends Page implements HasTable
 {
@@ -30,10 +29,7 @@ class ApiTokens extends Page implements HasTable
     {
         return $table
             ->query(
-                PersonalAccessToken::query()
-                    ->where('tokenable_id', auth()->id())
-                    ->where('tokenable_type', auth()->user()::class)
-                    ->latest()
+                auth()->user()->tokens()->latest()->getQuery()
             )
             ->columns([
                 TextColumn::make('name')
