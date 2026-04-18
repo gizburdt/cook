@@ -4,7 +4,7 @@
 - Use American spelling, like "color" instead of "colour"
 
 ## Dates
-- Use `UTC` in database and `Europe/Amsterdam` for showing dates
+- Use `UTC` in the database
 - Use `d-m-Y H:i` format for datetime
 - Use `d-m-Y` format for date
 - Use `H:i` format for time
