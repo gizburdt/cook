@@ -1,7 +1,8 @@
 # General
 
-## Spelling
+## Languages
 - Use American spelling, like "color" instead of "colour"
+- Use English in `__()` and `@lang()` methods and translate the value
 
 ## Dates
 - Use `UTC` in the database
