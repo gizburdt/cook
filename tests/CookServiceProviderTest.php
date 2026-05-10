@@ -30,15 +30,25 @@ it('has boot method', function () {
         ->toHaveMethod('boot');
 });
 
-it('has protected methods for publishable groups', function () {
+it('has files helper method on service provider', function () {
     expect(CookServiceProvider::class)
-        ->toHaveMethod('operations')
-        ->toHaveMethod('base')
-        ->toHaveMethod('codeQuality')
-        ->toHaveMethod('ai')
-        ->toHaveMethod('filament')
+        ->toHaveMethod('bootPublishes')
         ->toHaveMethod('files');
 });
+
+it('every command class declares a publish group', function (string $name, string $expected) {
+    expect(commandSource($name))
+        ->toContain("public string \$publishGroup = '{$expected}';");
+})->with([
+    'ai' => ['Ai', 'ai'],
+    'base' => ['Base', 'base'],
+    'code-quality' => ['CodeQuality', 'code-quality'],
+    'operations' => ['Operations', 'operations'],
+    'health' => ['Health', 'health'],
+    'failed-job-monitor' => ['FailedJobMonitor', 'failed-job-monitor'],
+    'backups' => ['Backups', 'backups'],
+    'filament' => ['Filament', 'filament'],
+]);
 
 it('has all command classes available', function () {
     expect(Install::class)->toBeString()
@@ -111,12 +121,19 @@ it('has backups publishable files', function () {
         ->toBeTrue();
 });
 
-it('has protected methods for all publish groups', function () {
-    expect(CookServiceProvider::class)
-        ->toHaveMethod('health')
-        ->toHaveMethod('failedJobMonitor')
-        ->toHaveMethod('backups');
-});
+it('every command class declares a publishes array', function (string $name) {
+    expect(commandSource($name))
+        ->toContain('public array $publishes = [');
+})->with([
+    'Ai',
+    'Base',
+    'CodeQuality',
+    'Operations',
+    'Health',
+    'FailedJobMonitor',
+    'Backups',
+    'Filament',
+]);
 
 it('has health command class available', function () {
     expect(Health::class)->toBeString()
@@ -137,7 +154,8 @@ it('health config has notifications configured', function () {
     expect($content)
         ->toContain('notifications')
         ->toContain("'enabled' => true")
-        ->toContain('App\Support\Health\Notifiable::class');
+        ->toContain('use App\Support\Health\Notifiable;')
+        ->toContain('Notifiable::class');
 });
 
 it('health config has discord webhook url setting', function () {
@@ -244,124 +262,61 @@ it('has files helper method', function () {
         ->toHaveMethod('files');
 });
 
-it('publishes base group with correct tag', function () {
+it('boot publishes registers commands with cook-prefixed tag', function () {
     $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
 
     expect($content)
-        ->toContain("'cook-base'")
-        ->toContain("'cook-ai'")
-        ->toContain("'cook-code-quality'")
-        ->toContain("'cook-operations'")
-        ->toContain("'cook-health'")
-        ->toContain("'cook-failed-job-monitor'")
-        ->toContain("'cook-backups'")
-        ->toContain("'cook-filament'");
+        ->toContain('cook-{$command->publishGroup}');
 });
 
-it('base method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'base');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('base command publishes expected files', function () {
+    expect(commandSource('Base'))
         ->toContain("'stubs' => 'stubs'")
         ->toContain("'Models/Model.php' => 'app/Models/Model.php'")
         ->toContain("'Models/Pivot.php' => 'app/Models/Pivot.php'");
 });
 
-it('ai method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'ai');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('ai command publishes expected files', function () {
+    expect(commandSource('Ai'))
         ->toContain("'.ai' => '.ai'")
         ->toContain("'.claude' => '.claude'");
 });
 
-it('code quality method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'codeQuality');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('code quality command publishes expected files', function () {
+    expect(commandSource('CodeQuality'))
         ->toContain("'.github' => '.github'")
         ->toContain("'phpstan.neon' => 'phpstan.neon'")
         ->toContain("'pint.json' => 'pint.json'")
         ->toContain("'rector.php' => 'rector.php'");
 });
 
-it('operations method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'operations');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('operations command publishes expected files', function () {
+    expect(commandSource('Operations'))
         ->toContain("'config/one-time-operations.php' => 'config/one-time-operations.php'")
         ->toContain("'stubs/one-time-operation.stub' => 'stubs/one-time-operation.stub'");
 });
 
-it('health method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'health');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('health command publishes expected files', function () {
+    expect(commandSource('Health'))
         ->toContain("'config/health.php' => 'config/health.php'")
         ->toContain("'Support/Notifiable.php' => 'app/Support/Health/Notifiable.php'")
         ->toContain("'Support/Notification.php' => 'app/Support/Health/Notification.php'");
 });
 
-it('failed job monitor method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'failedJobMonitor');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('failed job monitor command publishes expected files', function () {
+    expect(commandSource('FailedJobMonitor'))
         ->toContain("'config/failed-job-monitor.php' => 'config/failed-job-monitor.php'")
         ->toContain("'Support/Notifiable.php' => 'app/Support/FailedJobMonitor/Notifiable.php'")
         ->toContain("'Support/Notification.php' => 'app/Support/FailedJobMonitor/Notification.php'");
 });
 
-it('backups method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'backups');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('backups command publishes expected files', function () {
+    expect(commandSource('Backups'))
         ->toContain("'config/backup.php' => 'config/backup.php'");
 });
 
-it('filament method is protected and returns array', function () {
-    $reflection = new ReflectionMethod(CookServiceProvider::class, 'filament');
-
-    expect($reflection->isProtected())
-        ->toBeTrue();
-
-    $content = file_get_contents((new ReflectionClass(CookServiceProvider::class))->getFileName());
-
-    expect($content)
+it('filament command publishes expected files', function () {
+    expect(commandSource('Filament'))
         ->toContain("'Filament' => 'app/Filament'");
 });
 

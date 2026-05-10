@@ -101,7 +101,7 @@ PHP;
         ->toContain("'bucket' => env('BACKUP_S3_BUCKET')")
         ->toContain("'url' => env('BACKUP_S3_URL')")
         ->toContain("'endpoint' => env('BACKUP_S3_ENDPOINT')")
-        ->toContain("'use_path_style_endpoint' => false")
+        ->toContain("'use_path_style_endpoint' => true")
         ->toContain("'throw' => false")
         ->toContain("'report' => false");
 });
@@ -300,7 +300,7 @@ PHP;
         ->toMatch('/\'bucket\'\s*=>\s*env\(\'BACKUP_S3_BUCKET\'\),\s*\n\s*\'url\'/s')
         ->toMatch('/\'url\'\s*=>\s*env\(\'BACKUP_S3_URL\'\),\s*\n\s*\'endpoint\'/s')
         ->toMatch('/\'endpoint\'\s*=>\s*env\(\'BACKUP_S3_ENDPOINT\'\),\s*\n\s*\'use_path_style_endpoint\'/s')
-        ->toMatch('/\'use_path_style_endpoint\'\s*=>\s*false,\s*\n\s*\'throw\'/s')
+        ->toMatch('/\'use_path_style_endpoint\'\s*=>\s*true,\s*\n\s*\'throw\'/s')
         ->toMatch('/\'throw\'\s*=>\s*false,\s*\n\s*\'report\'/s');
 });
 

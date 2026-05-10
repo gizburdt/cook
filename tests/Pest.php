@@ -28,3 +28,8 @@ function createPhpParserHelper(): object
         }
     };
 }
+
+function commandSource(string $name): string
+{
+    return file_get_contents(dirname(__DIR__)."/src/Commands/{$name}.php");
+}
