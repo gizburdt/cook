@@ -68,7 +68,7 @@ PHP;
         ->toContain("'folder' => env('BACKUP_GOOGLE_FOLDER')");
 });
 
-it('adds minio backups disk to filesystems config', function () {
+it('adds s3 backups disk to filesystems config', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -89,7 +89,7 @@ return [
 PHP;
 
     $result = $parser->testParseContent($content, [
-        new AddBackupsDisk('minio'),
+        new AddBackupsDisk('s3'),
     ]);
 
     expect($result)
@@ -267,7 +267,7 @@ PHP;
         ->toMatch('/\'refreshToken\'\s*=>\s*env\(\'BACKUP_GOOGLE_REFRESH_TOKEN\'\),\s*\n\s*\'folder\'/s');
 });
 
-it('formats minio disk config keys on separate lines', function () {
+it('formats s3 disk config keys on separate lines', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -288,7 +288,7 @@ return [
 PHP;
 
     $result = $parser->testParseContent($content, [
-        new AddBackupsDisk('minio'),
+        new AddBackupsDisk('s3'),
     ]);
 
     expect($result)

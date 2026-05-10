@@ -74,7 +74,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
         $config = match ($this->driver) {
             'local' => $this->getLocalConfig(),
             'google' => $this->getGoogleConfig(),
-            'minio' => $this->getMinioConfig(),
+            's3' => $this->getS3Config(),
             default => [],
         };
 
@@ -144,7 +144,7 @@ class AddBackupsDisk extends NodeVisitorAbstract
         ];
     }
 
-    protected function getMinioConfig(): array
+    protected function getS3Config(): array
     {
         return [
             'driver' => 's3',

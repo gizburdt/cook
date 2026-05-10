@@ -7,6 +7,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
@@ -31,6 +32,7 @@ class AddFilamentConfiguration extends NodeVisitorAbstract
     protected array $missingUseStatements = [];
 
     protected array $requiredUseStatements = [
+        'Filament\Support\Facades\FilamentTimezone',
         'Filament\Tables\Table',
         'Filament\Forms\Components\TextInput',
         'Filament\Infolists\Components\TextEntry',
@@ -193,10 +195,21 @@ class AddFilamentConfiguration extends NodeVisitorAbstract
 
     protected function addFilamentConfigurationStatements(ClassMethod $method): void
     {
+        $hasFilamentTimezone = $this->methodHasFilamentTimezoneSet($method);
         $hasTable = $this->methodHasConfigureUsing($method, 'Table');
         $hasTextInput = $this->methodHasConfigureUsing($method, 'TextInput');
         $hasTextEntry = $this->methodHasConfigureUsing($method, 'TextEntry');
         $hasTextColumn = $this->methodHasConfigureUsing($method, 'TextColumn');
+
+        if (! $hasFilamentTimezone) {
+            $prepended = [$this->createFilamentTimezoneSet()];
+
+            if (! empty($method->stmts)) {
+                $prepended[] = new Nop;
+            }
+
+            $method->stmts = array_merge($prepended, $method->stmts);
+        }
 
         $needsBlankLine = ! empty($method->stmts);
 
@@ -234,6 +247,45 @@ class AddFilamentConfiguration extends NodeVisitorAbstract
 
             $method->stmts[] = $this->createTextColumnConfigureUsing();
         }
+    }
+
+    protected function methodHasFilamentTimezoneSet(ClassMethod $method): bool
+    {
+        foreach ($method->stmts as $stmt) {
+            if (! $stmt instanceof Expression) {
+                continue;
+            }
+
+            if (! $stmt->expr instanceof StaticCall) {
+                continue;
+            }
+
+            $call = $stmt->expr;
+
+            if ($call->class instanceof Name && $call->class->toString() === 'FilamentTimezone') {
+                if ($call->name instanceof Identifier && $call->name->name === 'set') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function createFilamentTimezoneSet(): Expression
+    {
+        return new Expression(
+            new StaticCall(
+                new Name('FilamentTimezone'),
+                new Identifier('set'),
+                [new Arg(
+                    new FuncCall(
+                        new Name('config'),
+                        [new Arg(new Node\Scalar\String_('app.timezone'))]
+                    )
+                )]
+            )
+        );
     }
 
     protected function methodHasConfigureUsing(ClassMethod $method, string $className): bool

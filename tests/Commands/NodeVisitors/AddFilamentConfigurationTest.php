@@ -249,6 +249,126 @@ PHP;
         ->toContain('TextColumn::configureUsing');
 });
 
+it('adds FilamentTimezone::set at the top of the filament method', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toContain("FilamentTimezone::set(config('app.timezone'));")
+        ->toMatch("/protected function filament\(\): void[\s]*\{[\s]*FilamentTimezone::set\(config\('app\.timezone'\)\);[\s]*\n[\s]*\n[\s]*Table::configureUsing/s");
+});
+
+it('adds FilamentTimezone use statement', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toContain('use Filament\Support\Facades\FilamentTimezone');
+});
+
+it('does not duplicate FilamentTimezone::set if it already exists', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Filament\Support\Facades\FilamentTimezone;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+
+    protected function filament(): void
+    {
+        FilamentTimezone::set(config('app.timezone'));
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect(substr_count($result, 'FilamentTimezone::set'))
+        ->toBe(1);
+});
+
+it('prepends FilamentTimezone::set to existing filament method', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        //
+    }
+
+    protected function filament(): void
+    {
+        // existing method
+    }
+}
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddFilamentConfiguration::class,
+    ], 'app/Providers/AppServiceProvider.php');
+
+    expect($result)
+        ->toMatch("/protected function filament\(\): void[\s]*\{[\s]*FilamentTimezone::set\(config\('app\.timezone'\)\);/s");
+});
+
 it('adds filament method call at the bottom of boot method', function () {
     $parser = createPhpParserHelper();
 

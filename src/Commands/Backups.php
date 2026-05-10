@@ -38,10 +38,10 @@ class Backups extends Command
     public function handle(): void
     {
         $this->driver = select('Which driver?', [
-            'minio' => 'MinIO',
+            's3' => 'S3',
             'google' => 'Google',
             'local' => 'Local',
-        ], 'minio');
+        ], 's3');
 
         $this->setupDriver();
 
@@ -63,7 +63,7 @@ class Backups extends Command
             $this->packages['yaza/laravel-google-drive-storage'] = 'require';
         }
 
-        if ($this->driver === 'minio') {
+        if ($this->driver === 's3') {
             $this->packages['league/flysystem-aws-s3-v3'] = 'require';
         }
     }
@@ -89,7 +89,7 @@ class Backups extends Command
             ]);
         }
 
-        if ($this->driver === 'minio') {
+        if ($this->driver === 's3') {
             $this->addEnvVariables([
                 'BACKUP_S3_KEY' => '',
                 'BACKUP_S3_SECRET' => '',
