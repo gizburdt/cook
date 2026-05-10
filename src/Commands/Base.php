@@ -4,6 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
+use Gizburdt\Cook\Commands\NodeVisitors\AddCarbonMacros;
 use Gizburdt\Cook\Commands\NodeVisitors\AddLocalRoutes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddOptimizes;
 use Gizburdt\Cook\Commands\NodeVisitors\AddPasswordRules;
@@ -63,6 +64,10 @@ class Base extends Command
 
         $this->replaceEloquentModel();
 
+        $this->components->info('Adding carbon macros');
+
+        $this->addCarbonMacros();
+
         $this->components->info('Adding password rules');
 
         $this->addPasswordRules();
@@ -101,6 +106,13 @@ class Base extends Command
         });
 
         $this->line("\n");
+    }
+
+    protected function addCarbonMacros(): void
+    {
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
+            AddCarbonMacros::class,
+        ]);
     }
 
     protected function addPasswordRules(): void
