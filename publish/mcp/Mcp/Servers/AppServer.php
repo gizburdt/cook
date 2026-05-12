@@ -12,6 +12,10 @@ use Laravel\Mcp\Server\Attributes\Version;
 #[Instructions('Instructions describing how to use the server and its features.')]
 class AppServer extends Server
 {
+    public int $defaultPaginationLength = 200;
+
+    public int $maxPaginationLength = 200;
+
     protected array $tools = [
         //
     ];
