@@ -6,7 +6,6 @@ When Filament is used in this project, there will be a lot of code and existing 
 
 ## General
 - Ignore SoftDeletes completely in Filament, so no filters, custom queries, restore and force delete actions
-- Use the `Filament\Support\Icons\Heroicon` class when setting icons
 - Use `->visible()` rather than `->hidden()`
 
 ## Tables

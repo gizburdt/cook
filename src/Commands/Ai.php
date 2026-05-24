@@ -21,6 +21,7 @@ class Ai extends Command
 
     protected array $packages = [
         'laravel/boost' => 'dev',
+        'laravel/pao' => 'dev',
     ];
 
     public function handle(): void
