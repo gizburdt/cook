@@ -40,7 +40,7 @@ class Base extends Command
 
     protected array $packages = [
         'barryvdh/laravel-debugbar' => 'dev',
-        'laracasts/presenter' => 'require',
+        'gizburdt/paint' => 'require',
         'laravel/horizon' => 'require',
         'laravel/pail' => 'dev',
         'laravel/prompts' => 'require',
