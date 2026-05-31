@@ -2,6 +2,7 @@ name: Styling
 
 on:
   pull_request:
+    branches: [master]
   push:
     branches-ignore:
       - '**'
