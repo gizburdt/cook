@@ -4,7 +4,7 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\NodeVisitors\AddApiTokensUserMenuItem;
+use Gizburdt\Cook\Commands\NodeVisitors\AddAccessTokensUserMenuItem;
 
 use function Laravel\Prompts\select;
 
@@ -13,17 +13,17 @@ class FilamentApiTokens extends Command
     use InstallsPackages;
     use UsesPhpParser;
 
-    protected $signature = 'cook:filament:api-tokens {--force} {--skip-pint}';
+    protected $signature = 'cook:filament:access-tokens {--force} {--skip-pint}';
 
-    protected $description = 'Install Filament Api Token manager';
+    protected $description = 'Install Filament access Tokens';
 
     protected string $driver;
 
-    public string $publishGroup = 'filament-api-tokens';
+    public string $publishGroup = 'filament-access-tokens';
 
     public array $publishes = [
-        'sanctum/Filament/Pages/ApiTokens.php' => 'app/Filament/Pages/ApiTokens.php',
-        'sanctum/resources/views/filament/pages/api-tokens.blade.php' => 'resources/views/filament/pages/api-tokens.blade.php',
+        'sanctum/Filament/Pages/AccessTokens.php' => 'app/Filament/Pages/AccessTokens.php',
+        'sanctum/resources/views/filament/pages/access-tokens.blade.php' => 'resources/views/filament/pages/access-tokens.blade.php',
     ];
 
     protected array $packages = [
@@ -37,7 +37,7 @@ class FilamentApiTokens extends Command
         ]);
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-filament-api-tokens',
+            '--tag' => 'cook-filament-access-tokens',
             '--force' => $this->option('force'),
         ]);
 
@@ -49,7 +49,7 @@ class FilamentApiTokens extends Command
     protected function addCode(): void
     {
         $this->applyPhpVisitors('app/Providers/Filament/AdminPanelProvider.php', [
-            AddApiTokensUserMenuItem::class,
+            AddAccessTokensUserMenuItem::class,
         ]);
     }
 }

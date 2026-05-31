@@ -51,8 +51,9 @@ class Mcp extends Command
     protected function installApi(): void
     {
         $this->driver = select(__('Which authentication?'), [
+            'passport' => 'Passport',
             'sanctum' => 'Sanctum',
-        ]);
+        ], 'passport');
 
         match ($this->driver) {
             'passport' => $this->installPassport(),
@@ -73,6 +74,29 @@ class Mcp extends Command
 
     protected function installPassport(): void
     {
-        //
+        $this->components->info('Install Passport');
+
+        $this->runInNewProcess('php artisan install:api --passport');
+
+        $this->applyPhpVisitors(app_path('Models/User.php'), [
+            // AddSanctumHasApiTokens::class,
+        ]);
+
+        // guards in config/auth.php
+        // 'api' => [
+        //     'driver' => 'passport',
+        //     'provider' => 'users',
+        // ],
+
+        // php artisan vendor:publish --tag=mcp-views
+        // gebruik custom view ivm shadcn
+
+        // ServiceProvider
+        // Passport::authorizationView(function ($parameters) {
+        //     return view('mcp.authorize', $parameters);
+        // });
+
+        // routes/ai.php
+        // Mcp::oauthRoutes();
     }
 }
