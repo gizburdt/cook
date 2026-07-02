@@ -22,6 +22,11 @@ class Install extends Command
             $this->call('cook:base', $arguments);
         }
 
+        // DDD
+        if (confirm('Install DDD?', default: false)) {
+            $this->call('cook:ddd', $arguments);
+        }
+
         // AI
         if (confirm('Install ai?')) {
             $this->call('cook:ai', $arguments);

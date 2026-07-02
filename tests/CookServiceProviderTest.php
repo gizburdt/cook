@@ -42,6 +42,7 @@ it('every command class declares a publish group', function (string $name, strin
 })->with([
     'ai' => ['Ai', 'ai'],
     'base' => ['Base', 'base'],
+    'ddd' => ['Ddd', 'ddd'],
     'code-quality' => ['CodeQuality', 'code-quality'],
     'operations' => ['Operations', 'operations'],
     'health' => ['Health', 'health'],
@@ -92,6 +93,18 @@ it('has code quality publishable files', function () {
         ->and(file_exists($basePath.'/rector.php'))->toBeTrue();
 });
 
+it('has ddd publishable files', function () {
+    $basePath = dirname(__DIR__).'/publish/ddd';
+
+    expect(file_exists($basePath.'/Domain/DomainServiceProvider.php'))
+        ->toBeTrue();
+});
+
+it('ddd command publishes expected files', function () {
+    expect(commandSource('Ddd'))
+        ->toContain("'Domain/DomainServiceProvider.php' => 'app/Domain/DomainServiceProvider.php'");
+});
+
 it('has ai publishable files', function () {
     $basePath = dirname(__DIR__).'/publish/ai';
 
@@ -127,6 +140,7 @@ it('every command class declares a publishes array', function (string $name) {
 })->with([
     'Ai',
     'Base',
+    'Ddd',
     'CodeQuality',
     'Operations',
     'Health',
