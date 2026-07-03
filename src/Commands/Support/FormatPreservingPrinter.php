@@ -20,6 +20,8 @@ class FormatPreservingPrinter extends Standard
 
     protected bool $hasUserMenuItems = false;
 
+    protected bool $hasMultiFactorAuthentication = false;
+
     public function printFormatPreserving(array $stmts, array $origStmts, array $origTokens): string
     {
         $this->methodsNeedingBlankLine = $this->findMethodsNeedingBlankLine($stmts);
@@ -27,6 +29,7 @@ class FormatPreservingPrinter extends Standard
         $this->hasHealthChecks = $this->hasHealthChecksMethod($stmts);
         $this->hasTableConfigureChain = $this->hasTableConfigureChain($stmts);
         $this->hasUserMenuItems = $this->hasUserMenuItemsMethod($stmts);
+        $this->hasMultiFactorAuthentication = $this->hasMultiFactorAuthenticationMethod($stmts);
 
         $result = parent::printFormatPreserving($stmts, $origStmts, $origTokens);
 
@@ -53,6 +56,10 @@ class FormatPreservingPrinter extends Standard
 
         if ($this->hasUserMenuItems) {
             $result = $this->formatUserMenuItems($result);
+        }
+
+        if ($this->hasMultiFactorAuthentication) {
+            $result = $this->formatMultiFactorAuthentication($result);
         }
 
         return $result;
@@ -286,6 +293,48 @@ class FormatPreservingPrinter extends Standard
         $code = preg_replace(
             "/(Action::make\('[^']+'\))(->label\(.*?\))(->url\(fn\(\).*?\)\))(->icon\([^)]+\))/",
             "$1\n                    $2\n                    $3\n                    $4",
+            $code
+        );
+
+        return $code;
+    }
+
+    protected function hasMultiFactorAuthenticationMethod(array $nodes): bool
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof Node\Stmt\Namespace_) {
+                if ($this->hasMultiFactorAuthenticationMethod($node->stmts)) {
+                    return true;
+                }
+            }
+
+            if ($node instanceof Node\Stmt\Class_) {
+                foreach ($node->stmts as $stmt) {
+                    if ($stmt instanceof ClassMethod && $stmt->name->name === 'panel') {
+                        if ($stmt->getAttribute('formatMultiFactorAuthentication')) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function formatMultiFactorAuthentication(string $code): string
+    {
+        // Put ->multiFactorAuthentication( on its own line after the preceding call
+        $code = preg_replace(
+            '/(\))(->multiFactorAuthentication\()/',
+            "$1\n            $2",
+            $code
+        );
+
+        // Break AppAuthentication::make()->recoverable() onto two lines
+        $code = preg_replace(
+            '/(AppAuthentication::make\(\))(->recoverable\(\))/',
+            "$1\n                    $2",
             $code
         );
 
