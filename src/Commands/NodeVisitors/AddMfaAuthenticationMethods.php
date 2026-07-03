@@ -30,6 +30,14 @@ class AddMfaAuthenticationMethods extends NodeVisitorAbstract
         }
     }
 
+    /**
+     * @param  array<int, MfaMethod>  $methods
+     */
+    public static function make(array $methods): static
+    {
+        return new static($methods);
+    }
+
     protected function shortName(string $fqcn): string
     {
         $position = strrpos($fqcn, '\\');

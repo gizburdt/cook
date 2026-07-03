@@ -22,7 +22,7 @@ PHP;
 
 it('adds app contracts, traits and use statements', function () {
     $result = createPhpParserHelper()->testParseContent(userModelStub(), [
-        new AddMfaAuthenticationMethods([MfaMethod::App]),
+        AddMfaAuthenticationMethods::make([MfaMethod::App]),
     ], 'app/Models/User.php');
 
     expect($result)
@@ -35,7 +35,7 @@ it('adds app contracts, traits and use statements', function () {
 
 it('adds email contracts, traits and use statements', function () {
     $result = createPhpParserHelper()->testParseContent(userModelStub(), [
-        new AddMfaAuthenticationMethods([MfaMethod::Email]),
+        AddMfaAuthenticationMethods::make([MfaMethod::Email]),
     ], 'app/Models/User.php');
 
     expect($result)
@@ -48,7 +48,7 @@ it('adds email contracts, traits and use statements', function () {
 
 it('adds both app and email when both selected', function () {
     $result = createPhpParserHelper()->testParseContent(userModelStub(), [
-        new AddMfaAuthenticationMethods([MfaMethod::App, MfaMethod::Email]),
+        AddMfaAuthenticationMethods::make([MfaMethod::App, MfaMethod::Email]),
     ], 'app/Models/User.php');
 
     expect($result)
@@ -61,7 +61,7 @@ it('adds both app and email when both selected', function () {
 
 it('adds nothing when no methods selected', function () {
     $result = createPhpParserHelper()->testParseContent(userModelStub(), [
-        new AddMfaAuthenticationMethods([]),
+        AddMfaAuthenticationMethods::make([]),
     ], 'app/Models/User.php');
 
     expect($result)
@@ -89,7 +89,7 @@ class User extends Authenticatable implements HasAppAuthentication, HasAppAuthen
 PHP;
 
     $result = createPhpParserHelper()->testParseContent($content, [
-        new AddMfaAuthenticationMethods([MfaMethod::App]),
+        AddMfaAuthenticationMethods::make([MfaMethod::App]),
     ], 'app/Models/User.php');
 
     expect(substr_count($result, 'use InteractsWithAppAuthentication;'))
@@ -103,7 +103,7 @@ PHP;
 it('works together with AddCanAccessPanel without duplicates', function () {
     $result = createPhpParserHelper()->testParseContent(userModelStub(), [
         new AddCanAccessPanel,
-        new AddMfaAuthenticationMethods([MfaMethod::App]),
+        AddMfaAuthenticationMethods::make([MfaMethod::App]),
     ], 'app/Models/User.php');
 
     expect(substr_count($result, 'use Filament\Panel;'))

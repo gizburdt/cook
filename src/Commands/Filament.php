@@ -69,7 +69,7 @@ class Filament extends Command
         $visitors = [AddCanAccessPanel::class];
 
         if (! empty($methods)) {
-            $visitors[] = new AddMfaAuthenticationMethods($methods);
+            $visitors[] = AddMfaAuthenticationMethods::make($methods);
         }
 
         $this->applyPhpVisitors(app_path('Models/User.php'), $visitors);
