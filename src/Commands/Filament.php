@@ -3,15 +3,16 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\PromptsMfaMethods;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddCanAccessPanel;
 use Gizburdt\Cook\Commands\NodeVisitors\AddFilamentConfiguration;
 use Gizburdt\Cook\Commands\NodeVisitors\AddMfaAuthenticationMethods;
-use Gizburdt\Cook\Enums\MfaMethod;
 
 class Filament extends Command
 {
     use InstallsPackages;
+    use PromptsMfaMethods;
     use UsesPhpParser;
 
     protected $signature = 'cook:filament {--force} {--skip-pint}';
@@ -63,10 +64,15 @@ class Filament extends Command
             AddFilamentConfiguration::class,
         ]);
 
-        $this->applyPhpVisitors(app_path('Models/User.php'), [
-            AddCanAccessPanel::class,
-            new AddMfaAuthenticationMethods([MfaMethod::App]),
-        ]);
+        $methods = $this->promptMfaMethods();
+
+        $visitors = [AddCanAccessPanel::class];
+
+        if (! empty($methods)) {
+            $visitors[] = new AddMfaAuthenticationMethods($methods);
+        }
+
+        $this->applyPhpVisitors(app_path('Models/User.php'), $visitors);
     }
 
     protected function installFilament(): void
