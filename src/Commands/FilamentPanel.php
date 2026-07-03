@@ -3,16 +3,16 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
-use Gizburdt\Cook\Commands\Concerns\PromptsMfaMethods;
 use Gizburdt\Cook\Commands\Concerns\UsesCssParser;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddAdminPanelProvider;
 use Gizburdt\Cook\Commands\NodeVisitors\AddMultiFactorAuthentication;
+use Gizburdt\Cook\Commands\Support\MfaMethodDetector;
+use Gizburdt\Cook\Enums\MfaMethod;
 
 class FilamentPanel extends Command
 {
     use InstallsPackages;
-    use PromptsMfaMethods;
     use UsesCssParser;
     use UsesPhpParser;
 
@@ -52,7 +52,7 @@ class FilamentPanel extends Command
             AddAdminPanelProvider::class,
         ]);
 
-        $methods = $this->promptMfaMethods();
+        $methods = $this->detectMfaMethods();
 
         if (! empty($methods)) {
             $this->applyPhpVisitors(
@@ -62,6 +62,20 @@ class FilamentPanel extends Command
         }
 
         $this->callInNewProcess('filament:upgrade');
+    }
+
+    /**
+     * @return array<int, MfaMethod>
+     */
+    protected function detectMfaMethods(): array
+    {
+        $file = app_path('Models/User.php');
+
+        if (! $this->files->exists($file)) {
+            return [];
+        }
+
+        return MfaMethodDetector::fromContent($this->files->get($file));
     }
 
     protected function installFilamentTheme(): void

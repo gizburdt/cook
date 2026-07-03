@@ -38,3 +38,28 @@ it('exposes email metadata', function () {
         ->and(MfaMethod::Email->panelRecoverable())
         ->toBeFalse();
 });
+
+it('detects app from implemented interfaces by short name', function () {
+    expect(MfaMethod::detect(['HasAppAuthentication', 'HasAppAuthenticationRecovery']))
+        ->toBe([MfaMethod::App]);
+});
+
+it('detects email from implemented interfaces', function () {
+    expect(MfaMethod::detect(['HasEmailAuthentication']))
+        ->toBe([MfaMethod::Email]);
+});
+
+it('detects both when both are implemented', function () {
+    expect(MfaMethod::detect(['HasAppAuthentication', 'HasEmailAuthentication']))
+        ->toBe([MfaMethod::App, MfaMethod::Email]);
+});
+
+it('detects nothing when no mfa interfaces are implemented', function () {
+    expect(MfaMethod::detect(['FilamentUser', 'HasApiTokens']))
+        ->toBe([]);
+});
+
+it('detects from fully qualified interface names', function () {
+    expect(MfaMethod::detect(['Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication']))
+        ->toBe([MfaMethod::App]);
+});

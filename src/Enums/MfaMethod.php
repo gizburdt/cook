@@ -74,4 +74,35 @@ enum MfaMethod: string
     {
         return $this === self::App;
     }
+
+    /**
+     * @param  array<int, string>  $interfaces
+     */
+    public function isImplementedBy(array $interfaces): bool
+    {
+        $required = self::basename($this->contracts()[0]);
+
+        $implemented = array_map(fn (string $interface): string => self::basename($interface), $interfaces);
+
+        return in_array($required, $implemented, true);
+    }
+
+    /**
+     * @param  array<int, string>  $interfaces
+     * @return array<int, self>
+     */
+    public static function detect(array $interfaces): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            fn (self $method): bool => $method->isImplementedBy($interfaces)
+        ));
+    }
+
+    protected static function basename(string $class): string
+    {
+        $position = strrpos($class, '\\');
+
+        return $position === false ? $class : substr($class, $position + 1);
+    }
 }
