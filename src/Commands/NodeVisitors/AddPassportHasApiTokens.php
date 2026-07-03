@@ -10,19 +10,21 @@ use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitorAbstract;
 
-class AddSanctumHasApiTokens extends NodeVisitorAbstract
+class AddPassportHasApiTokens extends NodeVisitorAbstract
 {
     protected bool $hasApiTokensTrait = false;
 
     protected array $missingUseStatements = [];
 
     protected array $requiredUseStatements = [
-        'Laravel\Sanctum\HasApiTokens',
+        'Laravel\Passport\HasApiTokens',
+        'Laravel\Passport\Contracts\OAuthenticatable',
     ];
 
     public function beforeTraverse(array $nodes)
     {
         $existingUse = $this->findExistingUseStatements($nodes);
+
         $this->missingUseStatements = array_diff($this->requiredUseStatements, $existingUse);
 
         return null;
@@ -69,6 +71,8 @@ class AddSanctumHasApiTokens extends NodeVisitorAbstract
         if ($node instanceof Class_) {
             $this->addTraitUse($node);
 
+            $this->addInterface($node);
+
             return $node;
         }
 
@@ -96,6 +100,17 @@ class AddSanctumHasApiTokens extends NodeVisitorAbstract
         } else {
             $node->stmts = array_merge([$traitToAdd], $node->stmts);
         }
+    }
+
+    protected function addInterface(Class_ $node): void
+    {
+        foreach ($node->implements as $interface) {
+            if ($interface->toString() === 'OAuthenticatable') {
+                return;
+            }
+        }
+
+        $node->implements[] = new Name('OAuthenticatable');
     }
 
     public function afterTraverse(array $nodes)
