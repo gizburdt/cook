@@ -4,9 +4,10 @@ namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\NodeVisitors\AddAppAuthenticationMethods;
 use Gizburdt\Cook\Commands\NodeVisitors\AddCanAccessPanel;
 use Gizburdt\Cook\Commands\NodeVisitors\AddFilamentConfiguration;
+use Gizburdt\Cook\Commands\NodeVisitors\AddMfaAuthenticationMethods;
+use Gizburdt\Cook\Enums\MfaMethod;
 
 class Filament extends Command
 {
@@ -64,7 +65,7 @@ class Filament extends Command
 
         $this->applyPhpVisitors(app_path('Models/User.php'), [
             AddCanAccessPanel::class,
-            AddAppAuthenticationMethods::class,
+            new AddMfaAuthenticationMethods([MfaMethod::App]),
         ]);
     }
 
