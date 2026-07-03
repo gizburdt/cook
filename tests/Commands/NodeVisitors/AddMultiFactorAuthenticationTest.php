@@ -148,6 +148,19 @@ PHP;
         ->and($result)->toContain('use Filament\Auth\MultiFactor\Email\EmailAuthentication;');
 });
 
+it('indents the entries array to match the chain depth', function () {
+    $result = createPhpParserHelper()->testParseContent(panelProviderStub(), [
+        new AddMultiFactorAuthentication([MfaMethod::App, MfaMethod::Email]),
+    ], 'app/Providers/Filament/AdminPanelProvider.php');
+
+    expect($result)
+        ->toContain("            ->multiFactorAuthentication([\n")
+        ->toContain("                AppAuthentication::make()\n")
+        ->toContain("                    ->recoverable(),\n")
+        ->toContain("                EmailAuthentication::make(),\n")
+        ->toContain('            ], isRequired: app()->isProduction())');
+});
+
 it('renders the call multiline after profile', function () {
     $result = createPhpParserHelper()->testParseContent(panelProviderStub(), [
         new AddMultiFactorAuthentication([MfaMethod::App]),

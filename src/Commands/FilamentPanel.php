@@ -44,6 +44,8 @@ class FilamentPanel extends Command
         $this->installAdminPanel();
 
         $this->installFilamentTheme();
+
+        $this->runPint();
     }
 
     protected function installAdminPanel(): void

@@ -338,6 +338,21 @@ class FormatPreservingPrinter extends Standard
             $code
         );
 
+        // Re-indent the entries array and its closing bracket
+        $code = preg_replace_callback(
+            '/->multiFactorAuthentication\(\[\n(.*?)\n\s*\], isRequired:/s',
+            function ($matches) {
+                $content = $matches[1];
+
+                $content = preg_replace('/^[ ]*([A-Za-z]+Authentication::make\(\).*)$/m', '                $1', $content);
+
+                $content = preg_replace('/^[ ]*(->recoverable\(\).*)$/m', '                    $1', $content);
+
+                return "->multiFactorAuthentication([\n{$content}\n            ], isRequired:";
+            },
+            $code
+        );
+
         return $code;
     }
 
