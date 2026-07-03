@@ -111,6 +111,42 @@ PHP;
         ->toBe(1);
 });
 
+it('does not add an orphan use statement when re-running with additional methods', function () {
+    $content = <<<'PHP'
+<?php
+
+namespace App\Providers\Filament;
+
+use App\Filament\Pages\Auth\EditProfile;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Panel;
+use Filament\PanelProvider;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->id('admin')
+            ->profile(EditProfile::class)
+            ->multiFactorAuthentication([
+                AppAuthentication::make()
+                    ->recoverable(),
+            ], isRequired: app()->isProduction());
+    }
+}
+PHP;
+
+    $result = createPhpParserHelper()->testParseContent($content, [
+        new AddMultiFactorAuthentication([MfaMethod::App, MfaMethod::Email]),
+    ], 'app/Providers/Filament/AdminPanelProvider.php');
+
+    expect(substr_count($result, 'multiFactorAuthentication('))
+        ->toBe(1)
+        ->and($result)->not->toContain('use Filament\Auth\MultiFactor\Email\EmailAuthentication;')
+        ->and($result)->not->toContain('EmailAuthentication::make()');
+});
+
 it('renders the call multiline after profile', function () {
     $result = createPhpParserHelper()->testParseContent(panelProviderStub(), [
         new AddMultiFactorAuthentication([MfaMethod::App]),

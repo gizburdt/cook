@@ -22,6 +22,8 @@ class AddMultiFactorAuthentication extends NodeVisitorAbstract
 {
     protected bool $hasMultiFactorAuthentication = false;
 
+    protected bool $inserted = false;
+
     protected array $missingUseStatements = [];
 
     /**
@@ -90,6 +92,8 @@ class AddMultiFactorAuthentication extends NodeVisitorAbstract
                 $this->addToChain($node);
 
                 $node->setAttribute('formatMultiFactorAuthentication', true);
+
+                $this->inserted = true;
             }
 
             return $node;
@@ -199,7 +203,7 @@ class AddMultiFactorAuthentication extends NodeVisitorAbstract
 
     public function afterTraverse(array $nodes)
     {
-        if (empty($this->missingUseStatements)) {
+        if (! $this->inserted || empty($this->missingUseStatements)) {
             return null;
         }
 
