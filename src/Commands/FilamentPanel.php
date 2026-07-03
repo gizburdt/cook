@@ -3,13 +3,16 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\PromptsMfaMethods;
 use Gizburdt\Cook\Commands\Concerns\UsesCssParser;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddAdminPanelProvider;
+use Gizburdt\Cook\Commands\NodeVisitors\AddMultiFactorAuthentication;
 
 class FilamentPanel extends Command
 {
     use InstallsPackages;
+    use PromptsMfaMethods;
     use UsesCssParser;
     use UsesPhpParser;
 
@@ -48,6 +51,15 @@ class FilamentPanel extends Command
         $this->applyPhpVisitors(base_path('bootstrap/providers.php'), [
             AddAdminPanelProvider::class,
         ]);
+
+        $methods = $this->promptMfaMethods();
+
+        if (! empty($methods)) {
+            $this->applyPhpVisitors(
+                app_path('Providers/Filament/AdminPanelProvider.php'),
+                [new AddMultiFactorAuthentication($methods)]
+            );
+        }
 
         $this->callInNewProcess('filament:upgrade');
     }

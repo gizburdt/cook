@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Dashboard;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
-use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -50,10 +49,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->login()
             ->profile(EditProfile::class)
-            ->multiFactorAuthentication([
-                AppAuthentication::make()
-                    ->recoverable(),
-            ], isRequired: app()->isProduction())
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder
                     ->item(...Dashboard::getNavigationItems())
