@@ -88,8 +88,12 @@ class AddMultiFactorAuthentication extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof ClassMethod && $node->name->name === 'panel') {
-            if (! empty($this->methods) && ! $this->hasMultiFactorAuthentication) {
-                $this->addToChain($node);
+            if (! empty($this->methods)) {
+                if ($this->hasMultiFactorAuthentication) {
+                    $this->replaceEntries($node);
+                } else {
+                    $this->addToChain($node);
+                }
 
                 $node->setAttribute('formatMultiFactorAuthentication', true);
 
@@ -100,6 +104,29 @@ class AddMultiFactorAuthentication extends NodeVisitorAbstract
         }
 
         return null;
+    }
+
+    protected function replaceEntries(ClassMethod $method): void
+    {
+        foreach ($method->stmts as $stmt) {
+            if (! $stmt instanceof Return_) {
+                continue;
+            }
+
+            $current = $stmt->expr;
+
+            while ($current instanceof MethodCall) {
+                if ($current->name instanceof Identifier
+                    && $current->name->name === 'multiFactorAuthentication'
+                ) {
+                    $current->args[0] = new Arg($this->createEntriesArray());
+
+                    return;
+                }
+
+                $current = $current->var;
+            }
+        }
     }
 
     protected function methodChainHasCall(ClassMethod $method, string $methodName): bool

@@ -111,7 +111,7 @@ PHP;
         ->toBe(1);
 });
 
-it('does not add an orphan use statement when re-running with additional methods', function () {
+it('merges additional methods into an existing call on re-run', function () {
     $content = <<<'PHP'
 <?php
 
@@ -143,8 +143,9 @@ PHP;
 
     expect(substr_count($result, 'multiFactorAuthentication('))
         ->toBe(1)
-        ->and($result)->not->toContain('use Filament\Auth\MultiFactor\Email\EmailAuthentication;')
-        ->and($result)->not->toContain('EmailAuthentication::make()');
+        ->and($result)->toContain('AppAuthentication::make()')
+        ->and($result)->toContain('EmailAuthentication::make()')
+        ->and($result)->toContain('use Filament\Auth\MultiFactor\Email\EmailAuthentication;');
 });
 
 it('renders the call multiline after profile', function () {
