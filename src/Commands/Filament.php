@@ -8,6 +8,7 @@ use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddCanAccessPanel;
 use Gizburdt\Cook\Commands\NodeVisitors\AddFilamentConfiguration;
 use Gizburdt\Cook\Commands\NodeVisitors\AddMfaAuthenticationMethods;
+use Gizburdt\Cook\Enums\MfaMethod;
 
 class Filament extends Command
 {
@@ -66,6 +67,8 @@ class Filament extends Command
 
         $methods = $this->promptMfaMethods();
 
+        $this->pruneMfaMigrations($methods);
+
         $visitors = [AddCanAccessPanel::class];
 
         if (! empty($methods)) {
@@ -73,6 +76,24 @@ class Filament extends Command
         }
 
         $this->applyPhpVisitors(app_path('Models/User.php'), $visitors);
+    }
+
+    /**
+     * @param  array<int, MfaMethod>  $methods
+     */
+    protected function pruneMfaMigrations(array $methods): void
+    {
+        $keep = array_map(fn (MfaMethod $method): string => $method->migration(), $methods);
+
+        foreach (MfaMethod::cases() as $method) {
+            if (in_array($method->migration(), $keep, true)) {
+                continue;
+            }
+
+            foreach ($this->files->glob(database_path('migrations/*_'.$method->migration().'.php')) as $path) {
+                $this->files->delete($path);
+            }
+        }
     }
 
     protected function installFilament(): void

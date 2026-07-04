@@ -21,7 +21,9 @@ it('exposes app metadata', function () {
         ->and(MfaMethod::App->panelClass())
         ->toBe('Filament\Auth\MultiFactor\App\AppAuthentication')
         ->and(MfaMethod::App->panelRecoverable())
-        ->toBeTrue();
+        ->toBeTrue()
+        ->and(MfaMethod::App->migration())
+        ->toBe('add_app_authentication_to_users_table');
 });
 
 it('exposes email metadata', function () {
@@ -36,7 +38,9 @@ it('exposes email metadata', function () {
         ->and(MfaMethod::Email->panelClass())
         ->toBe('Filament\Auth\MultiFactor\Email\EmailAuthentication')
         ->and(MfaMethod::Email->panelRecoverable())
-        ->toBeFalse();
+        ->toBeFalse()
+        ->and(MfaMethod::Email->migration())
+        ->toBe('add_email_authentication_to_users_table');
 });
 
 it('detects app from implemented interfaces by short name', function () {

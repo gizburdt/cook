@@ -62,6 +62,14 @@ enum MfaMethod: string
         };
     }
 
+    public function migration(): string
+    {
+        return match ($this) {
+            self::App => 'add_app_authentication_to_users_table',
+            self::Email => 'add_email_authentication_to_users_table',
+        };
+    }
+
     public function panelClass(): string
     {
         return match ($this) {
