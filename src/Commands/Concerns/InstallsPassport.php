@@ -31,7 +31,5 @@ trait InstallsPassport
         $this->applyPhpVisitors(database_path('seeders/DatabaseSeeder.php'), [
             AddPassportPersonalAccessClient::class,
         ]);
-
-        $this->runInNewProcess('php artisan passport:client --personal --provider=users --no-interaction');
     }
 }

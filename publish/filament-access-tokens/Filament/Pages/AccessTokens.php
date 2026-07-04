@@ -61,7 +61,7 @@ class AccessTokens extends Page implements HasTable
     public function showTokenAction(): Action
     {
         return Action::make('showToken')
-            ->modalHeading(__('API token created'))
+            ->modalHeading(__('Access token created'))
             ->modalDescription(__('Please copy this token now, as it will not be shown again.'))
             ->form([
                 TextInput::make('token')
