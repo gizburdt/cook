@@ -2,12 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Actions\SimpleDeleteAction;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -31,13 +32,27 @@ class AccessTokens extends Page implements HasTable
         return $table
             ->query(
                 Token::query()
+                    ->with('client')
                     ->where('user_id', auth()->id())
-                    ->where('revoked', false)
                     ->latest()
             )
             ->columns([
+                TextColumn::make('client.name')
+                    ->label(__('Client'))
+                    ->placeholder('-'),
+
                 TextColumn::make('name')
-                    ->label(__('Name')),
+                    ->label(__('Name'))
+                    ->placeholder('-'),
+
+                TextColumn::make('scopes')
+                    ->label(__('Scopes'))
+                    ->badge()
+                    ->placeholder(__('None')),
+
+                IconColumn::make('revoked')
+                    ->label(__('Revoked'))
+                    ->boolean(),
 
                 TextColumn::make('expires_at')
                     ->label(__('Expires'))
@@ -51,9 +66,48 @@ class AccessTokens extends Page implements HasTable
                     ->timezone('Europe/Amsterdam'),
             ])
             ->recordActions([
-                SimpleDeleteAction::make()
+                Action::make('credentials')
+                    ->label(__('Credentials'))
+                    ->icon(Heroicon::OutlinedKey)
+                    ->iconButton()
+                    ->modalHeading(__('Client credentials'))
+                    ->modalDescription(fn (Token $record): string => $record->client->secret
+                        ? __('Confidential client. Keep the secret safe.')
+                        : __('PKCE public client. No secret required.'))
+                    ->form(fn (Token $record): array => [
+                        TextInput::make('client_id')
+                            ->label(__('Client ID'))
+                            ->default($record->client->id)
+                            ->readOnly()
+                            ->copyable(copyMessage: __('Copied!')),
+
+                        TextInput::make('client_secret')
+                            ->label(__('Client secret'))
+                            ->default($record->client->secret)
+                            ->visible(fn (): bool => filled($record->client->secret))
+                            ->readOnly()
+                            ->copyable(copyMessage: __('Copied!')),
+                    ])
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('Close')),
+
+                Action::make('revoke')
                     ->label(__('Revoke'))
-                    ->using(fn (Token $record): bool => $record->revoke()),
+                    ->icon(Heroicon::OutlinedTrash)
+                    ->iconButton()
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn (Token $record): bool => ! $record->revoked)
+                    ->action(function (Token $record): void {
+                        $record->revoke();
+
+                        $record->refreshToken?->revoke();
+
+                        Notification::make()
+                            ->title(__('Token revoked'))
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->paginated(false);
     }
@@ -61,7 +115,7 @@ class AccessTokens extends Page implements HasTable
     public function showTokenAction(): Action
     {
         return Action::make('showToken')
-            ->modalHeading(__('Access token created'))
+            ->modalHeading(__('API token created'))
             ->modalDescription(__('Please copy this token now, as it will not be shown again.'))
             ->form([
                 TextInput::make('token')
@@ -85,7 +139,7 @@ class AccessTokens extends Page implements HasTable
                         ->required(),
                 ])
                 ->action(function (array $data): void {
-                    $token = auth()->user()->createToken($data['name']);
+                    $token = auth()->user()->createToken($data['name'], ['*']);
 
                     $this->plainTextToken = $token->accessToken;
 
@@ -96,11 +150,11 @@ class AccessTokens extends Page implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __('Access Tokens');
+        return __('Access tokens');
     }
 
     public function getTitle(): string
     {
-        return __('Access Tokens');
+        return __('Access tokens');
     }
 }
