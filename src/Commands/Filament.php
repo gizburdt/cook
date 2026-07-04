@@ -27,7 +27,6 @@ class Filament extends Command
     public array $publishes = [
         'Filament' => 'app/Filament',
         'config/filament.php' => 'config/filament.php',
-        'database/migrations' => 'database/migrations',
     ];
 
     protected array $packages = [
@@ -67,7 +66,7 @@ class Filament extends Command
 
         $methods = $this->promptMfaMethods();
 
-        $this->pruneMfaMigrations($methods);
+        $this->publishMigrations($methods);
 
         $visitors = [AddCanAccessPanel::class];
 
@@ -81,18 +80,18 @@ class Filament extends Command
     /**
      * @param  array<int, MfaMethod>  $methods
      */
-    protected function pruneMfaMigrations(array $methods): void
+    protected function publishMigrations(array $methods): void
     {
-        $keep = array_map(fn (MfaMethod $method): string => $method->migration(), $methods);
+        foreach ($methods as $method) {
+            $source = __DIR__.'/../../publish/filament/database/migrations/'.$method->migration();
 
-        foreach (MfaMethod::cases() as $method) {
-            if (in_array($method->migration(), $keep, true)) {
+            $destination = database_path('migrations/'.$method->migration());
+
+            if (! $this->option('force') && $this->files->exists($destination)) {
                 continue;
             }
 
-            foreach ($this->files->glob(database_path('migrations/*_'.$method->migration().'.php')) as $path) {
-                $this->files->delete($path);
-            }
+            $this->files->copy($source, $destination);
         }
     }
 

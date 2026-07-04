@@ -23,7 +23,7 @@ it('exposes app metadata', function () {
         ->and(MfaMethod::App->panelRecoverable())
         ->toBeTrue()
         ->and(MfaMethod::App->migration())
-        ->toBe('add_app_authentication_to_users_table');
+        ->toBe('0001_01_01_000001_add_app_authentication_to_users_table.php');
 });
 
 it('exposes email metadata', function () {
@@ -40,7 +40,7 @@ it('exposes email metadata', function () {
         ->and(MfaMethod::Email->panelRecoverable())
         ->toBeFalse()
         ->and(MfaMethod::Email->migration())
-        ->toBe('add_email_authentication_to_users_table');
+        ->toBe('0001_01_01_000002_add_email_authentication_to_users_table.php');
 });
 
 it('detects app from implemented interfaces by short name', function () {

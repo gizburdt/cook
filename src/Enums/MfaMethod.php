@@ -65,8 +65,8 @@ enum MfaMethod: string
     public function migration(): string
     {
         return match ($this) {
-            self::App => 'add_app_authentication_to_users_table',
-            self::Email => 'add_email_authentication_to_users_table',
+            self::App => '0001_01_01_000001_add_app_authentication_to_users_table.php',
+            self::Email => '0001_01_01_000002_add_email_authentication_to_users_table.php',
         };
     }
 

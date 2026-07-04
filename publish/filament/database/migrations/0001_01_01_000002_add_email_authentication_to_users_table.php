@@ -9,9 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (! Schema::hasColumn('users', 'has_email_authentication')) {
-                $table->boolean('has_email_authentication')->default(false);
-            }
+            $table->after('remember_token', function (Blueprint $table) {
+                if (! Schema::hasColumn('users', 'has_email_authentication')) {
+                    $table->boolean('has_email_authentication')->default(false);
+                }
+            });
         });
     }
 
