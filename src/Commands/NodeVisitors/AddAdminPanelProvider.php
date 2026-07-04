@@ -88,6 +88,12 @@ class AddAdminPanelProvider extends NodeVisitorAbstract
             return false;
         }
 
-        return $node->class->toString() === $this->providerClass;
+        $class = $node->class->toString();
+
+        if ($class === $this->providerClass) {
+            return true;
+        }
+
+        return ! str_contains($class, '\\') && $class === class_basename($this->providerClass);
     }
 }

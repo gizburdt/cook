@@ -46,6 +46,30 @@ PHP;
         ->toBe(1);
 });
 
+it('does not duplicate admin panel provider when imported as a short name', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+use App\Providers\Filament\AdminPanelProvider;
+
+return [
+
+    App\Providers\AppServiceProvider::class,
+    AdminPanelProvider::class,
+
+];
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddAdminPanelProvider::class,
+    ], 'bootstrap/providers.php');
+
+    expect(substr_count($result, 'AdminPanelProvider::class'))
+        ->toBe(1);
+});
+
 it('adds admin panel provider at the end of the array', function () {
     $parser = createPhpParserHelper();
 
