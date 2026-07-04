@@ -74,7 +74,7 @@ class AccessTokens extends Page implements HasTable
                     ->modalDescription(fn (Token $record): string => $record->client->secret
                         ? __('Confidential client. Keep the secret safe.')
                         : __('PKCE public client. No secret required.'))
-                    ->form(fn (Token $record): array => [
+                    ->schema(fn (Token $record): array => [
                         TextInput::make('client_id')
                             ->label(__('Client ID'))
                             ->default($record->client->id)
@@ -119,7 +119,7 @@ class AccessTokens extends Page implements HasTable
         return Action::make('showToken')
             ->modalHeading(__('API token created'))
             ->modalDescription(__('Please copy this token now, as it will not be shown again.'))
-            ->form([
+            ->schema([
                 TextInput::make('token')
                     ->label(__('Token'))
                     ->default(fn (): ?string => $this->plainTextToken)
@@ -135,7 +135,7 @@ class AccessTokens extends Page implements HasTable
         return [
             Action::make('createToken')
                 ->label(__('Create token'))
-                ->form([
+                ->schema([
                     TextInput::make('name')
                         ->label(__('Name'))
                         ->required(),
