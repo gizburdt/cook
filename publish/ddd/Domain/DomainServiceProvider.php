@@ -23,14 +23,6 @@ abstract class DomainServiceProvider extends ServiceProvider
 
     protected string $name;
 
-    protected static array $facades = [];
-
-    protected static array $bladeComponents = [];
-
-    protected static array $livewireComponents = [];
-
-    protected static array $viewComposers = [];
-
     protected string|array $webMiddleware = 'web';
 
     protected string|array $apiMiddleware = 'api';
@@ -40,6 +32,14 @@ abstract class DomainServiceProvider extends ServiceProvider
     protected ?string $webRouteName = null;
 
     protected ?string $apiRouteName = null;
+
+    protected static array $facades = [];
+
+    protected static array $bladeComponents = [];
+
+    protected static array $livewireComponents = [];
+
+    protected static array $viewComposers = [];
 
     public function register(): void
     {

@@ -52,11 +52,6 @@ class Install extends Command
             $this->call('cook:operations', $arguments);
         }
 
-        // Health
-        if (confirm('Run cook:health?')) {
-            $this->call('cook:health', $arguments);
-        }
-
         // Failed job monitor
         if (confirm('Run cook:failed-job-monitor?')) {
             $this->call('cook:failed-job-monitor', $arguments);
@@ -65,6 +60,11 @@ class Install extends Command
         // Backups
         if (confirm('Run cook:backups?')) {
             $this->call('cook:backups', $arguments);
+        }
+
+        // Health
+        if (confirm('Run cook:health?')) {
+            $this->call('cook:health', $arguments);
         }
 
         // Filament

@@ -17,6 +17,10 @@ return new class extends Migration
                 if (! Schema::hasColumn('users', 'app_authentication_recovery_codes')) {
                     $table->text('app_authentication_recovery_codes')->nullable();
                 }
+
+                if (! Schema::hasColumn('users', 'has_email_authentication')) {
+                    $table->boolean('has_email_authentication')->default(false);
+                }
             });
         });
     }
@@ -28,11 +32,15 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             if (Schema::hasColumn('users', 'app_authentication_secret')) {
-                $table->text('app_authentication_secret')->nullable();
+                $table->dropColumn('app_authentication_secret');
             }
 
             if (Schema::hasColumn('users', 'app_authentication_recovery_codes')) {
                 $table->dropColumn('app_authentication_recovery_codes');
+            }
+
+            if (Schema::hasColumn('users', 'has_email_authentication')) {
+                $table->dropColumn('has_email_authentication');
             }
         });
     }
