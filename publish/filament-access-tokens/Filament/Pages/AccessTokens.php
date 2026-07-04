@@ -84,7 +84,9 @@ class AccessTokens extends Page implements HasTable
                         TextInput::make('client_secret')
                             ->label(__('Client secret'))
                             ->default($record->client->secret)
-                            ->visible(fn (): bool => filled($record->client->secret))
+                            ->visible(fn (): bool => filled($record->client->secret)
+                                && ! $record->client->personal_access_client
+                                && (int) $record->client->owner_id === auth()->id())
                             ->readOnly()
                             ->copyable(copyMessage: __('Copied!')),
                     ])
