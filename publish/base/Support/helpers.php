@@ -9,8 +9,8 @@ if (! function_exists('user')) {
             return auth()->user();
         }
 
-        if (auth('sanctum')->check()) {
-            return auth('sanctum')->user();
+        if (auth('api')->check()) {
+            return auth('api')->user();
         }
 
         return null;
