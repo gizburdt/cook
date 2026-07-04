@@ -32,7 +32,7 @@ PHP;
     ], 'app/Providers/Filament/AdminPanelProvider.php');
 
     expect($result)
-        ->toContain("->profile(EditProfile::class)\n            ->userMenuItems([\n                Action::make('access-tokens')\n                    ->label(__('Access Tokens'))\n                    ->url(fn(): string => AccessTokens::getUrl())\n                    ->icon(Heroicon::OutlinedKey),\n            ])")
+        ->toContain("->profile(EditProfile::class)\n            ->userMenuItems([\n                Action::make('access-tokens')\n                    ->label(__('Access tokens'))\n                    ->url(fn(): string => AccessTokens::getUrl())\n                    ->icon(Heroicon::OutlinedKey),\n            ])")
         ->toMatch('/->userMenuItems\(.*->middleware\(/s');
 });
 
@@ -91,7 +91,7 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->userMenuItems([
                 Action::make('access-tokens')
-                    ->label(__('Access Tokens'))
+                    ->label(__('Access tokens'))
                     ->url(fn (): string => AccessTokens::getUrl())
                     ->icon(Heroicon::OutlinedKey),
             ])

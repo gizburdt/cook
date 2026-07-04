@@ -193,7 +193,7 @@ class AddAccessTokensUserMenuItem extends NodeVisitorAbstract
                         [new Arg(new String_('access-tokens'))]
                     ),
                     new Identifier('label'),
-                    [new Arg(new FuncCall(new Name('__'), [new Arg(new String_('Access Tokens'))]))]
+                    [new Arg(new FuncCall(new Name('__'), [new Arg(new String_('Access tokens'))]))]
                 ),
                 new Identifier('url'),
                 [new Arg(new ArrowFunction([

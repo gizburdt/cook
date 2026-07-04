@@ -78,7 +78,7 @@ class Install extends Command
         }
 
         // Filament access tokens
-        if ($installFilament && confirm('Install Filament Access Tokens?', default: false)) {
+        if ($installFilament && confirm('Install Filament access tokens?', default: false)) {
             $this->call('cook:filament:access-tokens', $arguments);
         }
 
