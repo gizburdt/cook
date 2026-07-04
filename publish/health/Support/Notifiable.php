@@ -9,7 +9,7 @@ class Notifiable extends VendorNotifiable
 {
     use NotifiableTrait;
 
-    public function routeNotificationForDiscord(): string
+    public function routeNotificationForDiscord(): ?string
     {
         return config('health.notifications.discord.webhook_url');
     }
