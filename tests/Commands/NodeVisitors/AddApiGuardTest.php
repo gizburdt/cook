@@ -27,7 +27,9 @@ PHP;
     expect($result)
         ->toContain("'api' =>")
         ->toContain("'driver' => 'passport'")
-        ->toContain("'provider' => 'users'");
+        ->toContain("'provider' => 'users'")
+        ->not->toContain("], 'api' =>")
+        ->and($result)->toMatch("/\],\s*\n\s*'api' =>/");
 });
 
 it('is idempotent when a passport api guard exists', function () {

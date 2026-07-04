@@ -12,20 +12,29 @@ class AddApiGuard extends NodeVisitorAbstract
 {
     public function leaveNode(Node $node)
     {
-        if ($node instanceof ArrayItem
-            && $node->key instanceof String_
-            && $node->key->value === 'guards'
-            && $node->value instanceof Array_
+        if (! $node instanceof ArrayItem
+            || ! $node->key instanceof String_
+            || $node->key->value !== 'guards'
+            || ! $node->value instanceof Array_
         ) {
-            $this->ensureApiGuard($node->value);
+            return null;
+        }
 
+        if ($this->forceExistingApiGuardToPassport($node->value)) {
             return $node;
         }
 
-        return null;
+        $existingItems = $this->getExistingItems($node->value);
+
+        $newArray = new Array_(array_merge($existingItems, [$this->createApiGuardItem()]), ['kind' => Array_::KIND_SHORT]);
+        $newArray->setAttribute('multiline', true);
+
+        $node->value = $newArray;
+
+        return $node;
     }
 
-    protected function ensureApiGuard(Array_ $guards): void
+    protected function forceExistingApiGuardToPassport(Array_ $guards): bool
     {
         foreach ($guards->items as $item) {
             if ($item instanceof ArrayItem
@@ -35,11 +44,11 @@ class AddApiGuard extends NodeVisitorAbstract
             ) {
                 $this->forceDriverToPassport($item->value);
 
-                return;
+                return true;
             }
         }
 
-        $guards->items[] = $this->createApiGuardItem();
+        return false;
     }
 
     protected function forceDriverToPassport(Array_ $guard): void
@@ -54,6 +63,27 @@ class AddApiGuard extends NodeVisitorAbstract
         }
     }
 
+    protected function getExistingItems(Array_ $guards): array
+    {
+        $items = [];
+        $isFirst = true;
+
+        foreach ($guards->items as $item) {
+            if ($item === null) {
+                continue;
+            }
+
+            if (! $isFirst) {
+                $item->setAttribute('newlineBefore', true);
+            }
+
+            $isFirst = false;
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
     protected function createApiGuardItem(): ArrayItem
     {
         $guard = new Array_([
@@ -65,7 +95,7 @@ class AddApiGuard extends NodeVisitorAbstract
 
         $item = new ArrayItem($guard, new String_('api'));
 
-        $item->setAttribute('blankLineBefore', true);
+        $item->setAttribute('newlineBefore', true);
 
         return $item;
     }
