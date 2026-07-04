@@ -20,7 +20,7 @@ use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitorAbstract;
 
-class AddApiTokensUserMenuItem extends NodeVisitorAbstract
+class AddAccessTokensUserMenuItem extends NodeVisitorAbstract
 {
     protected bool $hasUserMenuItems = false;
 
@@ -28,7 +28,7 @@ class AddApiTokensUserMenuItem extends NodeVisitorAbstract
 
     protected array $requiredUseStatements = [
         'Filament\Actions\Action',
-        'App\Filament\Pages\ApiTokens',
+        'App\Filament\Pages\AccessTokens',
         'Filament\Support\Icons\Heroicon',
     ];
 
@@ -190,16 +190,16 @@ class AddApiTokensUserMenuItem extends NodeVisitorAbstract
                     new StaticCall(
                         new Name('Action'),
                         new Identifier('make'),
-                        [new Arg(new String_('api-tokens'))]
+                        [new Arg(new String_('access-tokens'))]
                     ),
                     new Identifier('label'),
-                    [new Arg(new FuncCall(new Name('__'), [new Arg(new String_('API tokens'))]))]
+                    [new Arg(new FuncCall(new Name('__'), [new Arg(new String_('Access Tokens'))]))]
                 ),
                 new Identifier('url'),
                 [new Arg(new ArrowFunction([
                     'returnType' => new Identifier('string'),
                     'expr' => new StaticCall(
-                        new Name('ApiTokens'),
+                        new Name('AccessTokens'),
                         new Identifier('getUrl')
                     ),
                 ]))]

@@ -11,7 +11,7 @@ use Gizburdt\Cook\Commands\Ddd;
 use Gizburdt\Cook\Commands\FailedJob;
 use Gizburdt\Cook\Commands\FailedJobMonitor;
 use Gizburdt\Cook\Commands\Filament;
-use Gizburdt\Cook\Commands\FilamentApiTokens;
+use Gizburdt\Cook\Commands\FilamentAccessTokens;
 use Gizburdt\Cook\Commands\FilamentPanel;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
@@ -40,7 +40,7 @@ class CookServiceProvider extends ServiceProvider
         Backups::class,
         Filament::class,
         FilamentPanel::class,
-        FilamentApiTokens::class,
+        FilamentAccessTokens::class,
         Ui::class,
         Packages::class,
     ];

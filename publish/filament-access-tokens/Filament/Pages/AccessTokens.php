@@ -14,7 +14,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Laravel\Passport\Token;
 
-class ApiTokens extends Page implements HasTable
+class AccessTokens extends Page implements HasTable
 {
     use InteractsWithTable;
 
@@ -22,7 +22,7 @@ class ApiTokens extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected string $view = 'filament.pages.api-tokens';
+    protected string $view = 'filament.pages.access-tokens';
 
     public ?string $plainTextToken = null;
 
@@ -96,11 +96,11 @@ class ApiTokens extends Page implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __('API tokens');
+        return __('Access Tokens');
     }
 
     public function getTitle(): string
     {
-        return __('API tokens');
+        return __('Access Tokens');
     }
 }

@@ -5,23 +5,23 @@ namespace Gizburdt\Cook\Commands;
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 use Gizburdt\Cook\Commands\Concerns\InstallsPassport;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\NodeVisitors\AddApiTokensUserMenuItem;
+use Gizburdt\Cook\Commands\NodeVisitors\AddAccessTokensUserMenuItem;
 
-class FilamentApiTokens extends Command
+class FilamentAccessTokens extends Command
 {
     use InstallsPackages;
     use InstallsPassport;
     use UsesPhpParser;
 
-    protected $signature = 'cook:filament:api-tokens {--force} {--skip-pint}';
+    protected $signature = 'cook:filament:access-tokens {--force} {--skip-pint}';
 
-    protected $description = 'Install Filament Api Token manager';
+    protected $description = 'Install Filament Access Token manager';
 
-    public string $publishGroup = 'filament-api-tokens';
+    public string $publishGroup = 'filament-access-tokens';
 
     public array $publishes = [
-        'Filament/Pages/ApiTokens.php' => 'app/Filament/Pages/ApiTokens.php',
-        'resources/views/filament/pages/api-tokens.blade.php' => 'resources/views/filament/pages/api-tokens.blade.php',
+        'Filament/Pages/AccessTokens.php' => 'app/Filament/Pages/AccessTokens.php',
+        'resources/views/filament/pages/access-tokens.blade.php' => 'resources/views/filament/pages/access-tokens.blade.php',
     ];
 
     protected array $packages = [
@@ -33,7 +33,7 @@ class FilamentApiTokens extends Command
         $this->installPassport();
 
         $this->call('vendor:publish', [
-            '--tag' => 'cook-filament-api-tokens',
+            '--tag' => 'cook-filament-access-tokens',
             '--force' => $this->option('force'),
         ]);
 
@@ -45,7 +45,7 @@ class FilamentApiTokens extends Command
     protected function addCode(): void
     {
         $this->applyPhpVisitors('app/Providers/Filament/AdminPanelProvider.php', [
-            AddApiTokensUserMenuItem::class,
+            AddAccessTokensUserMenuItem::class,
         ]);
     }
 }

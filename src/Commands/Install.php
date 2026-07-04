@@ -77,9 +77,9 @@ class Install extends Command
             $this->call('cook:filament:panel', $arguments);
         }
 
-        // Filament api tokens
-        if ($installFilament && confirm('Install Filament Api Tokens?', default: false)) {
-            $this->call('cook:filament:api-tokens', $arguments);
+        // Filament access tokens
+        if ($installFilament && confirm('Install Filament Access Tokens?', default: false)) {
+            $this->call('cook:filament:access-tokens', $arguments);
         }
 
         // UI
