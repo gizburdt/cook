@@ -32,6 +32,11 @@ class Install extends Command
             $this->call('cook:ai', $arguments);
         }
 
+        // API
+        if (confirm('Install API?', default: false)) {
+            $this->call('cook:api', $arguments);
+        }
+
         // MCP
         if (confirm('Install MCP?', default: false)) {
             $this->call('cook:mcp', $arguments);
