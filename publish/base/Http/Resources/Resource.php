@@ -11,7 +11,7 @@ use JsonSerializable;
 
 abstract class Resource extends JsonResource
 {
-    protected array $only;
+    protected array $only = [];
 
     public function only(array $fields): self
     {
