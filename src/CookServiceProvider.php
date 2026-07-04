@@ -3,6 +3,7 @@
 namespace Gizburdt\Cook;
 
 use Gizburdt\Cook\Commands\Ai;
+use Gizburdt\Cook\Commands\Api;
 use Gizburdt\Cook\Commands\Backups;
 use Gizburdt\Cook\Commands\Base;
 use Gizburdt\Cook\Commands\CodeQuality;
@@ -31,6 +32,7 @@ class CookServiceProvider extends ServiceProvider
         Ddd::class,
         Ai::class,
         Mcp::class,
+        Api::class,
         CodeQuality::class,
         Operations::class,
         Health::class,
