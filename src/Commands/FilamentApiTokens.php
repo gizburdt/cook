@@ -3,27 +3,25 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\InstallsPassport;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
 use Gizburdt\Cook\Commands\NodeVisitors\AddApiTokensUserMenuItem;
-
-use function Laravel\Prompts\select;
 
 class FilamentApiTokens extends Command
 {
     use InstallsPackages;
+    use InstallsPassport;
     use UsesPhpParser;
 
     protected $signature = 'cook:filament:api-tokens {--force} {--skip-pint}';
 
     protected $description = 'Install Filament Api Token manager';
 
-    protected string $driver;
-
     public string $publishGroup = 'filament-api-tokens';
 
     public array $publishes = [
-        'sanctum/Filament/Pages/ApiTokens.php' => 'app/Filament/Pages/ApiTokens.php',
-        'sanctum/resources/views/filament/pages/api-tokens.blade.php' => 'resources/views/filament/pages/api-tokens.blade.php',
+        'Filament/Pages/ApiTokens.php' => 'app/Filament/Pages/ApiTokens.php',
+        'resources/views/filament/pages/api-tokens.blade.php' => 'resources/views/filament/pages/api-tokens.blade.php',
     ];
 
     protected array $packages = [
@@ -32,9 +30,7 @@ class FilamentApiTokens extends Command
 
     public function handle(): void
     {
-        $this->driver = select('Which authentication?', [
-            'sanctum' => 'Sanctum',
-        ]);
+        $this->installPassport();
 
         $this->call('vendor:publish', [
             '--tag' => 'cook-filament-api-tokens',
