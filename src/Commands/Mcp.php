@@ -3,14 +3,14 @@
 namespace Gizburdt\Cook\Commands;
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Concerns\InstallsPassport;
 use Gizburdt\Cook\Commands\Concerns\UsesPhpParser;
-use Gizburdt\Cook\Commands\NodeVisitors\AddSanctumHasApiTokens;
-
-use function Laravel\Prompts\select;
+use Gizburdt\Cook\Commands\NodeVisitors\AddPassportAuthorizationView;
 
 class Mcp extends Command
 {
     use InstallsPackages;
+    use InstallsPassport;
     use UsesPhpParser;
 
     protected $signature = 'cook:mcp {--force} {--skip-pint}';
@@ -19,13 +19,12 @@ class Mcp extends Command
 
     protected string $docs = 'https://laravel.com/docs/12.x/mcp';
 
-    protected string $driver;
-
     public string $publishGroup = 'mcp';
 
     public array $publishes = [
         'routes/ai.php' => 'routes/ai.php',
         'Mcp' => 'app/Mcp',
+        'resources/views/mcp/authorize.blade.php' => 'resources/views/mcp/authorize.blade.php',
     ];
 
     protected array $packages = [
@@ -41,38 +40,19 @@ class Mcp extends Command
 
         $this->tryInstallPackages();
 
-        $this->installApi();
+        $this->installPassport();
+
+        $this->addCode();
 
         $this->runPint();
 
         $this->openDocs();
     }
 
-    protected function installApi(): void
+    protected function addCode(): void
     {
-        $this->driver = select(__('Which authentication?'), [
-            'sanctum' => 'Sanctum',
+        $this->applyPhpVisitors(app_path('Providers/AppServiceProvider.php'), [
+            AddPassportAuthorizationView::class,
         ]);
-
-        match ($this->driver) {
-            'passport' => $this->installPassport(),
-            default => $this->installSanctum(),
-        };
-    }
-
-    protected function installSanctum(): void
-    {
-        $this->components->info('Install Sanctum');
-
-        $this->runInNewProcess('php artisan install:api --without-migration-prompt');
-
-        $this->applyPhpVisitors(app_path('Models/User.php'), [
-            AddSanctumHasApiTokens::class,
-        ]);
-    }
-
-    protected function installPassport(): void
-    {
-        //
     }
 }
