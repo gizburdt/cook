@@ -1,6 +1,8 @@
 <?php
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Composer;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 
 beforeEach(function () {
@@ -19,42 +21,6 @@ afterEach(function () {
     if (is_dir($this->tempDir)) {
         rmdir($this->tempDir);
     }
-});
-
-it('returns empty collection when composer.json does not exist', function () {
-    $installer = createPackageInstaller($this->tempDir);
-
-    expect($installer->testGetRequiredPackages())
-        ->toBeInstanceOf(Collection::class)
-        ->toBeEmpty();
-});
-
-it('maps packages to the section they are required in', function () {
-    writeComposerJson($this->composerJsonPath, [
-        'require' => [
-            'laravel/framework' => '^12.0',
-        ],
-        'require-dev' => [
-            'phpunit/phpunit' => '^12.0',
-        ],
-    ]);
-
-    $installer = createPackageInstaller($this->tempDir);
-
-    expect($installer->testGetRequiredPackages()->all())
-        ->toBe([
-            'phpunit/phpunit' => 'dev',
-            'laravel/framework' => 'require',
-        ]);
-});
-
-it('handles a missing require section in composer.json', function () {
-    writeComposerJson($this->composerJsonPath, []);
-
-    $installer = createPackageInstaller($this->tempDir);
-
-    expect($installer->testGetRequiredPackages())
-        ->toBeEmpty();
 });
 
 it('returns true when packages need to be installed', function () {
@@ -111,9 +77,7 @@ it('installs a dev package again when it is needed in require', function () {
 
     $installer = createPackageInstaller($this->tempDir);
 
-    expect($installer->testHasInstallablePackages(['laravel/pail' => 'require']))
-        ->toBeTrue()
-        ->and($installer->testGetInstallablePackages(['laravel/pail' => 'require'])->all())
+    expect($installer->testGetInstallablePackages(['laravel/pail' => 'require'])->all())
         ->toBe(['laravel/pail' => 'require']);
 });
 
@@ -154,8 +118,11 @@ it('returns false for empty packages array', function () {
         ->toBeFalse();
 });
 
-it('returns true when packages can be removed', function () {
+it('returns the section a removable package is required in', function () {
     writeComposerJson($this->composerJsonPath, [
+        'require' => [
+            'laravel/framework' => '^12.0',
+        ],
         'require-dev' => [
             'phpunit/phpunit' => '^12.0',
         ],
@@ -163,21 +130,13 @@ it('returns true when packages can be removed', function () {
 
     $installer = createPackageInstaller($this->tempDir);
 
-    expect($installer->testHasRemovablePackages(['phpunit/phpunit' => 'dev']))
-        ->toBeTrue();
-});
-
-it('returns true when a package is removable from another section', function () {
-    writeComposerJson($this->composerJsonPath, [
-        'require' => [
-            'phpunit/phpunit' => '^12.0',
-        ],
+    expect($installer->testGetRemovablePackages([
+        'phpunit/phpunit' => 'dev',
+        'laravel/framework' => 'dev',
+    ])->all())->toBe([
+        'phpunit/phpunit' => 'dev',
+        'laravel/framework' => 'require',
     ]);
-
-    $installer = createPackageInstaller($this->tempDir);
-
-    expect($installer->testHasRemovablePackages(['phpunit/phpunit' => 'dev']))
-        ->toBeTrue();
 });
 
 it('returns false when packages to remove are not required', function () {
@@ -213,16 +172,11 @@ function writeComposerJson(string $path, array $content): void
 
 function createPackageInstaller(string $tempDir): object
 {
-    return new class($tempDir)
+    return new class(new Composer(new Filesystem, $tempDir))
     {
         use InstallsPackages;
 
-        public function __construct(protected string $basePath) {}
-
-        public function testGetRequiredPackages(): Collection
-        {
-            return $this->getRequiredPackages();
-        }
+        public function __construct(protected Composer $composer) {}
 
         public function testGetInstallablePackages(array $packages): Collection
         {
@@ -234,14 +188,14 @@ function createPackageInstaller(string $tempDir): object
             return $this->hasInstallablePackages($packages);
         }
 
+        public function testGetRemovablePackages(array $packages): Collection
+        {
+            return $this->getRemovablePackages($packages);
+        }
+
         public function testHasRemovablePackages(array $packages): bool
         {
             return $this->hasRemovablePackages($packages);
-        }
-
-        protected function getComposerConfigPath(): string
-        {
-            return $this->basePath.'/composer.json';
         }
     };
 }

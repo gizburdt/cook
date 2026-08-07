@@ -23,34 +23,22 @@ trait InstallsPackages
             return;
         }
 
-        if (! $this->hasRemovablePackages($this->removePackages)) {
+        $removable = $this->getRemovablePackages($this->removePackages);
+
+        if ($removable->isEmpty()) {
             return;
         }
 
         $this->components->info('Removing packages');
 
-        $required = $this->getRequiredPackages();
+        $removable->groupBy(fn (string $group) => $group, preserveKeys: true)
+            ->each(function (Collection $packages, string $group) {
+                $packages = $packages->keys()->all();
 
-        $packageGroups = collect($this->removePackages)
-            ->filter(fn ($group, $package) => $required->has($package))
-            ->groupBy(fn ($group, $package) => $required->get($package), preserveKeys: true);
+                $this->components->bulletList($packages);
 
-        $packageGroups->each(function ($packages, $group) {
-            $packages = $packages->keys()->values();
-
-            $this->components->bulletList($packages->all());
-
-            $this->composer->removePackages($packages->all(), dev: $group === 'dev');
-        });
-    }
-
-    protected function hasRemovablePackages(array $packages): bool
-    {
-        $required = $this->getRequiredPackages();
-
-        return collect($packages)->keys()
-            ->filter(fn ($package) => $required->has($package))
-            ->isNotEmpty();
+                $this->composer->removePackages($packages, dev: $group === 'dev');
+            });
     }
 
     protected function installPackages(array $packages): void
@@ -61,24 +49,24 @@ trait InstallsPackages
             return;
         }
 
-        $packageGroups = $installable->groupBy(function ($group) {
-            return $group;
-        }, preserveKeys: true);
+        $installable->groupBy(fn (string $group) => $group, preserveKeys: true)
+            ->each(function (Collection $packages, string $group) {
+                $packages = $packages->keys()->all();
 
-        $packageGroups->each(function ($packages, $group) {
-            $packages = $packages->keys()->values();
+                $this->components->bulletList($packages);
 
-            $this->components->bulletList($packages->all());
-
-            $extra = ($group === 'dev') ? '--dev' : '';
-
-            $this->composer->installPackages($packages->all(), $extra);
-        });
+                $this->composer->requirePackages($packages, dev: $group === 'dev');
+            });
     }
 
     protected function hasInstallablePackages(array $packages): bool
     {
         return $this->getInstallablePackages($packages)->isNotEmpty();
+    }
+
+    protected function hasRemovablePackages(array $packages): bool
+    {
+        return $this->getRemovablePackages($packages)->isNotEmpty();
     }
 
     /**
@@ -87,42 +75,21 @@ trait InstallsPackages
      */
     protected function getInstallablePackages(array $packages): Collection
     {
-        $required = $this->getRequiredPackages();
+        $required = $this->composer->getRequiredPackages();
 
-        return collect($packages)->filter(function (string $group, string $package) use ($required) {
-            $current = $required->get($package);
-
-            if ($current === null) {
-                return true;
-            }
-
-            return $group === 'require' && $current === 'dev';
+        return collect($packages)->filter(fn (string $group, string $package) => match ($required->get($package)) {
+            null => true,
+            'dev' => $group === 'require',
+            default => false,
         });
     }
 
     /**
-     * @return Collection<string, string> Package name mapped to 'require' or 'dev'
+     * @param  array<string, string>  $packages
+     * @return Collection<string, string> Package name mapped to the section it is required in
      */
-    protected function getRequiredPackages(): Collection
+    protected function getRemovablePackages(array $packages): Collection
     {
-        $file = $this->getComposerConfigPath();
-
-        if (! file_exists($file)) {
-            return collect();
-        }
-
-        $config = json_decode(file_get_contents($file), true) ?? [];
-
-        return collect($config['require-dev'] ?? [])->keys()
-            ->mapWithKeys(fn (string $package) => [$package => 'dev'])
-            ->merge(
-                collect($config['require'] ?? [])->keys()
-                    ->mapWithKeys(fn (string $package) => [$package => 'require'])
-            );
-    }
-
-    protected function getComposerConfigPath(): string
-    {
-        return base_path('composer.json');
+        return $this->composer->getRequiredPackages()->only(array_keys($packages));
     }
 }

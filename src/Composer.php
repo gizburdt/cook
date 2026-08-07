@@ -2,23 +2,22 @@
 
 namespace Gizburdt\Cook;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Composer as BaseComposer;
 
 class Composer extends BaseComposer
 {
-    public function installPackages(array $packages, string $extra = ''): int
+    /**
+     * @return Collection<string, string> Package name mapped to 'require' or 'dev'
+     */
+    public function getRequiredPackages(): Collection
     {
-        $command = collect($this->findComposer())
-            ->push('require')
-            ->push($packages)
-            ->push(Arr::wrap($extra))
-            ->flatten()
-            ->filter(fn ($value) => $value !== '')
-            ->toArray();
-
-        return $this->getProcess($command)->run();
+        return $this->getFromConfig('require-dev')->keys()
+            ->mapWithKeys(fn (string $package) => [$package => 'dev'])
+            ->merge(
+                $this->getFromConfig('require')->keys()
+                    ->mapWithKeys(fn (string $package) => [$package => 'require'])
+            );
     }
 
     public function addScript(string $hook, string $script): int

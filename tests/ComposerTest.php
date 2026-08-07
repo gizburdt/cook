@@ -61,30 +61,31 @@ it('writes script directly to composer.json', function () {
         ]);
 });
 
-it('builds correct command for install packages', function () {
+it('builds correct command for require packages', function () {
     createComposerJson($this->composerJsonPath, []);
 
     $capturedCommand = null;
 
     $composer = createComposerWithProcessCapture($this->tempDir, $capturedCommand);
 
-    $composer->installPackages(['laravel/sanctum', 'spatie/laravel-permission']);
+    $composer->requirePackages(['laravel/sanctum', 'spatie/laravel-permission']);
 
     expect($capturedCommand)
         ->not->toBeNull()
         ->toContain('require')
         ->toContain('laravel/sanctum')
-        ->toContain('spatie/laravel-permission');
+        ->toContain('spatie/laravel-permission')
+        ->not->toContain('--dev');
 });
 
-it('builds correct command for install packages with extra', function () {
+it('builds correct command for require packages as dev', function () {
     createComposerJson($this->composerJsonPath, []);
 
     $capturedCommand = null;
 
     $composer = createComposerWithProcessCapture($this->tempDir, $capturedCommand);
 
-    $composer->installPackages(['laravel/sanctum'], '--dev');
+    $composer->requirePackages(['laravel/sanctum'], dev: true);
 
     expect($capturedCommand)
         ->not->toBeNull()
@@ -93,20 +94,39 @@ it('builds correct command for install packages with extra', function () {
         ->toContain('--dev');
 });
 
-it('filters empty strings from command when extra is empty', function () {
-    createComposerJson($this->composerJsonPath, []);
+it('returns empty required packages when composer.json does not exist', function () {
+    $composer = createComposer($this->tempDir);
 
-    $capturedCommand = null;
+    expect($composer->getRequiredPackages())->toBeEmpty();
+});
 
-    $composer = createComposerWithProcessCapture($this->tempDir, $capturedCommand);
+it('maps required packages to the section they are required in', function () {
+    createComposerJson($this->composerJsonPath, [
+        'require' => [
+            'laravel/framework' => '^12.0',
+        ],
+        'require-dev' => [
+            'phpunit/phpunit' => '^12.0',
+        ],
+    ]);
 
-    $composer->installPackages(['laravel/sanctum'], '');
+    $composer = createComposer($this->tempDir);
 
-    expect($capturedCommand)
-        ->not->toBeNull()
-        ->toContain('require')
-        ->toContain('laravel/sanctum')
-        ->not->toContain('');
+    expect($composer->getRequiredPackages()->all())
+        ->toBe([
+            'phpunit/phpunit' => 'dev',
+            'laravel/framework' => 'require',
+        ]);
+});
+
+it('handles a missing require section in composer.json', function () {
+    createComposerJson($this->composerJsonPath, [
+        'name' => 'test/package',
+    ]);
+
+    $composer = createComposer($this->tempDir);
+
+    expect($composer->getRequiredPackages())->toBeEmpty();
 });
 
 it('actually writes script to composer.json when no scripts exist', function () {
