@@ -29,11 +29,11 @@ trait InstallsPackages
 
         $this->components->info('Removing packages');
 
-        $installed = $this->getInstalledPackages();
+        $required = $this->getRequiredPackages();
 
         $packageGroups = collect($this->removePackages)
-            ->filter(fn ($group, $package) => $installed->contains($package))
-            ->groupBy(fn ($group) => $group, preserveKeys: true);
+            ->filter(fn ($group, $package) => $required->has($package))
+            ->groupBy(fn ($group, $package) => $required->get($package), preserveKeys: true);
 
         $packageGroups->each(function ($packages, $group) {
             $packages = $packages->keys()->values();
@@ -46,33 +46,27 @@ trait InstallsPackages
 
     protected function hasRemovablePackages(array $packages): bool
     {
-        $installed = $this->getInstalledPackages();
+        $required = $this->getRequiredPackages();
 
         return collect($packages)->keys()
-            ->filter(fn ($package) => $installed->contains($package))
+            ->filter(fn ($package) => $required->has($package))
             ->isNotEmpty();
     }
 
     protected function installPackages(array $packages): void
     {
-        if (! $this->hasInstallablePackages($packages)) {
+        $installable = $this->getInstallablePackages($packages);
+
+        if ($installable->isEmpty()) {
             return;
         }
 
-        $installed = $this->getInstalledPackages();
-
-        $packageGroups = collect($packages)->groupBy(function ($group) {
+        $packageGroups = $installable->groupBy(function ($group) {
             return $group;
         }, preserveKeys: true);
 
-        $packageGroups->each(function ($packages, $group) use ($installed) {
-            if (! $this->hasInstallablePackages($packages->all())) {
-                return;
-            }
-
-            $packages = $packages->keys()
-                ->reject(fn ($package) => $installed->contains($package))
-                ->values();
+        $packageGroups->each(function ($packages, $group) {
+            $packages = $packages->keys()->values();
 
             $this->components->bulletList($packages->all());
 
@@ -84,25 +78,51 @@ trait InstallsPackages
 
     protected function hasInstallablePackages(array $packages): bool
     {
-        $installed = $this->getInstalledPackages();
-
-        return collect($packages)->keys()
-            ->reject(fn ($package) => $installed->contains($package))
-            ->isNotEmpty();
+        return $this->getInstallablePackages($packages)->isNotEmpty();
     }
 
-    protected function getInstalledPackages(): Collection
+    /**
+     * @param  array<string, string>  $packages
+     * @return Collection<string, string>
+     */
+    protected function getInstallablePackages(array $packages): Collection
     {
-        $lockFile = base_path('composer.lock');
+        $required = $this->getRequiredPackages();
 
-        if (! file_exists($lockFile)) {
+        return collect($packages)->filter(function (string $group, string $package) use ($required) {
+            $current = $required->get($package);
+
+            if ($current === null) {
+                return true;
+            }
+
+            return $group === 'require' && $current === 'dev';
+        });
+    }
+
+    /**
+     * @return Collection<string, string> Package name mapped to 'require' or 'dev'
+     */
+    protected function getRequiredPackages(): Collection
+    {
+        $file = $this->getComposerConfigPath();
+
+        if (! file_exists($file)) {
             return collect();
         }
 
-        $lock = json_decode(file_get_contents($lockFile), true);
+        $config = json_decode(file_get_contents($file), true) ?? [];
 
-        return collect($lock['packages'] ?? [])
-            ->merge($lock['packages-dev'] ?? [])
-            ->pluck('name');
+        return collect($config['require-dev'] ?? [])->keys()
+            ->mapWithKeys(fn (string $package) => [$package => 'dev'])
+            ->merge(
+                collect($config['require'] ?? [])->keys()
+                    ->mapWithKeys(fn (string $package) => [$package => 'require'])
+            );
+    }
+
+    protected function getComposerConfigPath(): string
+    {
+        return base_path('composer.json');
     }
 }

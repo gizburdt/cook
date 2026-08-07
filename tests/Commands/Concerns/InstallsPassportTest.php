@@ -1,7 +1,6 @@
 <?php
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPassport;
-use Illuminate\Support\Collection;
 
 if (! function_exists('app_path')) {
     function app_path(string $path = ''): string
@@ -50,9 +49,9 @@ function makePassportInstaller(bool $installed): object
             $this->installPassport();
         }
 
-        protected function getInstalledPackages(): Collection
+        protected function hasInstallablePackages(array $packages): bool
         {
-            return collect($this->installed ? ['laravel/passport'] : []);
+            return ! $this->installed;
         }
 
         protected function installPackages(array $packages): void

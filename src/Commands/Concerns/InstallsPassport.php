@@ -10,13 +10,15 @@ trait InstallsPassport
 {
     protected function installPassport(): void
     {
-        if ($this->getInstalledPackages()->contains('laravel/passport')) {
+        $packages = ['laravel/passport' => 'require'];
+
+        if (! $this->hasInstallablePackages($packages)) {
             return;
         }
 
         $this->components->info('Installing Passport');
 
-        $this->installPackages(['laravel/passport' => 'require']);
+        $this->installPackages($packages);
 
         $this->runInNewProcess('php artisan install:api --passport --no-interaction');
 
