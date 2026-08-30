@@ -52,6 +52,11 @@ class Install extends Command
             $this->call('cook:operations', $arguments);
         }
 
+        // Mail
+        if (confirm('Install mail?', default: false)) {
+            $this->call('cook:mail', $arguments);
+        }
+
         // Failed job monitor
         if (confirm('Run cook:failed-job-monitor?')) {
             $this->call('cook:failed-job-monitor', $arguments);

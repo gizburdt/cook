@@ -15,6 +15,7 @@ use Gizburdt\Cook\Commands\FilamentAccessTokens;
 use Gizburdt\Cook\Commands\FilamentPanel;
 use Gizburdt\Cook\Commands\Health;
 use Gizburdt\Cook\Commands\Install;
+use Gizburdt\Cook\Commands\Mail;
 use Gizburdt\Cook\Commands\Mcp;
 use Gizburdt\Cook\Commands\Operations;
 use Gizburdt\Cook\Commands\Packages;
@@ -36,6 +37,7 @@ class CookServiceProvider extends ServiceProvider
         CodeQuality::class,
         Operations::class,
         Health::class,
+        Mail::class,
         FailedJobMonitor::class,
         Backups::class,
         Filament::class,

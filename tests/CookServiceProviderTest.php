@@ -264,6 +264,7 @@ it('registers all commands in boot method', function () {
         ->toContain('CodeQuality::class')
         ->toContain('Operations::class')
         ->toContain('Health::class')
+        ->toContain('Mail::class')
         ->toContain('FailedJobMonitor::class')
         ->toContain('Backups::class')
         ->toContain('Filament::class')

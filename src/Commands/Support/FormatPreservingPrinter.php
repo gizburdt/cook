@@ -427,6 +427,10 @@ class FormatPreservingPrinter extends Standard
     {
         $result = '';
 
+        foreach ($node->getComments() as $comment) {
+            $result .= str_replace("\n", $this->nl, $comment->getReformattedText()).$this->nl.$this->nl;
+        }
+
         if ($node->key !== null) {
             $result .= $this->p($node->key).' => ';
         }
