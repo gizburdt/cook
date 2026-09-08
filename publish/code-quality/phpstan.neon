@@ -13,4 +13,5 @@ parameters:
         - routes
     excludePaths:
         - **/vendor/*
+        - config/insights.php
     tmpDir: /tmp/phpstan
