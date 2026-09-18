@@ -1,25 +1,27 @@
 <?php
 
 use Gizburdt\Cook\Commands\Concerns\InstallsPassport;
+use Illuminate\Container\Container;
+use Illuminate\Foundation\Application;
 
-if (! function_exists('app_path')) {
+if (class_exists(Application::class)) {
+    beforeEach(fn () => Container::setInstance(new Application('/base')));
+
+    afterEach(fn () => Container::setInstance(null));
+} else {
     function app_path(string $path = ''): string
     {
-        return $path;
+        return "/base/app/{$path}";
     }
-}
 
-if (! function_exists('config_path')) {
     function config_path(string $path = ''): string
     {
-        return $path;
+        return "/base/config/{$path}";
     }
-}
 
-if (! function_exists('database_path')) {
     function database_path(string $path = ''): string
     {
-        return $path;
+        return "/base/database/{$path}";
     }
 }
 
@@ -91,5 +93,9 @@ it('installs passport when it is not yet installed', function () {
         ->and($installer->calls['runInNewProcess'])
         ->toContain('php artisan install:api --passport --no-interaction')
         ->and($installer->calls['applyPhpVisitors'])
-        ->toBe(['Models/User.php', 'auth.php', 'seeders/DatabaseSeeder.php']);
+        ->toBe([
+            app_path('Models/User.php'),
+            config_path('auth.php'),
+            database_path('seeders/DatabaseSeeder.php'),
+        ]);
 });
