@@ -10,7 +10,7 @@ class Notification extends VendorNotification
 {
     public function toDiscord(): DiscordMessage
     {
-        return DiscordMessage::make(__('A job failed at '.config('app.name')))
+        return DiscordMessage::make(__('A job failed at :app', ['app' => config('app.name')]))
             ->embed(function (DiscordEmbed $embed) {
                 $embed
                     ->color('#E01E5A')
