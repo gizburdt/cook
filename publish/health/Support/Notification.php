@@ -2,8 +2,8 @@
 
 namespace App\Support\Health;
 
-use Awssat\Notifications\Messages\DiscordEmbed;
-use Awssat\Notifications\Messages\DiscordMessage;
+use Gizburdt\Talk\Discord\DiscordEmbed;
+use Gizburdt\Talk\Discord\DiscordMessage;
 use Spatie\Health\Enums\Status;
 use Spatie\Health\Notifications\CheckFailedNotification;
 
@@ -11,7 +11,7 @@ class Notification extends CheckFailedNotification
 {
     public function toDiscord(): DiscordMessage
     {
-        $message = (new DiscordMessage)->content(
+        $message = DiscordMessage::make(
             trans('health::notifications.check_failed_slack_message', $this->transParameters())
         );
 

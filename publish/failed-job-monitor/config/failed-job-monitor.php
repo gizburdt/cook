@@ -2,7 +2,7 @@
 
 use App\Support\FailedJobMonitor\Notifiable;
 use App\Support\FailedJobMonitor\Notification;
-use Awssat\Notifications\Channels\DiscordWebhookChannel;
+use Gizburdt\Talk\Discord\DiscordWebhookChannel;
 
 /**
  * https://github.com/spatie/laravel-failed-job-monitor/blob/main/config/failed-job-monitor.php

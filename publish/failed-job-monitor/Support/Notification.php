@@ -2,16 +2,16 @@
 
 namespace App\Support\FailedJobMonitor;
 
-use Awssat\Notifications\Messages\DiscordMessage;
+use Gizburdt\Talk\Discord\DiscordEmbed;
+use Gizburdt\Talk\Discord\DiscordMessage;
 use Spatie\FailedJobMonitor\Notification as VendorNotification;
 
 class Notification extends VendorNotification
 {
     public function toDiscord(): DiscordMessage
     {
-        return (new DiscordMessage)
-            ->content(__('A job failed at '.config('app.name')))
-            ->embed(function ($embed) {
+        return DiscordMessage::make(__('A job failed at '.config('app.name')))
+            ->embed(function (DiscordEmbed $embed) {
                 $embed
                     ->color('#E01E5A')
                     ->title($this->event->job->resolveName())

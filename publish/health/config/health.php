@@ -6,7 +6,7 @@
 
 use App\Support\Health\Notifiable;
 use App\Support\Health\Notification;
-use Awssat\Notifications\Channels\DiscordWebhookChannel;
+use Gizburdt\Talk\Discord\DiscordWebhookChannel;
 use Spatie\Health\ResultStores\JsonFileHealthResultStore;
 
 return [

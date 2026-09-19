@@ -30,7 +30,7 @@ class Health extends Command
     ];
 
     protected array $packages = [
-        'awssat/discord-notification-channel' => 'require',
+        'gizburdt/talk' => 'require',
         'doctrine/dbal' => 'require',
         'spatie/cpu-load-health-check' => 'require',
         'spatie/laravel-health' => 'require',

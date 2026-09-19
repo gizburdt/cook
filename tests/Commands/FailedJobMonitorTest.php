@@ -13,6 +13,7 @@ it('config uses discord webhook channel class', function () {
 
     expect($content)
         ->toContain("'channels'")
+        ->toContain('use Gizburdt\Talk\Discord\DiscordWebhookChannel;')
         ->toContain('DiscordWebhookChannel::class');
 });
 
@@ -46,7 +47,7 @@ it('notification file has to discord method', function () {
 
     expect($content)
         ->toContain('public function toDiscord()')
-        ->toContain('DiscordMessage');
+        ->toContain('use Gizburdt\Talk\Discord\DiscordMessage;');
 });
 
 it('notifiable file has route notification for discord method', function () {

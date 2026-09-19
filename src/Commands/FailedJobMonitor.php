@@ -23,7 +23,7 @@ class FailedJobMonitor extends Command
     ];
 
     protected array $packages = [
-        'awssat/discord-notification-channel' => 'require',
+        'gizburdt/talk' => 'require',
         'spatie/laravel-failed-job-monitor' => 'require',
     ];
 

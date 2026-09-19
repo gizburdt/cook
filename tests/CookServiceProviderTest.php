@@ -169,7 +169,9 @@ it('health config has notifications configured', function () {
         ->toContain('notifications')
         ->toContain("'enabled' => true")
         ->toContain('use App\Support\Health\Notifiable;')
-        ->toContain('Notifiable::class');
+        ->toContain('Notifiable::class')
+        ->toContain('use Gizburdt\Talk\Discord\DiscordWebhookChannel;')
+        ->toContain('Notification::class => [DiscordWebhookChannel::class]');
 });
 
 it('health config has discord webhook url setting', function () {
@@ -186,7 +188,7 @@ it('health notification file has to discord method', function () {
 
     expect($content)
         ->toContain('public function toDiscord()')
-        ->toContain('DiscordMessage');
+        ->toContain('use Gizburdt\Talk\Discord\DiscordMessage;');
 });
 
 it('health notifiable file has route notification for discord method', function () {
