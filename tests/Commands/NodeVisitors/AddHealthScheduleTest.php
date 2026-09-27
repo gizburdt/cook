@@ -281,3 +281,75 @@ PHP;
         ->and(substr_count($result, 'Schedule::command(RunHealthChecksCommand::class)'))
         ->toBe(1);
 });
+
+it('adds queue check dispatch schedule command to console routes', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthSchedule::class,
+    ]);
+
+    expect($result)
+        ->toContain('use Spatie\Health\Commands\DispatchQueueCheckJobsCommand')
+        ->toMatch('/Schedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);\nSchedule::command\(DispatchQueueCheckJobsCommand::class\)->everyMinute\(\);/s');
+});
+
+it('adds only the queue check dispatch schedule when the other health schedules exist', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Schedule;
+use Spatie\Health\Commands\RunHealthChecksCommand;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
+
+Schedule::command(RunHealthChecksCommand::class)->everyMinute();
+Schedule::command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthSchedule::class,
+    ]);
+
+    expect($result)
+        ->toContain('use Spatie\Health\Commands\DispatchQueueCheckJobsCommand')
+        ->toContain('Schedule::command(DispatchQueueCheckJobsCommand::class)->everyMinute()')
+        ->and(substr_count($result, 'Schedule::command(RunHealthChecksCommand::class)'))->toBe(1)
+        ->and(substr_count($result, 'Schedule::command(ScheduleCheckHeartbeatCommand::class)'))->toBe(1);
+});
+
+it('does not add queue check dispatch schedule if it already exists', function () {
+    $parser = createPhpParserHelper();
+
+    $content = <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Schedule;
+use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
+use Spatie\Health\Commands\RunHealthChecksCommand;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
+
+Schedule::command(RunHealthChecksCommand::class)->everyMinute();
+Schedule::command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+Schedule::command(DispatchQueueCheckJobsCommand::class)->everyMinute();
+PHP;
+
+    $result = $parser->testParseContent($content, [
+        AddHealthSchedule::class,
+    ]);
+
+    expect(substr_count($result, 'Schedule::command(DispatchQueueCheckJobsCommand::class)'))->toBe(1)
+        ->and(substr_count($result, 'use Spatie\Health\Commands\DispatchQueueCheckJobsCommand'))->toBe(1);
+});

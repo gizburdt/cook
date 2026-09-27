@@ -16,30 +16,50 @@ use PhpParser\NodeVisitorAbstract;
 
 class AddHealthSchedule extends NodeVisitorAbstract
 {
-    protected bool $hasHealthSchedule = false;
+    /**
+     * Health-commando's die elke minuut moeten draaien, in deze volgorde.
+     * DispatchQueueCheckJobsCommand zet de testjob op de queue waar
+     * QueueCheck op wacht; zonder die schedule faalt QueueCheck altijd.
+     *
+     * @var array<int, string>
+     */
+    protected array $commands = [
+        'RunHealthChecksCommand',
+        'ScheduleCheckHeartbeatCommand',
+        'DispatchQueueCheckJobsCommand',
+    ];
 
-    protected bool $hasHeartbeatSchedule = false;
+    protected string $namespace = 'Spatie\Health\Commands';
+
+    /**
+     * @var array<string, bool>
+     */
+    protected array $scheduled = [];
+
+    /**
+     * @var array<string, bool>
+     */
+    protected array $imported = [];
 
     protected bool $hasScheduleUse = false;
 
-    protected bool $hasHealthCommandUse = false;
-
-    protected bool $hasHeartbeatCommandUse = false;
-
     public function beforeTraverse(array $nodes)
     {
-        $this->hasHealthSchedule = $this->healthScheduleExists($nodes);
-        $this->hasHeartbeatSchedule = $this->heartbeatScheduleExists($nodes);
+        foreach ($this->commands as $command) {
+            $this->scheduled[$command] = $this->scheduleExistsForCommand($nodes, $command);
+            $this->imported[$command] = $this->useStatementExists($nodes, "{$this->namespace}\\{$command}");
+        }
+
         $this->hasScheduleUse = $this->useStatementExists($nodes, 'Illuminate\Support\Facades\Schedule');
-        $this->hasHealthCommandUse = $this->useStatementExists($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
-        $this->hasHeartbeatCommandUse = $this->useStatementExists($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
 
         return null;
     }
 
     public function afterTraverse(array $nodes)
     {
-        if ($this->hasHealthSchedule && $this->hasHeartbeatSchedule) {
+        $missing = array_values(array_filter($this->commands, fn (string $command) => ! $this->scheduled[$command]));
+
+        if ($missing === []) {
             return null;
         }
 
@@ -47,27 +67,13 @@ class AddHealthSchedule extends NodeVisitorAbstract
             $nodes = $this->addUseStatement($nodes, 'Illuminate\Support\Facades\Schedule');
         }
 
-        if (! $this->hasHealthCommandUse && ! $this->hasHealthSchedule) {
-            $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\RunHealthChecksCommand');
+        foreach ($missing as $command) {
+            if (! $this->imported[$command]) {
+                $nodes = $this->addUseStatement($nodes, "{$this->namespace}\\{$command}");
+            }
         }
 
-        if (! $this->hasHeartbeatCommandUse && ! $this->hasHeartbeatSchedule) {
-            $nodes = $this->addUseStatement($nodes, 'Spatie\Health\Commands\ScheduleCheckHeartbeatCommand');
-        }
-
-        $nodes = $this->addSchedules($nodes);
-
-        return $nodes;
-    }
-
-    protected function healthScheduleExists(array $nodes): bool
-    {
-        return $this->scheduleExistsForCommand($nodes, 'RunHealthChecksCommand');
-    }
-
-    protected function heartbeatScheduleExists(array $nodes): bool
-    {
-        return $this->scheduleExistsForCommand($nodes, 'ScheduleCheckHeartbeatCommand');
+        return $this->addSchedules($nodes, $missing);
     }
 
     protected function scheduleExistsForCommand(array $nodes, string $commandClass): bool
@@ -152,22 +158,15 @@ class AddHealthSchedule extends NodeVisitorAbstract
         return $nodes;
     }
 
-    protected function addSchedules(array $nodes): array
+    /**
+     * @param  array<int, string>  $commands
+     */
+    protected function addSchedules(array $nodes, array $commands): array
     {
-        $addedAny = false;
+        $nodes[] = new Nop;
 
-        if (! $this->hasHealthSchedule) {
-            $nodes[] = new Nop;
-            $nodes[] = $this->createScheduleExpression('RunHealthChecksCommand');
-            $addedAny = true;
-        }
-
-        if (! $this->hasHeartbeatSchedule) {
-            if (! $addedAny) {
-                $nodes[] = new Nop;
-            }
-
-            $nodes[] = $this->createScheduleExpression('ScheduleCheckHeartbeatCommand');
+        foreach ($commands as $command) {
+            $nodes[] = $this->createScheduleExpression($command);
         }
 
         return $nodes;
