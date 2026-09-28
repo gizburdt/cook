@@ -63,7 +63,7 @@ function pendingPackages(string $cacheDirectory): array
  */
 function buildCommand(array $package): string
 {
-    $directory = sys_get_temp_dir().'/prime-composer-cache-'.sha1($package['target']);
+    $directory = sys_get_temp_dir().'/composer-cache-'.sha1($package['target']);
     $prefix = str_replace('/', '-', $package['name']).'-'.substr($package['reference'], 0, 7).'/';
 
     return implode(' && ', [
@@ -108,7 +108,7 @@ $slot = 0;
 while ($pending !== [] || $running !== []) {
     while (count($running) < CONCURRENCY && $pending !== []) {
         $package = array_shift($pending);
-        $errors = tempnam(sys_get_temp_dir(), 'prime-composer-cache-');
+        $errors = tempnam(sys_get_temp_dir(), 'composer-cache-');
 
         // stderr goes to a file rather than a pipe so a noisy failure cannot fill
         // the buffer and deadlock a worker we are not reading from yet.
