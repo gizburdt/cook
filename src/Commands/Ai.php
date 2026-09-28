@@ -2,6 +2,7 @@
 
 namespace Gizburdt\Cook\Commands;
 
+use Gizburdt\Cook\ClaudeSettings;
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
 
 class Ai extends Command
@@ -16,7 +17,8 @@ class Ai extends Command
 
     public array $publishes = [
         '.ai' => '.ai',
-        '.claude' => '.claude',
+        '.claude/hooks' => '.claude/hooks',
+        '.claude/settings.local.json' => '.claude/settings.local.json',
     ];
 
     protected array $packages = [
@@ -31,6 +33,8 @@ class Ai extends Command
             '--force' => $this->option('force'),
         ]);
 
+        $this->addClaudeHooks();
+
         $this->tryInstallPackages();
 
         $this->callInNewProcess('boost:install');
@@ -40,5 +44,16 @@ class Ai extends Command
         $this->composer->addScript('post-update-cmd', '@php artisan boost:update --ansi');
 
         $this->runPint();
+    }
+
+    protected function addClaudeHooks(): void
+    {
+        $this->components->info('Adding Claude Code hooks');
+
+        $source = json_decode($this->files->get(__DIR__.'/../../publish/ai/.claude/settings.json'), true);
+
+        $settings = new ClaudeSettings($this->files, base_path('.claude/settings.json'));
+
+        $settings->mergeHooks($source['hooks']);
     }
 }

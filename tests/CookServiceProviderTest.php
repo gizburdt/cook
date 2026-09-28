@@ -296,7 +296,15 @@ it('base command publishes expected files', function () {
 it('ai command publishes expected files', function () {
     expect(commandSource('Ai'))
         ->toContain("'.ai' => '.ai'")
-        ->toContain("'.claude' => '.claude'");
+        ->toContain("'.claude/hooks' => '.claude/hooks'")
+        ->toContain("'.claude/settings.local.json' => '.claude/settings.local.json'")
+        ->not->toContain("'.claude' => '.claude'");
+});
+
+it('ai command merges the claude hooks instead of publishing the settings', function () {
+    expect(commandSource('Ai'))
+        ->toContain('$this->addClaudeHooks();')
+        ->toContain("base_path('.claude/settings.json')");
 });
 
 it('code quality command publishes expected files', function () {
