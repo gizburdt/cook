@@ -2,8 +2,8 @@
 
 namespace Gizburdt\Cook\Commands;
 
-use Gizburdt\Cook\ClaudeSettings;
 use Gizburdt\Cook\Commands\Concerns\InstallsPackages;
+use Gizburdt\Cook\Commands\Support\JsonFile;
 
 class Ai extends Command
 {
@@ -50,10 +50,14 @@ class Ai extends Command
     {
         $this->components->info('Adding Claude Code hooks');
 
-        $source = json_decode($this->files->get(__DIR__.'/../../publish/ai/.claude/settings.json'), true);
+        $source = new JsonFile($this->files, __DIR__.'/../../publish/ai/.claude/settings.json');
 
-        $settings = new ClaudeSettings($this->files, base_path('.claude/settings.json'));
+        $settings = new JsonFile($this->files, base_path('.claude/settings.json'));
 
-        $settings->mergeHooks($source['hooks']);
+        foreach ($source->get('hooks') as $event => $groups) {
+            $settings->mergeList("hooks.{$event}", $groups, fn (array $group) => array_column($group['hooks'], 'command'));
+        }
+
+        $settings->save();
     }
 }
