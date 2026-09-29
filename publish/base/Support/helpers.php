@@ -9,7 +9,7 @@ if (! function_exists('user')) {
             return auth()->user();
         }
 
-        if (auth('api')->check()) {
+        if (config('auth.guards.api') && auth('api')->check()) {
             return auth('api')->user();
         }
 
