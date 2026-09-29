@@ -24,9 +24,9 @@ class AddHealthSchedule extends NodeVisitorAbstract
      * @var array<int, string>
      */
     protected array $commands = [
+        'DispatchQueueCheckJobsCommand',
         'RunHealthChecksCommand',
         'ScheduleCheckHeartbeatCommand',
-        'DispatchQueueCheckJobsCommand',
     ];
 
     protected string $namespace = 'Spatie\Health\Commands';

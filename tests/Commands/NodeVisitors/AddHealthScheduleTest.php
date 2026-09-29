@@ -216,10 +216,10 @@ PHP;
     ]);
 
     expect($result)
-        ->toMatch('/->daily\(\);\n\nSchedule::command\(RunHealthChecksCommand::class\)/s');
+        ->toMatch('/->daily\(\);\n\nSchedule::command\(DispatchQueueCheckJobsCommand::class\)/s');
 });
 
-it('adds health before heartbeat schedule without blank line between', function () {
+it('adds queue dispatch, health and heartbeat schedules in order without blank lines between', function () {
     $parser = createPhpParserHelper();
 
     $content = <<<'PHP'
@@ -235,7 +235,7 @@ PHP;
     ]);
 
     expect($result)
-        ->toMatch('/Schedule::command\(RunHealthChecksCommand::class\)->everyMinute\(\);\nSchedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);/s');
+        ->toMatch('/Schedule::command\(DispatchQueueCheckJobsCommand::class\)->everyMinute\(\);\nSchedule::command\(RunHealthChecksCommand::class\)->everyMinute\(\);\nSchedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);/s');
 });
 
 it('adds health schedule if only heartbeat exists', function () {
@@ -302,7 +302,7 @@ PHP;
 
     expect($result)
         ->toContain('use Spatie\Health\Commands\DispatchQueueCheckJobsCommand')
-        ->toMatch('/Schedule::command\(ScheduleCheckHeartbeatCommand::class\)->everyMinute\(\);\nSchedule::command\(DispatchQueueCheckJobsCommand::class\)->everyMinute\(\);/s');
+        ->toMatch('/Schedule::command\(DispatchQueueCheckJobsCommand::class\)->everyMinute\(\);\nSchedule::command\(RunHealthChecksCommand::class\)->everyMinute\(\);/s');
 });
 
 it('adds only the queue check dispatch schedule when the other health schedules exist', function () {
