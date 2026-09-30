@@ -61,6 +61,32 @@ it('writes script directly to composer.json', function () {
         ]);
 });
 
+it('sets abandoned audit to report', function () {
+    createComposerJson($this->composerJsonPath, []);
+
+    $composer = createComposer($this->tempDir);
+
+    expect($composer->reportAbandoned())->toBe(0);
+
+    $content = json_decode(file_get_contents($this->composerJsonPath), true);
+
+    expect($content['config']['audit']['abandoned'])->toBe('report');
+});
+
+it('does not override existing abandoned audit setting', function () {
+    createComposerJson($this->composerJsonPath, [
+        'config' => ['audit' => ['abandoned' => 'fail']],
+    ]);
+
+    $composer = createComposer($this->tempDir);
+
+    expect($composer->reportAbandoned())->toBe(0);
+
+    $content = json_decode(file_get_contents($this->composerJsonPath), true);
+
+    expect($content['config']['audit']['abandoned'])->toBe('fail');
+});
+
 it('builds correct command for require packages', function () {
     createComposerJson($this->composerJsonPath, []);
 

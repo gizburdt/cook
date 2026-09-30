@@ -62,6 +62,8 @@ class Base extends Command
 
         $this->composer->addAutoloadFile('app/Support/helpers.php');
 
+        $this->composer->reportAbandoned();
+
         $this->components->info('Replacing Eloquent Model');
 
         $this->replaceEloquentModel();

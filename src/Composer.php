@@ -35,6 +35,11 @@ class Composer extends BaseComposer
         return $this->addToConfigAssoc('config.allow-plugins', $plugin, true);
     }
 
+    public function reportAbandoned(): int
+    {
+        return $this->addToConfigAssoc('config.audit', 'abandoned', 'report');
+    }
+
     protected function addToConfig(string $key, string $value): int
     {
         $config = $this->getComposerConfig();
