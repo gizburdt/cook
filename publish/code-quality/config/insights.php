@@ -9,12 +9,16 @@ use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenPrivateMethods;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenTraits;
 use NunoMaduro\PhpInsights\Domain\Metrics\Architecture\Classes;
+use NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
+use PHP_CodeSniffer\Standards\PEAR\Sniffs\WhiteSpace\ScopeClosingBraceSniff;
 use PHP_CodeSniffer\Standards\PSR12\Sniffs\Classes\ClassInstantiationSniff;
 use PhpCsFixer\Fixer\ClassNotation\OrderedClassElementsFixer;
 use PhpCsFixer\Fixer\Comment\NoEmptyCommentFixer;
 use PhpCsFixer\Fixer\FunctionNotation\MethodArgumentSpaceFixer;
+use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
 use SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff;
+use SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff;
 use SlevomatCodingStandard\Sniffs\Commenting\DocCommentSpacingSniff;
 use SlevomatCodingStandard\Sniffs\Commenting\UselessFunctionDocCommentSniff;
 use SlevomatCodingStandard\Sniffs\ControlStructures\AssignmentInConditionSniff;
@@ -56,12 +60,17 @@ return [
         ForbiddenDefineFunctions::class,
         ForbiddenNormalClasses::class,
         ForbiddenPublicPropertySniff::class,
+        ForbiddenSetterSniff::class,
         ForbiddenTraits::class,
         FunctionLengthSniff::class,
+        NewWithBracesFixer::class,
         NoEmptyCommentFixer::class,
         OrderedClassElementsFixer::class,
         ParameterTypeHintSniff::class,
         PropertyTypeHintSniff::class,
+        ScopeClosingBraceSniff::class,
+        SuperfluousExceptionNamingSniff::class,
+        UnusedParameterSniff::class,
         ReturnTypeHintSniff::class,
         UselessFunctionDocCommentSniff::class,
         UselessParenthesesSniff::class,
@@ -83,11 +92,6 @@ return [
         MethodArgumentSpaceFixer::class => [
             'keep_multiple_spaces_after_comma' => false,
             'on_multiline' => 'ignore',
-        ],
-        UnusedParameterSniff::class => [
-            'exclude' => [
-                'app/Nova/',
-            ],
         ],
     ],
 
