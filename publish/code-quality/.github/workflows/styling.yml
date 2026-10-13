@@ -23,6 +23,11 @@ jobs:
           php-version: '8.5'
           coverage: none
 
+      - name: Configure Composer auth
+        env:
+          TOKEN: ${{ github.token }}
+        run: echo "COMPOSER_AUTH={\"github-oauth\":{\"github.com\":\"$TOKEN\"}}" >> "$GITHUB_ENV"
+
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
