@@ -29,6 +29,11 @@ jobs:
           extensions: mbstring
           coverage: none
 
+      - name: Configure Composer auth
+        env:
+          TOKEN: ${{ github.token }}
+        run: echo "COMPOSER_AUTH={\"github-oauth\":{\"github.com\":\"$TOKEN\"}}" >> "$GITHUB_ENV"
+
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
