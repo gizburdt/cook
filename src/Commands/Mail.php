@@ -29,11 +29,11 @@ class Mail extends Command
     public function handle(): void
     {
         $this->driver = select('Which mailer?', [
-            'postmark' => 'Postmark',
             'resend' => 'Resend',
+            'postmark' => 'Postmark',
             'mailgun' => 'Mailgun',
             'gmail' => 'Gmail (SMTP)',
-        ], 'postmark');
+        ], 'resend');
 
         $this->setupDriver();
 
