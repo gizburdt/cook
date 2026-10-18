@@ -246,7 +246,7 @@ class AddHealthChecks extends NodeVisitorAbstract
             new ArrayItem($this->createRedisMemoryUsageCheck()),
             new ArrayItem($this->createScheduleCheck()),
             new ArrayItem($this->createSimpleCheck('SecurityAdvisoriesCheck')),
-            new ArrayItem($this->createSimpleCheck('UsedDiskSpaceCheck')),
+            new ArrayItem($this->createUsedDiskSpaceCheck()),
         ], ['kind' => Array_::KIND_SHORT]);
 
         $healthChecksCall = new Expression(
@@ -317,6 +317,18 @@ class AddHealthChecks extends NodeVisitorAbstract
             ),
             new Identifier('failWhenMoreConnectionsThan'),
             [new Arg(new Int_(100))]
+        );
+    }
+
+    protected function createUsedDiskSpaceCheck(): MethodCall
+    {
+        return new MethodCall(
+            new StaticCall(
+                new Name('UsedDiskSpaceCheck'),
+                new Identifier('new')
+            ),
+            new Identifier('warnWhenUsedSpaceIsAbovePercentage'),
+            [new Arg(new Int_(75))]
         );
     }
 

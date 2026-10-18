@@ -230,6 +230,13 @@ class FormatPreservingPrinter extends Standard
                     $checks
                 );
 
+                // Format UsedDiskSpaceCheck method chain on separate lines
+                $checks = preg_replace(
+                    '/(UsedDiskSpaceCheck::new\(\))(->warnWhenUsedSpaceIsAbovePercentage\([^)]+\))/',
+                    "$1\n                $2",
+                    $checks
+                );
+
                 // Add trailing comma after last item
                 $checks = rtrim($checks, ', ');
                 $checks .= ',';

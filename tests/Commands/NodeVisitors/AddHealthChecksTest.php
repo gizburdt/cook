@@ -322,7 +322,8 @@ PHP;
         ->toMatch('/CpuLoadCheck::new\(\)[\s]+->failWhenLoadIsHigherInTheLast5Minutes\(2\.0\)[\s]+->failWhenLoadIsHigherInTheLast15Minutes\(1\.5\)/s')
         ->toMatch('/DatabaseConnectionCountCheck::new\(\)[\s]+->warnWhenMoreConnectionsThan\(50\)[\s]+->failWhenMoreConnectionsThan\(100\)/s')
         ->toMatch('/RedisMemoryUsageCheck::new\(\)[\s]+->warnWhenAboveMb\(900\)[\s]+->failWhenAboveMb\(1000\)/s')
-        ->toMatch('/ScheduleCheck::new\(\)[\s]+->heartbeatMaxAgeInMinutes\(2\)/s');
+        ->toMatch('/ScheduleCheck::new\(\)[\s]+->heartbeatMaxAgeInMinutes\(2\)/s')
+        ->toMatch('/UsedDiskSpaceCheck::new\(\)[\s]+->warnWhenUsedSpaceIsAbovePercentage\(75\)/s');
 });
 
 it('indents health checks array items and method chains correctly', function () {
