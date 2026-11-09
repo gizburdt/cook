@@ -11,11 +11,15 @@ use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenTraits;
 use NunoMaduro\PhpInsights\Domain\Metrics\Architecture\Classes;
 use NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
+use PHP_CodeSniffer\Standards\PEAR\Sniffs\WhiteSpace\ObjectOperatorIndentSniff;
 use PHP_CodeSniffer\Standards\PEAR\Sniffs\WhiteSpace\ScopeClosingBraceSniff;
 use PHP_CodeSniffer\Standards\PSR12\Sniffs\Classes\ClassInstantiationSniff;
+use PhpCsFixer\Fixer\Basic\BracesFixer;
+use PhpCsFixer\Fixer\ClassNotation\ClassDefinitionFixer;
 use PhpCsFixer\Fixer\ClassNotation\OrderedClassElementsFixer;
 use PhpCsFixer\Fixer\Comment\NoEmptyCommentFixer;
 use PhpCsFixer\Fixer\FunctionNotation\MethodArgumentSpaceFixer;
+use PhpCsFixer\Fixer\Import\OrderedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
 use SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff;
 use SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff;
@@ -25,6 +29,7 @@ use SlevomatCodingStandard\Sniffs\ControlStructures\AssignmentInConditionSniff;
 use SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff;
 use SlevomatCodingStandard\Sniffs\Functions\UnusedParameterSniff;
 use SlevomatCodingStandard\Sniffs\Namespaces\AlphabeticallySortedUsesSniff;
+use SlevomatCodingStandard\Sniffs\Namespaces\UseSpacingSniff;
 use SlevomatCodingStandard\Sniffs\PHP\UselessParenthesesSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\DeclareStrictTypesSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\DisallowMixedTypeHintSniff;
@@ -52,6 +57,8 @@ return [
     'remove' => [
         AlphabeticallySortedUsesSniff::class,
         AssignmentInConditionSniff::class,
+        BracesFixer::class,
+        ClassDefinitionFixer::class,
         ClassInstantiationSniff::class,
         CyclomaticComplexityIsHigh::class,
         DeclareStrictTypesSniff::class,
@@ -65,7 +72,9 @@ return [
         FunctionLengthSniff::class,
         NewWithBracesFixer::class,
         NoEmptyCommentFixer::class,
+        ObjectOperatorIndentSniff::class,
         OrderedClassElementsFixer::class,
+        OrderedImportsFixer::class,
         ParameterTypeHintSniff::class,
         PropertyTypeHintSniff::class,
         ScopeClosingBraceSniff::class,
@@ -74,6 +83,7 @@ return [
         ReturnTypeHintSniff::class,
         UselessFunctionDocCommentSniff::class,
         UselessParenthesesSniff::class,
+        UseSpacingSniff::class,
     ],
 
     'config' => [
@@ -85,8 +95,8 @@ return [
                 'routes/',
                 'rector.php',
             ],
-            'lineLimit' => 100,
-            'absoluteLineLimit' => 120,
+            'lineLimit' => 140,
+            'absoluteLineLimit' => 160,
             'ignoreComments' => true,
         ],
         MethodArgumentSpaceFixer::class => [
