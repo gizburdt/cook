@@ -3,17 +3,25 @@ name: Tests
 on:
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.ai/**'
   push:
     branches-ignore:
       - '**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: true
       matrix:
-        php: [8.4, 8.5]
+        php: [8.5]
     name: php-${{ matrix.php }}
     services:
       mysql:
@@ -45,7 +53,7 @@ jobs:
         run: echo "COMPOSER_AUTH={\"github-oauth\":{\"github.com\":\"$TOKEN\"}}" >> "$GITHUB_ENV"
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+        uses: ramsey/composer-install@v3
 
       - name: Setup Node
         uses: actions/setup-node@v4

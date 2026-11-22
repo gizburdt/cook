@@ -3,12 +3,20 @@ name: Styling
 on:
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.ai/**'
   push:
     branches-ignore:
       - '**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   pint:
+    name: pint
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -3,9 +3,16 @@ name: Audit
 on:
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.ai/**'
   push:
     branches-ignore:
       - '**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   audit:
@@ -28,7 +35,7 @@ jobs:
         run: echo "COMPOSER_AUTH={\"github-oauth\":{\"github.com\":\"$TOKEN\"}}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        uses: ramsey/composer-install@v3
 
       - name: Composer audit
         uses: alamirault/composer-audit-action@v1

@@ -1,19 +1,27 @@
-name: PHPstan
+name: Quality
 
 on:
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.ai/**'
   push:
     branches-ignore:
       - '**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
-  phpstan:
-    name: phpstan
+  quality:
+    name: quality
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -31,3 +39,7 @@ jobs:
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github
+
+      - name: Run Insights
+        if: ${{ !cancelled() }}
+        run: php artisan insights --no-interaction --disable-security-check
