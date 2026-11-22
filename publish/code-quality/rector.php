@@ -38,7 +38,7 @@ return RectorConfig::configure()
         earlyReturn: true,
     )
     ->withPhpSets(
-        php84: true,
+        php85: true,
     )
     ->withImportNames(
         removeUnusedImports: true,
