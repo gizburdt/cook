@@ -73,6 +73,12 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
+      - name: Generate Passport keys
+        run: |
+          if php artisan list --raw | grep -q '^passport:keys'; then
+            php artisan passport:keys --no-interaction
+          fi
+
       - name: Execute tests
         run: php artisan test
         env:
